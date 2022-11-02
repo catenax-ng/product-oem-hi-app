@@ -7,7 +7,6 @@
       <artifactId>oem_btp</artifactId>
       <version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<groupId>net.catena-x</groupId>
 	<artifactId>product-oem-hi-app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Vehicle Health Indicator Application</name>
@@ -74,12 +73,27 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>2.1.214</version>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>2.7.1</version>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>net.catena-x</groupId>
+			<artifactId>product-behaviour-twin-libraries</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+    </dependencies>
 
 	<build>
 		<plugins>
