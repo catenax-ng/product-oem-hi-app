@@ -90,6 +90,19 @@
 					<mainClass>net.catena_x.btp.hi.oem.frontend.OemHiFrontendApplication</mainClass>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>2.0.0</version>
+				<executions>
+					<execution>
+						<id>aggregate-download-licenses</id>
+						<goals>
+							<goal>aggregate-download-licenses</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
