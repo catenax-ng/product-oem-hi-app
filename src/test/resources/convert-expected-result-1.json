@@ -46,7 +46,7 @@
     }
   },
   "adaptionValueList" : {
-    "version" : "VER_AV_001",
+    "version" : "DV_0.0.99",
     "timestamp" : "2022-10-12T08:17:18.734Z",
     "mileage_km" : 76543.0,
     "operatingtime_s" : 4615200,

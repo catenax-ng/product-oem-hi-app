@@ -1,22 +1,28 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.collector;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import net.catena_x.btp.hi.oem.backend.hi_service.OemHiBackendServiceApplication;
+import net.catena_x.btp.hi.oem.backend.hi_service.handler.HealthIndicatorResultHandler;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInput;
+import net.catena_x.btp.libraries.oem.backend.database.rawdata.dao.VehicleTable;
 import net.catena_x.btp.libraries.oem.backend.database.rawdata.model.TelemetricsData;
-import net.catena_x.btp.libraries.oem.backend.datasource.updater.OemDataUpdaterApplication;
+import net.catena_x.btp.libraries.oem.backend.database.rawdata.model.Vehicle;
+import net.catena_x.btp.libraries.oem.backend.database.util.OemDatabaseException;
+import net.catena_x.btp.libraries.oem.backend.util.EDCHandler;
+import net.catena_x.btp.libraries.oem.backend.util.S3Handler;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -39,20 +45,45 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @EnableAutoConfiguration
 @TestPropertySource(locations = {"classpath:test-hibackendservice.properties"})
 @ComponentScan(basePackages = {"net.catena_x.btp.hi.oem.backend.hi_service.collector",
-        "net.catena_x.btp.libraries.oem.backend.database.rawdata"})
+        "net.catena_x.btp.libraries.oem.backend.database.rawdata",
+        "net.catena_x.btp.libraries.oem.backend.util",
+        "net.catena_x.btp.hi.oem.backend.hi_service.handler"
+})
 @EntityScan(basePackages = {"net.catena_x.btp.libraries.oem.backend.database.rawdata.model"})
 //@DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @SpringBootTest
 class DataCollectorTest {
 
-    @Autowired private DataCollector collector;
+    @InjectMocks
+    @Autowired
+    private DataCollector collector;
+
+    @Mock
+    private HealthIndicatorResultHandler resultHandler;
+    @Mock
+    private EDCHandler edcHandler;
+    @Mock
+    private S3Handler s3Handler;
+    @Mock
+    private VehicleTable vehicleTable;
 
     @Autowired ObjectMapper om;
+
+    @BeforeEach
+    void beforeEach() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     String readFromResourceFile(String filename) throws IOException {
         return new String(Objects.requireNonNull(this.getClass().getResourceAsStream(filename))
                 .readAllBytes(), StandardCharsets.UTF_8);
+    }
+
+    @Test
+    void testDoUpdateSuccess() throws OemDatabaseException {
+        // Setup
+
     }
 
     @Test
