@@ -1,23 +1,20 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.collector;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import net.catena_x.btp.hi.oem.backend.hi_service.handler.HealthIndicatorResultHandler;
 import net.catena_x.btp.hi.supplier.data.input.AdaptionValueList;
 import net.catena_x.btp.hi.supplier.data.input.ClassifiedLoadCollective;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInput;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInputJson;
-import net.catena_x.btp.libraries.oem.backend.database.rawdata.dao.InfoTable;
-import net.catena_x.btp.libraries.oem.backend.database.rawdata.dao.VehicleTable;
-import net.catena_x.btp.libraries.oem.backend.database.rawdata.model.InfoItem;
-import net.catena_x.btp.libraries.oem.backend.database.rawdata.model.TelemetricsData;
-import net.catena_x.btp.libraries.oem.backend.database.rawdata.model.Vehicle;
-import net.catena_x.btp.libraries.oem.backend.database.util.OemDatabaseException;
+import net.catena_x.btp.libraries.oem.backend.database.rawdata.dao.tables.infoitem.InfoTable;
+import net.catena_x.btp.libraries.oem.backend.database.rawdata.dao.tables.vehicle.VehicleTable;
+import net.catena_x.btp.libraries.oem.backend.database.rawdata.dto.InfoItem;
+import net.catena_x.btp.libraries.oem.backend.database.rawdata.dto.TelematicsData;
+import net.catena_x.btp.libraries.oem.backend.database.rawdata.dto.Vehicle;
+import net.catena_x.btp.libraries.oem.backend.database.util.exceptions.OemDatabaseException;
 import net.catena_x.btp.libraries.oem.backend.util.EDCHandler;
 import net.catena_x.btp.libraries.oem.backend.util.S3Handler;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -50,7 +47,7 @@ public class DataCollector {
 
 
     public void doUpdate() throws OemDatabaseException, IOException {
-        Instant timestamp = infoTable.getCurrentDatabaseTimestamp();
+        Instant timestamp = infoTable.getCurrentDatabaseTimestampNewTransaction();
         List<Vehicle> updatedVehicles = doRequest();
         lastUpdate = timestamp;
         HealthIndicatorInputJson healthIndicatorInputJson = buildJson(updatedVehicles);
@@ -59,23 +56,23 @@ public class DataCollector {
 
     private void uploadToS3(HealthIndicatorInputJson inputFile) throws IOException {
         String resultJson = mapper.writeValueAsString(inputFile);
-        s3Handler.uploadFileToS3(resultJson, bucketName, key);
+        //FA s3Handler.uploadFileToS3(resultJson, bucketName, key);
     }
 
     private void dispatchRequestWithS3(HealthIndicatorInputJson inputFile) throws IOException {
         uploadToS3(inputFile);
-        edcHandler.startAsyncRequest(hiEndpoint.toString(), generateMessageBody(),
-                resultHandler::processHealthIndicatorResponse);
+        //FA edcHandler.startAsyncRequest(hiEndpoint.toString(), generateMessageBody(),
+        //FA         resultHandler::processHealthIndicatorResponse);
     }
 
     private List<Vehicle> doRequest() throws OemDatabaseException {
-        return vehicleTable.getUpdatedSince(lastUpdate);
+        return vehicleTable.getUpdatedSinceNewTransaction(lastUpdate);
     }
 
     private HealthIndicatorInputJson buildJson(List<Vehicle> queriedVehicles) throws OemDatabaseException {
         List<HealthIndicatorInput> healthIndicatorInputs = new ArrayList<>();
         for(var vehicle: queriedVehicles) {
-            TelemetricsData telemetrics = vehicle.getTelemetricsData();
+            TelematicsData telemetrics = vehicle.getNewestTelematicsData();
             healthIndicatorInputs.add(convert(telemetrics,
                     "ADDME"
                     //vehicle.getGearboxId()
@@ -85,15 +82,15 @@ public class DataCollector {
         return new HealthIndicatorInputJson(refId, healthIndicatorInputs);
     }
 
-    private HealthIndicatorInput convert(TelemetricsData telemetricsData,
+    private HealthIndicatorInput convert(TelematicsData telematicsData,
                                          String componentId) throws OemDatabaseException {
         // List has only one element!
-        List<String> loadCollectives = telemetricsData.getLoadCollectives();
-        List<double[]> adaptionValues = telemetricsData.getAdaptionValues();
+        List<String> loadCollectives = telematicsData.getLoadCollectives();
+        List<double[]> adaptionValues = telematicsData.getAdaptionValues();
         verifyInput(loadCollectives, adaptionValues);
 
         ClassifiedLoadCollective classifiedLoadCollective = convertLoadCollective(loadCollectives.get(0));
-        AdaptionValueList adaptionValueList = convertAdaptionValues(telemetricsData);
+        AdaptionValueList adaptionValueList = convertAdaptionValues(telematicsData);
 
         return new HealthIndicatorInput(componentId, classifiedLoadCollective, adaptionValueList);
     }
@@ -119,19 +116,19 @@ public class DataCollector {
         }
     }
 
-    private AdaptionValueList convertAdaptionValues(TelemetricsData telemetricsData) throws OemDatabaseException {
+    private AdaptionValueList convertAdaptionValues(TelematicsData telematicsData) throws OemDatabaseException {
         String version = "DV_0.0.99";
 
         // TODO assert version is correct
-        if(!infoTable.getInfoValue(InfoItem.InfoKey.dataversion).equals(version)) {
+        if(!infoTable.getInfoValueNewTransaction(InfoItem.InfoKey.dataversion).equals(version)) {
             throw new OemDatabaseException("Data Version has changed!");
         }
         return new AdaptionValueList(
                 version,
-                telemetricsData.getStorageTimestamp(),
-                telemetricsData.getMileage(),
-                telemetricsData.getOperatingSeconds(),
-                telemetricsData.getAdaptionValues().get(0)
+                telematicsData.getStorageTimestamp(),
+                telematicsData.getMileage(),
+                telematicsData.getOperatingSeconds(),
+                telematicsData.getAdaptionValues().get(0)
         );
     }
 

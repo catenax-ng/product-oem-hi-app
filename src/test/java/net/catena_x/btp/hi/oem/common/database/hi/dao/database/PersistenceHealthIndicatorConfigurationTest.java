@@ -14,8 +14,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @DataJpaTest
 @ActiveProfiles(profiles = "dataupdater")
 @ContextConfiguration(classes = {PersistenceHealthIndicatorConfiguration.class})

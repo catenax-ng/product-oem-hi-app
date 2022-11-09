@@ -4,18 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.catena_x.btp.hi.oem.backend.hi_service.OemHiBackendServiceApplication;
 import net.catena_x.btp.hi.oem.backend.hi_service.handler.HealthIndicatorResultHandler;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInput;
-import net.catena_x.btp.libraries.oem.backend.database.rawdata.dao.VehicleTable;
-import net.catena_x.btp.libraries.oem.backend.database.rawdata.model.TelemetricsData;
-import net.catena_x.btp.libraries.oem.backend.database.rawdata.model.Vehicle;
-import net.catena_x.btp.libraries.oem.backend.database.util.OemDatabaseException;
+import net.catena_x.btp.libraries.oem.backend.database.rawdata.dao.tables.vehicle.VehicleTable;
+import net.catena_x.btp.libraries.oem.backend.database.rawdata.dto.TelematicsData;
+import net.catena_x.btp.libraries.oem.backend.database.util.exceptions.OemDatabaseException;
 import net.catena_x.btp.libraries.oem.backend.util.EDCHandler;
 import net.catena_x.btp.libraries.oem.backend.util.S3Handler;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -88,7 +85,7 @@ class DataCollectorTest {
 
     @Test
     void testConvert() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, IOException {
-        TelemetricsData input = new TelemetricsData();
+        TelematicsData input = new TelematicsData();
         List<double[]> adaptionValues = new ArrayList<>();
         adaptionValues.add(new double[] {20.0, 40.0, 20.0, 40.0});
         List<String> loadCollectives = new ArrayList<>();
@@ -113,7 +110,7 @@ class DataCollectorTest {
     }
 
     private Method getConvertMethod() throws NoSuchMethodException {
-        Method method = DataCollector.class.getDeclaredMethod("convert", TelemetricsData.class);
+        Method method = DataCollector.class.getDeclaredMethod("convert", TelematicsData.class);
         Objects.requireNonNull(method);
         method.setAccessible(true);
         return method;
