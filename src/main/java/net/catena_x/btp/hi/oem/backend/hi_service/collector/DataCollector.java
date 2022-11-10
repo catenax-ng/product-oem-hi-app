@@ -7,12 +7,12 @@ import net.catena_x.btp.hi.supplier.data.input.AdaptionValueList;
 import net.catena_x.btp.hi.supplier.data.input.ClassifiedLoadCollective;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInput;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInputJson;
-import net.catena_x.btp.libraries.oem.backend.database.rawdata.dao.tables.infoitem.InfoTable;
-import net.catena_x.btp.libraries.oem.backend.database.rawdata.dao.tables.vehicle.VehicleTable;
-import net.catena_x.btp.libraries.oem.backend.database.rawdata.dto.InfoItem;
-import net.catena_x.btp.libraries.oem.backend.database.rawdata.dto.TelematicsData;
-import net.catena_x.btp.libraries.oem.backend.database.rawdata.dto.Vehicle;
+import net.catena_x.btp.libraries.oem.backend.model.dto.infoitem.InfoTable;
+import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.VehicleTable;
+import net.catena_x.btp.libraries.oem.backend.model.dto.telematicsdata.TelematicsData;
+import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.Vehicle;
 import net.catena_x.btp.libraries.oem.backend.database.util.exceptions.OemDatabaseException;
+import net.catena_x.btp.libraries.oem.backend.model.enums.InfoKey;
 import net.catena_x.btp.libraries.oem.backend.util.EDCHandler;
 import net.catena_x.btp.libraries.oem.backend.util.S3Handler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,7 +120,7 @@ public class DataCollector {
         String version = "DV_0.0.99";
 
         // TODO assert version is correct
-        if(!infoTable.getInfoValueNewTransaction(InfoItem.InfoKey.dataversion).equals(version)) {
+        if(!infoTable.getInfoValueNewTransaction(InfoKey.dataversion).equals(version)) {
             throw new OemDatabaseException("Data Version has changed!");
         }
         return new AdaptionValueList(
