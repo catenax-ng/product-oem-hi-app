@@ -120,7 +120,7 @@ public class DataCollector {
         String version = "DV_0.0.99";
 
         // TODO assert version is correct
-        if(!infoTable.getInfoValueNewTransaction(InfoKey.dataversion).equals(version)) {
+        if(!infoTable.getInfoValueNewTransaction(InfoKey.DATAVERSION).equals(version)) {
             throw new OemDatabaseException("Data Version has changed!");
         }
         return new AdaptionValueList(
