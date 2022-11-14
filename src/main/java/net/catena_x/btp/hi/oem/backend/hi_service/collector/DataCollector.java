@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.catena_x.btp.hi.oem.backend.hi_service.handler.HealthIndicatorResultHandler;
 import net.catena_x.btp.hi.supplier.data.input.AdaptionValueList;
-import net.catena_x.btp.hi.supplier.data.input.ClassifiedLoadCollective;
+import net.catena_x.btp.hi.supplier.data.input.ClassifiedLoadSpectrum;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInput;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInputJson;
 import net.catena_x.btp.libraries.oem.backend.model.dto.infoitem.InfoTable;
@@ -85,19 +85,19 @@ public class DataCollector {
     private HealthIndicatorInput convert(TelematicsData telematicsData,
                                          String componentId) throws OemDatabaseException {
         // List has only one element!
-        List<String> loadCollectives = telematicsData.getLoadCollectives();
+        List<String> loadCollectives = telematicsData.getLoadSpectra();
         List<double[]> adaptionValues = telematicsData.getAdaptionValues();
         verifyInput(loadCollectives, adaptionValues);
 
-        ClassifiedLoadCollective classifiedLoadCollective = convertLoadCollective(loadCollectives.get(0));
+        ClassifiedLoadSpectrum classifiedLoadSpectrum = convertLoadSpectrum(loadCollectives.get(0));
         AdaptionValueList adaptionValueList = convertAdaptionValues(telematicsData);
 
-        return new HealthIndicatorInput(componentId, classifiedLoadCollective, adaptionValueList);
+        return new HealthIndicatorInput(componentId, classifiedLoadSpectrum, adaptionValueList);
     }
 
     private void verifyInput(List<String> loadCollectives, List<double[]> adaptionValues) throws OemDatabaseException {
         if(loadCollectives.size() != 1) {
-            throw new OemDatabaseException("Found more than one LoadCollective! " +
+            throw new OemDatabaseException("Found more than one LoadSpectrum! " +
                     "Data format seems to have changed!");
         }
         if(adaptionValues.size() != 1) {
@@ -106,10 +106,10 @@ public class DataCollector {
         }
     }
 
-    private ClassifiedLoadCollective convertLoadCollective(String loadCollective) throws OemDatabaseException {
+    private ClassifiedLoadSpectrum convertLoadSpectrum(String loadCollective) throws OemDatabaseException {
 
         try {
-            return mapper.readValue(loadCollective, ClassifiedLoadCollective.class);
+            return mapper.readValue(loadCollective, ClassifiedLoadSpectrum.class);
         }
         catch (JsonProcessingException e) {
             throw new OemDatabaseException("Mapping of load collective failed!");

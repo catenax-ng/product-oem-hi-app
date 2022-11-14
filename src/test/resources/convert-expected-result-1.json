@@ -1,6 +1,6 @@
 {
   "componentId" : "urn:uuid:2343245-2442-2344-2345423",
-  "classifiedLoadCollective" : {
+  "classifiedLoadSpectrum" : {
     "targetComponentID": "telnet://192.0.2.16:80/",
     "metadata": {
       "projectDescription": "projectnumber Landstrasse",

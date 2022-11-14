@@ -88,8 +88,8 @@ class DataCollectorTest {
         TelematicsData input = new TelematicsData();
         List<double[]> adaptionValues = new ArrayList<>();
         adaptionValues.add(new double[] {20.0, 40.0, 20.0, 40.0});
-        List<String> loadCollectives = new ArrayList<>();
-        loadCollectives.add(readFromResourceFile("/load-collective-1.json"));
+        List<String> loadSpectra = new ArrayList<>();
+        loadSpectra.add(readFromResourceFile("/load-collective-1.json"));
         input.setId("urn:example-telemetrics");
         input.setVehicleId("urn:uuid:2343245-2442-2344-2345423");
         input.setCreationTimestamp(Instant.parse("2007-12-31T00:00:00.00Z"));
@@ -97,7 +97,7 @@ class DataCollectorTest {
         input.setOperatingSeconds(4615200);
         input.setStorageTimestamp(Instant.parse("2022-10-12T08:17:18.734Z"));
         input.setAdaptionValues(adaptionValues);
-        input.setLoadCollectives(loadCollectives);
+        input.setLoadSpectra(loadSpectra);
 
         HealthIndicatorInput result = (HealthIndicatorInput) getConvertMethod().invoke(collector, input);
 
