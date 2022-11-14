@@ -56,13 +56,13 @@ public class DataCollector {
 
     private void uploadToS3(HealthIndicatorInputJson inputFile) throws IOException {
         String resultJson = mapper.writeValueAsString(inputFile);
-        //FA s3Handler.uploadFileToS3(resultJson, bucketName, key);
+        s3Handler.uploadFileToS3(resultJson, bucketName, key);
     }
 
     private void dispatchRequestWithS3(HealthIndicatorInputJson inputFile) throws IOException {
         uploadToS3(inputFile);
-        //FA edcHandler.startAsyncRequest(hiEndpoint.toString(), generateMessageBody(),
-        //FA         resultHandler::processHealthIndicatorResponse);
+        edcHandler.startAsyncRequest(hiEndpoint.toString(), generateMessageBody(),
+                 resultHandler::processHealthIndicatorResponse);
     }
 
     private List<Vehicle> doRequest() throws OemDatabaseException {
