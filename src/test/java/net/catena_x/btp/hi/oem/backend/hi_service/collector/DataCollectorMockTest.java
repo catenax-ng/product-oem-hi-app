@@ -32,6 +32,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
@@ -43,11 +44,9 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-
-
 @TestPropertySource(locations = {"classpath:test-hibackendservice.properties"})
-@ComponentScan(basePackages = {"net.catena_x.btp.hi.oem.backend.hi_service.collector",
+@ComponentScan(basePackages = {
+        "net.catena_x.btp.hi.oem.backend.hi_service.collector",
         "net.catena_x.btp.libraries.oem.backend.model.dto",
         "net.catena_x.btp.libraries.oem.backend.util",
         "net.catena_x.btp.hi.oem.backend.hi_service.handler"
@@ -92,7 +91,7 @@ class DataCollectorMockTest {
     void testDoUpdateSuccessFirstCounter() throws Exception {
         // make the "database" return pre-defined vehicles
         Mockito.when(vehicleTable.getSyncCounterSinceNewTransaction(Mockito.anyLong())).thenReturn(
-                generateMockDatabaseResponse(collector.lastCounter)
+                generateMockDatabaseResponse(getCounter())
         );
         Mockito.when(infoTable.getInfoValueNewTransaction(InfoKey.DATAVERSION)).thenReturn(dataversion);
 
@@ -118,7 +117,7 @@ class DataCollectorMockTest {
                 Mockito.argThat(x -> true)
         );
 
-        Assertions.assertEquals(collector.lastCounter, 2);
+        Assertions.assertEquals(getCounter(), 2);
     }
 
     @Test
@@ -128,7 +127,7 @@ class DataCollectorMockTest {
         Mockito.when(vehicleTable.getSyncCounterSinceNewTransaction(Mockito.anyLong())).thenReturn(
                 generateMockDatabaseResponse(2)
         );
-        collector.lastCounter = 1;
+        setCounter(1);
         Mockito.when(infoTable.getInfoValueNewTransaction(InfoKey.DATAVERSION)).thenReturn(dataversion);
 
         // mock UUID class to always return the same UUID
@@ -234,5 +233,19 @@ class DataCollectorMockTest {
         else if(counter < 2) response.add(veh2);
 
         return response;
+    }
+
+    private Field getLastCounterField() throws NoSuchFieldException {
+        var field = DataCollector.class.getDeclaredField("lastCounter");
+        field.setAccessible(true);
+        return field;
+    }
+
+    private long getCounter() throws NoSuchFieldException, IllegalAccessException {
+        return (long) getLastCounterField().get(collector);
+    }
+
+    private void setCounter(long counter) throws NoSuchFieldException, IllegalAccessException {
+        getLastCounterField().set(collector, counter);
     }
 }

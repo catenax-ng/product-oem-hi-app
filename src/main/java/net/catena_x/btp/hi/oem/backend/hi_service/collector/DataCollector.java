@@ -35,12 +35,11 @@ public class DataCollector {
     @Autowired private HealthIndicatorResultHandler resultHandler;
     @Autowired private ObjectMapper mapper;
     @Autowired private S3Handler s3Handler;
-
-    long lastCounter = -1;      // TODO should this be made persistent somehow?
-
     @Value("${cloud.inputFile.key}") private String key;
     @Value("${zf.hiservice.endpoint}") private URL hiEndpoint;
     @Value("${zf.hiservice.inputAssetName}") private String inputAssetName;
+
+    private long lastCounter = -1;      // TODO should this be made persistent somehow?
 
 
     public void doUpdate() throws OemDatabaseException, IOException, MinioException, NoSuchAlgorithmException,
