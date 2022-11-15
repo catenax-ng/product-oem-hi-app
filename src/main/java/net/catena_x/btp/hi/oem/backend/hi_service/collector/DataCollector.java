@@ -60,7 +60,6 @@ public class DataCollector {
     }
 
     private List<Vehicle> doRequest() throws OemDatabaseException {
-        // return vehicleTable.getUpdatedSinceNewTransaction(lastUpdate);
         var result = vehicleTable.getSyncCounterSinceNewTransaction(lastCounter);
         setNewestCounter(result);
         return result;

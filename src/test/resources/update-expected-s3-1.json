@@ -1,0 +1,60 @@
+{
+  "requestRefId": "550e8400-e29b-11d4-a716-446655440000",
+  "healthIndicatorInputs": [
+    {
+      "componentId" : "g1",
+      "classifiedLoadSpectrum" : {
+        "targetComponentID": "telnet://192.0.2.16:80/",
+        "metadata": {
+          "projectDescription": "projectnumber Landstrasse",
+          "componentDescription": "Clutch",
+          "routeDescription": "logged",
+          "status": {
+            "date": "2022-08-21",
+            "operatingTime": "1281.9",
+            "mileage": 76543
+          }
+        },
+        "header": {
+          "countingMethod": "TimeAtLevel",
+          "channels": [
+            {
+              "channelName": "TC_Clutch",
+              "unit": "unit:degreeCelsius",
+              "lowerLimit": 0.0,
+              "upperLimit": 320.0,
+              "numberOfBins": 8
+            }
+          ],
+          "countingValue": "Time",
+          "countingUnit": "unit:secondUnitOfTime"
+        },
+        "body": {
+          "classes": [
+            {
+              "className": "TC_Clutch-class", "classList": [
+              2,
+              3,
+              4,
+              5,
+              6
+            ]}],
+          "counts":{"countsName":"Time","countsList": [
+            3018.21,
+            3451252.83,
+            699160.662,
+            349580.331,
+            116526.777
+          ]}
+        }
+      },
+      "adaptionValueList" : {
+        "version" : "DV_0.0.99",
+        "timestamp" : "2022-10-12T08:17:18.734Z",
+        "mileage_km" : 23431.5,
+        "operatingtime_s" : 325426243,
+        "values" : [ 20.0, 40.0, 20.0, 40.0 ]
+      }
+    }
+  ]
+}
