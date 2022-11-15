@@ -22,9 +22,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class DataCollector {
@@ -36,9 +34,7 @@ public class DataCollector {
     @Autowired private ObjectMapper mapper;
     @Autowired private S3Handler s3Handler;
 
-    final static Instant earliestTimestamp = Instant.parse("2007-12-03T10:15:30.00Z");
-
-    Instant lastUpdate = earliestTimestamp;      // TODO should this be made persistent somehow?
+    long lastCounter = -1;      // TODO should this be made persistent somehow?
 
     @Value("${aws.inputFile.bucketName}") private String bucketName;
     @Value("${aws.inputFile.key}") private String key;
@@ -47,9 +43,7 @@ public class DataCollector {
 
 
     public void doUpdate() throws OemDatabaseException, IOException {
-        Instant timestamp = infoTable.getCurrentDatabaseTimestampNewTransaction();
         List<Vehicle> updatedVehicles = doRequest();
-        lastUpdate = timestamp;
         HealthIndicatorInputJson healthIndicatorInputJson = buildJson(updatedVehicles);
         dispatchRequestWithS3(healthIndicatorInputJson);
     }
@@ -66,17 +60,26 @@ public class DataCollector {
     }
 
     private List<Vehicle> doRequest() throws OemDatabaseException {
-        return vehicleTable.getUpdatedSinceNewTransaction(lastUpdate);
+        // return vehicleTable.getUpdatedSinceNewTransaction(lastUpdate);
+        var result = vehicleTable.getSyncCounterSinceNewTransaction(lastCounter);
+        setNewestCounter(result);
+        return result;
+    }
+
+    private void setNewestCounter(List<Vehicle> result) {
+        Optional<Vehicle> maxCounterVehicle = result.stream().max(Comparator.comparing(Vehicle::getSyncCounter));
+        if(maxCounterVehicle.isPresent()) {
+            lastCounter = maxCounterVehicle.get().getSyncCounter();
+            return;
+        }
+        System.out.println("[DataCollector] Warning: No vehicles found in database!");
     }
 
     private HealthIndicatorInputJson buildJson(List<Vehicle> queriedVehicles) throws OemDatabaseException {
         List<HealthIndicatorInput> healthIndicatorInputs = new ArrayList<>();
         for(var vehicle: queriedVehicles) {
             TelematicsData telemetrics = vehicle.getNewestTelematicsData();
-            healthIndicatorInputs.add(convert(telemetrics,
-                    "ADDME"
-                    //vehicle.getGearboxId()
-            ));
+            healthIndicatorInputs.add(convert(telemetrics, vehicle.getGearboxId()));
         }
         String refId = UUID.randomUUID().toString();
         return new HealthIndicatorInputJson(refId, healthIndicatorInputs);
@@ -119,7 +122,7 @@ public class DataCollector {
     private AdaptionValueList convertAdaptionValues(TelematicsData telematicsData) throws OemDatabaseException {
         String version = "DV_0.0.99";
 
-        // TODO assert version is correct
+        // assert version is correct
         if(!infoTable.getInfoValueNewTransaction(InfoKey.DATAVERSION).equals(version)) {
             throw new OemDatabaseException("Data Version has changed!");
         }
