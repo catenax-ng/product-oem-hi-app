@@ -3,7 +3,7 @@
 This service provides a periodic calculation of health indicators that can be visualized by a simple web frontend.
 
 **Backend**
-  * Collects daily updated load collectives and adaption values form a set of predefined vehicles.
+  * Collects daily updated load spectra and adaption values form a set of predefined vehicles.
   * Creates a input file for the external hi calculation service.
   * Triggers the hi calculation service at supplier side (using S3 dataplane for sending the input file).
   * Waits for the notification "hi calculation finished".
@@ -51,10 +51,10 @@ If there are new Data or vehicles available, this service calls the HI Data Upda
 In a real-world scenario, the data may be pushed directly by the vehicles over the air.
 
 ## HI Data Updater + Vehicle Registration (Backend)
-This service provides a REST API to register new vehicles and update data like load collectives and adaption values. This happens whenever new data are pushed by the Testdata Provider. The data are written to the OEM Rawdata database.
+This service provides a REST API to register new vehicles and update data like load spectra and adaption values. This happens whenever new data are pushed by the Testdata Provider. The data are written to the OEM Rawdata database.
 
 ## OEM Rawdata DB (Backend)
-This database is used to store the vehicle objects with their gearbox relations as well as the load collectives and the adaption values. The content of this database could be exposed as AAS assets if necessary.
+This database is used to store the vehicle objects with their gearbox relations as well as the load spectra and the adaption values. The content of this database could be exposed as AAS assets if necessary.
 
 ## HI Service Controller (Backend)
 The HI Service Controller is called periodically, e.g., once per day. It could also be triggered manually. It is responsible to manage the health indicator calculation that is hosted at the supplier. Therefore, there are two modules. The Data Collector collects the current input data and sends it to the supplier service. The Receiver waits until the calculation is finished and then downloads the results and stores them into a database.

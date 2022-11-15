@@ -1,39 +1,40 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.collector;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.catena_x.btp.hi.oem.backend.hi_service.OemHiBackendServiceApplication;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import net.catena_x.btp.hi.oem.backend.hi_service.handler.HealthIndicatorResultHandler;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInput;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInputJson;
+import net.catena_x.btp.libraries.bamm.common.BammStatus;
+import net.catena_x.btp.libraries.bamm.custom.adaptionvalues.AdaptionValues;
+import net.catena_x.btp.libraries.bamm.custom.classifiedloadspectrum.ClassifiedLoadSpectrum;
 import net.catena_x.btp.libraries.oem.backend.model.dto.infoitem.InfoTable;
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.Vehicle;
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.VehicleTable;
 import net.catena_x.btp.libraries.oem.backend.model.dto.telematicsdata.TelematicsData;
-import net.catena_x.btp.libraries.oem.backend.database.util.exceptions.OemDatabaseException;
 import net.catena_x.btp.libraries.oem.backend.model.enums.InfoKey;
 import net.catena_x.btp.libraries.oem.backend.util.EDCHandler;
 import net.catena_x.btp.libraries.oem.backend.util.S3Handler;
+import net.catena_x.btp.libraries.util.TimeStampDeserializer;
+import net.catena_x.btp.libraries.util.TimeStampSerializer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -75,9 +76,24 @@ class DataCollectorMockTest {
     private DataCollector collector;
 
     @Autowired ObjectMapper om;
+    boolean objectMapperInitialized = false;
 
     @BeforeEach
     void beforeEach() {
+        if(!objectMapperInitialized){
+            om.registerModule(new JavaTimeModule());
+
+            SimpleModule timestampSerializerModule = new SimpleModule();
+            timestampSerializerModule.addSerializer(Instant.class, new TimeStampSerializer());
+            om.registerModule(timestampSerializerModule);
+
+            SimpleModule timestampDeserializerModule = new SimpleModule();
+            timestampDeserializerModule.addDeserializer(Instant.class, new TimeStampDeserializer());
+            om.registerModule(timestampDeserializerModule);
+
+            objectMapperInitialized = true;
+        }
+
         MockitoAnnotations.openMocks(this);
     }
 
@@ -117,7 +133,7 @@ class DataCollectorMockTest {
                 Mockito.argThat(x -> true)
         );
 
-        Assertions.assertEquals(getCounter(), 2);
+        Assertions.assertEquals(2, getCounter());
     }
 
     @Test
@@ -149,16 +165,28 @@ class DataCollectorMockTest {
 
         Mockito.when(infoTable.getInfoValueNewTransaction(InfoKey.DATAVERSION)).thenReturn(dataversion);
 
+        ClassifiedLoadSpectrum loadSpectum = om.readValue(
+                readFromResourceFile("/load-collective-1.json"),
+                ClassifiedLoadSpectrum.class);
+
         TelematicsData input = new TelematicsData();
-        List<double[]> adaptionValues = new ArrayList<>();
-        adaptionValues.add(new double[] {20.0, 40.0, 20.0, 40.0});
-        List<String> loadSpectra = new ArrayList<>();
-        loadSpectra.add(readFromResourceFile("/load-collective-1.json"));
+
+        List<ClassifiedLoadSpectrum> loadSpectra = new ArrayList<>();
+        loadSpectra.add(loadSpectum);
+        List<AdaptionValues> adaptionValues = new ArrayList<>();
+
+        AdaptionValues adaptionValueSet = new AdaptionValues();
+        adaptionValueSet.setValues(new double[] {20.0, 40.0, 20.0, 40.0});
+        BammStatus status = new BammStatus();
+        status.setRouteDescription("Default route");
+        status.setMileage(3245L);
+        status.setDate(Instant.parse("2022-10-12T08:16:18.734Z"));
+        status.setOperatingTime("235.2");
+        adaptionValueSet.setStatus(status);
+        adaptionValues.add(adaptionValueSet);
+
         input.setId("urn:example-telemetrics");
         input.setVehicleId("urn:uuid:2343245-2442-2344-2345423");
-        input.setCreationTimestamp(Instant.parse("2007-12-31T00:00:00.00Z"));
-        input.setMileage(76543.0f);
-        input.setOperatingSeconds(4615200);
         input.setStorageTimestamp(Instant.parse("2022-10-12T08:17:18.734Z"));
         input.setAdaptionValues(adaptionValues);
         input.setLoadSpectra(loadSpectra);
@@ -182,18 +210,28 @@ class DataCollectorMockTest {
     }
 
     private List<Vehicle> generateMockDatabaseResponse(long counter) throws Exception {
-        List<String> loadSpectra = new ArrayList<>();
-        loadSpectra.add(readFromResourceFile("/load-collective-1.json"));
-        List<double[]> adaptionValues = new ArrayList<>();
-        adaptionValues.add(new double[] {20.0, 40.0, 20.0, 40.0});
+        ClassifiedLoadSpectrum loadSpectum = om.readValue(
+                readFromResourceFile("/load-collective-1.json"),
+                ClassifiedLoadSpectrum.class);
+
+        List<ClassifiedLoadSpectrum> loadSpectra = new ArrayList<>();
+        loadSpectra.add(loadSpectum);
+        List<AdaptionValues> adaptionValues = new ArrayList<>();
+
+        AdaptionValues adaptionValueSet = new AdaptionValues();
+        adaptionValueSet.setValues(new double[] {20.0, 40.0, 20.0, 40.0});
+        BammStatus status = new BammStatus();
+        status.setRouteDescription("Default route");
+        status.setMileage(3245L);
+        status.setDate(Instant.parse("2022-10-12T08:16:18.734Z"));
+        status.setOperatingTime("235.2");
+        adaptionValueSet.setStatus(status);
+        adaptionValues.add(adaptionValueSet);
 
         TelematicsData t1 = new TelematicsData();
         t1.setId("t1");
         t1.setSyncCounter(2);
-        t1.setMileage(23431.5f);
-        t1.setCreationTimestamp(Instant.parse("2007-12-31T00:00:00.00Z"));
         t1.setVehicleId("v1");
-        t1.setOperatingSeconds(325426243);
         t1.setStorageTimestamp(Instant.parse("2022-10-12T08:17:18.734Z"));
         t1.setLoadSpectra(loadSpectra);
         t1.setAdaptionValues(adaptionValues);
@@ -201,10 +239,7 @@ class DataCollectorMockTest {
         TelematicsData t2 = new TelematicsData();
         t2.setId("t2");
         t2.setSyncCounter(5);
-        t2.setMileage(22222.5f);
-        t2.setCreationTimestamp(Instant.parse("2012-12-31T00:00:00.00Z"));
         t2.setVehicleId("v2");
-        t2.setOperatingSeconds(925426332);
         t2.setStorageTimestamp(Instant.parse("2022-10-12T08:17:18.734Z"));
         t2.setLoadSpectra(loadSpectra);
         t2.setAdaptionValues(adaptionValues);
