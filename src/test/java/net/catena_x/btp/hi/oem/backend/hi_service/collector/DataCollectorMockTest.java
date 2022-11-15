@@ -115,7 +115,6 @@ class DataCollectorMockTest {
                             return true;
                         }
                 ),
-                Mockito.argThat(x -> true),
                 Mockito.argThat(x -> true)
         );
 
@@ -141,7 +140,6 @@ class DataCollectorMockTest {
 
         // setup assertion to test correct call of S3Handler
         Mockito.verify(s3Handler, Mockito.never()).uploadFileToS3(
-                Mockito.anyString(),
                 Mockito.anyString(),
                 Mockito.anyString()
         );

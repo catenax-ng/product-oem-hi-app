@@ -2,6 +2,7 @@ package net.catena_x.btp.hi.oem.backend.hi_service.collector;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.minio.errors.MinioException;
 import net.catena_x.btp.hi.oem.backend.hi_service.handler.HealthIndicatorResultHandler;
 import net.catena_x.btp.hi.supplier.data.input.AdaptionValueList;
 import net.catena_x.btp.hi.supplier.data.input.ClassifiedLoadSpectrum;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @Component
@@ -35,13 +38,13 @@ public class DataCollector {
 
     long lastCounter = -1;      // TODO should this be made persistent somehow?
 
-    @Value("${aws.inputFile.bucketName}") private String bucketName;
-    @Value("${aws.inputFile.key}") private String key;
+    @Value("${cloud.inputFile.key}") private String key;
     @Value("${zf.hiservice.endpoint}") private URL hiEndpoint;
     @Value("${zf.hiservice.inputAssetName}") private String inputAssetName;
 
 
-    public void doUpdate() throws OemDatabaseException, IOException {
+    public void doUpdate() throws OemDatabaseException, IOException, MinioException, NoSuchAlgorithmException,
+            InvalidKeyException {
         List<Vehicle> updatedVehicles = doRequest();
         if(updatedVehicles.size() == 0) {
             System.out.println("[DataCollector] No updated vehicles this time!");
@@ -52,12 +55,14 @@ public class DataCollector {
         dispatchRequestWithS3(healthIndicatorInputJson);
     }
 
-    private void uploadToS3(HealthIndicatorInputJson inputFile) throws IOException {
+    private void uploadToS3(HealthIndicatorInputJson inputFile) throws IOException, MinioException,
+            NoSuchAlgorithmException, InvalidKeyException {
         String resultJson = mapper.writeValueAsString(inputFile);
-        s3Handler.uploadFileToS3(resultJson, bucketName, key);
+        s3Handler.uploadFileToS3(resultJson, key);
     }
 
-    private void dispatchRequestWithS3(HealthIndicatorInputJson inputFile) throws IOException {
+    private void dispatchRequestWithS3(HealthIndicatorInputJson inputFile) throws IOException, MinioException,
+            NoSuchAlgorithmException, InvalidKeyException {
         uploadToS3(inputFile);
         edcHandler.startAsyncRequest(hiEndpoint.toString(), generateMessageBody(),
                  resultHandler::processHealthIndicatorResponse);
