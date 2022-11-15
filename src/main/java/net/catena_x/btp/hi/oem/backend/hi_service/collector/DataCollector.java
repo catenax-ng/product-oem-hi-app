@@ -7,11 +7,11 @@ import net.catena_x.btp.hi.supplier.data.input.AdaptionValueList;
 import net.catena_x.btp.hi.supplier.data.input.ClassifiedLoadSpectrum;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInput;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInputJson;
-import net.catena_x.btp.libraries.oem.backend.database.util.exceptions.OemDatabaseException;
 import net.catena_x.btp.libraries.oem.backend.model.dto.infoitem.InfoTable;
+import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.VehicleTable;
 import net.catena_x.btp.libraries.oem.backend.model.dto.telematicsdata.TelematicsData;
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.Vehicle;
-import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.VehicleTable;
+import net.catena_x.btp.libraries.oem.backend.database.util.exceptions.OemDatabaseException;
 import net.catena_x.btp.libraries.oem.backend.model.enums.InfoKey;
 import net.catena_x.btp.libraries.oem.backend.util.EDCHandler;
 import net.catena_x.btp.libraries.oem.backend.util.S3Handler;
@@ -22,9 +22,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class DataCollector {
@@ -36,9 +34,8 @@ public class DataCollector {
     @Autowired private ObjectMapper mapper;
     @Autowired private S3Handler s3Handler;
 
-    final static Instant earliestTimestamp = Instant.parse("2007-12-03T10:15:30.00Z");
+    long lastCounter = -1;      // TODO should this be made persistent somehow?
 
-    Instant lastUpdate = earliestTimestamp;      // TODO should this be made persistent somehow?
 
     @Value("${aws.inputFile.bucketName}") private String bucketName;
     @Value("${aws.inputFile.key}") private String key;
@@ -47,36 +44,41 @@ public class DataCollector {
 
 
     public void doUpdate() throws OemDatabaseException, IOException {
-        Instant timestamp = infoTable.getCurrentDatabaseTimestampNewTransaction();
         List<Vehicle> updatedVehicles = doRequest();
-        lastUpdate = timestamp;
         HealthIndicatorInputJson healthIndicatorInputJson = buildJson(updatedVehicles);
         dispatchRequestWithS3(healthIndicatorInputJson);
     }
 
     private void uploadToS3(HealthIndicatorInputJson inputFile) throws IOException {
         String resultJson = mapper.writeValueAsString(inputFile);
-        //FA s3Handler.uploadFileToS3(resultJson, bucketName, key);
+        s3Handler.uploadFileToS3(resultJson, bucketName, key);
     }
 
     private void dispatchRequestWithS3(HealthIndicatorInputJson inputFile) throws IOException {
         uploadToS3(inputFile);
-        //FA edcHandler.startAsyncRequest(hiEndpoint.toString(), generateMessageBody(),
-        //FA         resultHandler::processHealthIndicatorResponse);
+        edcHandler.startAsyncRequest(hiEndpoint.toString(), generateMessageBody(),
+                 resultHandler::processHealthIndicatorResponse);
     }
 
     private List<Vehicle> doRequest() throws OemDatabaseException {
-        return vehicleTable.getUpdatedSinceNewTransaction(lastUpdate);
+        var result = vehicleTable.getSyncCounterSinceNewTransaction(lastCounter);
+        setNewestCounter(result);
+        return result;
+    }
+    private void setNewestCounter(List<Vehicle> result) {
+        Optional<Vehicle> maxCounterVehicle = result.stream().max(Comparator.comparing(Vehicle::getSyncCounter));
+        if(maxCounterVehicle.isPresent()) {
+            lastCounter = maxCounterVehicle.get().getSyncCounter();
+            return;
+        }
+        System.out.println("[DataCollector] Warning: No vehicles found in database!");
     }
 
     private HealthIndicatorInputJson buildJson(List<Vehicle> queriedVehicles) throws OemDatabaseException {
         List<HealthIndicatorInput> healthIndicatorInputs = new ArrayList<>();
         for(var vehicle: queriedVehicles) {
             TelematicsData telemetrics = vehicle.getNewestTelematicsData();
-            healthIndicatorInputs.add(convert(telemetrics,
-                    "ADDME"
-                    //vehicle.getGearboxId()
-            ));
+            healthIndicatorInputs.add(convert(telemetrics, vehicle.getGearboxId()));
         }
         String refId = UUID.randomUUID().toString();
         return new HealthIndicatorInputJson(refId, healthIndicatorInputs);
@@ -119,7 +121,7 @@ public class DataCollector {
     private AdaptionValueList convertAdaptionValues(TelematicsData telematicsData) throws OemDatabaseException {
         String version = "DV_0.0.99";
 
-        // TODO assert version is correct
+        // assert version is correct
         if(!infoTable.getInfoValueNewTransaction(InfoKey.DATAVERSION).equals(version)) {
             throw new OemDatabaseException("Data Version has changed!");
         }
