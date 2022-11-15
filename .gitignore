@@ -1,2 +1,6 @@
 /target
 /product-oem-hi-app.iml
+/src/main/resources/hibackendservice-bindings.properties
+/src/main/resources/hifrontend-bindings.properties
+/src/main/resources/rawdatadb-bindings.properties
+/src/main/resources/healthindicatordb-bindings.properties
