@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
-import java.time.Instant;
 import java.util.*;
 
 @Component
@@ -44,6 +43,11 @@ public class DataCollector {
 
     public void doUpdate() throws OemDatabaseException, IOException {
         List<Vehicle> updatedVehicles = doRequest();
+        if(updatedVehicles.size() == 0) {
+            System.out.println("[DataCollector] No updated vehicles this time!");
+            return;
+        }
+        System.out.println("[DataCollector] Found " + updatedVehicles.size() + " updated vehicles!");
         HealthIndicatorInputJson healthIndicatorInputJson = buildJson(updatedVehicles);
         dispatchRequestWithS3(healthIndicatorInputJson);
     }
@@ -61,17 +65,13 @@ public class DataCollector {
 
     private List<Vehicle> doRequest() throws OemDatabaseException {
         var result = vehicleTable.getSyncCounterSinceNewTransaction(lastCounter);
-        setNewestCounter(result);
+        setNewestCounterIfNewVehicles(result);
         return result;
     }
 
-    private void setNewestCounter(List<Vehicle> result) {
+    private void setNewestCounterIfNewVehicles(List<Vehicle> result) {
         Optional<Vehicle> maxCounterVehicle = result.stream().max(Comparator.comparing(Vehicle::getSyncCounter));
-        if(maxCounterVehicle.isPresent()) {
-            lastCounter = maxCounterVehicle.get().getSyncCounter();
-            return;
-        }
-        System.out.println("[DataCollector] Warning: No vehicles found in database!");
+        maxCounterVehicle.ifPresent(vehicle -> lastCounter = vehicle.getSyncCounter());
     }
 
     private HealthIndicatorInputJson buildJson(List<Vehicle> queriedVehicles) throws OemDatabaseException {

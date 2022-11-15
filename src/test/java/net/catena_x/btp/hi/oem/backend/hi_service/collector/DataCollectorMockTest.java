@@ -25,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -87,6 +88,7 @@ class DataCollectorMockTest {
     }
 
     @Test
+    @DirtiesContext
     void testDoUpdateSuccessFirstCounter() throws Exception {
         // make the "database" return pre-defined vehicles
         Mockito.when(vehicleTable.getSyncCounterSinceNewTransaction(Mockito.anyLong())).thenReturn(
@@ -118,6 +120,31 @@ class DataCollectorMockTest {
         );
 
         Assertions.assertEquals(collector.lastCounter, 2);
+    }
+
+    @Test
+    @DirtiesContext
+    void testDoUpdateNoNewVehicles() throws Exception {
+        // make the "database" return pre-defined vehicles
+        Mockito.when(vehicleTable.getSyncCounterSinceNewTransaction(Mockito.anyLong())).thenReturn(
+                generateMockDatabaseResponse(2)
+        );
+        collector.lastCounter = 1;
+        Mockito.when(infoTable.getInfoValueNewTransaction(InfoKey.DATAVERSION)).thenReturn(dataversion);
+
+        // mock UUID class to always return the same UUID
+        try (MockedStatic<UUID> mocked = Mockito.mockStatic(UUID.class)) {
+            mocked.when(UUID::randomUUID).thenReturn(testUUID);
+            // the actual tested method
+            collector.doUpdate();
+        }
+
+        // setup assertion to test correct call of S3Handler
+        Mockito.verify(s3Handler, Mockito.never()).uploadFileToS3(
+                Mockito.anyString(),
+                Mockito.anyString(),
+                Mockito.anyString()
+        );
     }
 
     @Test
@@ -205,8 +232,8 @@ class DataCollectorMockTest {
         veh2.setProductionDate(Instant.parse("2012-12-31T00:00:00.00Z"));
         veh2.setUpdateTimestamp(Instant.parse("2022-10-12T08:17:18.734Z"));
 
-        if(counter < 2) response.add(veh1);
-        else if(counter < 5) response.add(veh2);
+        if(counter < 1) response.add(veh1);
+        else if(counter < 2) response.add(veh2);
 
         return response;
     }
