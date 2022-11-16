@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import net.catena_x.btp.hi.oem.backend.hi_service.handler.HealthIndicatorResultHandler;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInput;
-import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInputJson;
+import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorServiceInput;
 import net.catena_x.btp.libraries.bamm.common.BammStatus;
 import net.catena_x.btp.libraries.bamm.custom.adaptionvalues.AdaptionValues;
 import net.catena_x.btp.libraries.bamm.custom.classifiedloadspectrum.ClassifiedLoadSpectrum;
@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
@@ -113,7 +112,7 @@ class DataCollectorMockTest {
 
         // load expected result
         String expectedJson = om.writeValueAsString(om.readValue(readFromResourceFile("/update-expected-s3-1.json"),
-                HealthIndicatorInputJson.class));
+                HealthIndicatorServiceInput.class));
 
         // mock UUID class to always return the same UUID
         try (MockedStatic<UUID> mocked = Mockito.mockStatic(UUID.class)) {
@@ -199,7 +198,7 @@ class DataCollectorMockTest {
         );
 
         // comparing the objects directly fails because of the nested primitive arrays
-        assertEquals(om.writeValueAsString(result), om.writeValueAsString(expected));
+        assertEquals(om.writeValueAsString(expected), om.writeValueAsString(result));
     }
 
     private Method getConvertMethod() throws NoSuchMethodException {
