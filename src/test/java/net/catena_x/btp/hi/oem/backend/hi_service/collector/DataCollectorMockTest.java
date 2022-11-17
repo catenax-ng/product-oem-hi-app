@@ -3,7 +3,8 @@ package net.catena_x.btp.hi.oem.backend.hi_service.collector;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import net.catena_x.btp.hi.oem.backend.hi_service.handler.HealthIndicatorResultHandler;
+import net.catena_x.btp.hi.oem.backend.hi_service.receiver.HIResultReceiver;
+import net.catena_x.btp.hi.oem.backend.hi_service.util.S3EDCInitiatorImpl;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInput;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorServiceInput;
 import net.catena_x.btp.libraries.bamm.common.BammStatus;
@@ -14,7 +15,6 @@ import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.Vehicle;
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.VehicleTable;
 import net.catena_x.btp.libraries.oem.backend.model.dto.telematicsdata.TelematicsData;
 import net.catena_x.btp.libraries.oem.backend.model.enums.InfoKey;
-import net.catena_x.btp.libraries.oem.backend.util.EDCHandler;
 import net.catena_x.btp.libraries.oem.backend.util.S3Handler;
 import net.catena_x.btp.libraries.util.TimeStampDeserializer;
 import net.catena_x.btp.libraries.util.TimeStampSerializer;
@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         "net.catena_x.btp.hi.oem.backend.hi_service.collector",
         "net.catena_x.btp.libraries.oem.backend.model.dto",
         "net.catena_x.btp.libraries.oem.backend.util",
-        "net.catena_x.btp.hi.oem.backend.hi_service.handler"
+        "net.catena_x.btp.hi.oem.backend.hi_service"
 })
 @EntityScan(basePackages = {"net.catena_x.btp.libraries.oem.backend.database.rawdata.model"})
 @SpringBootTest
@@ -61,9 +61,9 @@ class DataCollectorMockTest {
     private final UUID testUUID = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
     @MockBean
-    private HealthIndicatorResultHandler resultHandler;
+    private HIResultReceiver resultHandler;
     @MockBean
-    private EDCHandler edcHandler;
+    private S3EDCInitiatorImpl edcHandler;
     @MockBean
     private S3Handler s3Handler;
     @MockBean
@@ -178,9 +178,9 @@ class DataCollectorMockTest {
         adaptionValueSet.setValues(new double[] {20.0, 40.0, 20.0, 40.0});
         BammStatus status = new BammStatus();
         status.setRouteDescription("Default route");
-        status.setMileage(3245L);
-        status.setDate(Instant.parse("2022-10-12T08:16:18.734Z"));
-        status.setOperatingTime("235.2");
+        status.setMileage(76543L);
+        status.setDate(Instant.parse("2022-10-12T08:17:18.734Z"));
+        status.setOperatingTime("1282.0");
         adaptionValueSet.setStatus(status);
         adaptionValues.add(adaptionValueSet);
 
@@ -221,9 +221,9 @@ class DataCollectorMockTest {
         adaptionValueSet.setValues(new double[] {20.0, 40.0, 20.0, 40.0});
         BammStatus status = new BammStatus();
         status.setRouteDescription("Default route");
-        status.setMileage(3245L);
-        status.setDate(Instant.parse("2022-10-12T08:16:18.734Z"));
-        status.setOperatingTime("235.2");
+        status.setMileage(76543L);
+        status.setDate(Instant.parse("2022-10-12T08:17:18.734Z"));
+        status.setOperatingTime("1282.0");
         adaptionValueSet.setStatus(status);
         adaptionValues.add(adaptionValueSet);
 

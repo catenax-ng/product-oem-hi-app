@@ -2,11 +2,11 @@ package net.catena_x.btp.hi.oem.backend.hi_service.collector;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.minio.errors.MinioException;
-import net.catena_x.btp.hi.oem.backend.hi_service.handler.HealthIndicatorResultHandler;
+import net.catena_x.btp.hi.oem.backend.hi_service.util.HIS3EDCRequestMetadata;
+import net.catena_x.btp.hi.oem.backend.hi_service.util.S3EDCRequestMapperInMemory;
 import net.catena_x.btp.hi.supplier.data.input.AdaptionValueList;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInput;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorServiceInput;
-import net.catena_x.btp.hi.supplier.data.output.HealthIndicatorResponse;
 import net.catena_x.btp.libraries.bamm.custom.adaptionvalues.AdaptionValues;
 import net.catena_x.btp.libraries.bamm.custom.classifiedloadspectrum.ClassifiedLoadSpectrum;
 import net.catena_x.btp.libraries.oem.backend.model.dto.infoitem.InfoTable;
@@ -15,7 +15,7 @@ import net.catena_x.btp.libraries.oem.backend.model.dto.telematicsdata.Telematic
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.Vehicle;
 import net.catena_x.btp.libraries.oem.backend.database.util.exceptions.OemDatabaseException;
 import net.catena_x.btp.libraries.oem.backend.model.enums.InfoKey;
-import net.catena_x.btp.libraries.oem.backend.util.S3DataPlaneEDCInitiator;
+import net.catena_x.btp.hi.oem.backend.hi_service.util.S3EDCInitiatorImpl;
 import net.catena_x.btp.libraries.oem.backend.util.S3Handler;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +33,8 @@ public class DataCollector {
 
     @Autowired private VehicleTable vehicleTable;
     @Autowired private InfoTable infoTable;
-    @Autowired private S3DataPlaneEDCInitiator edcHandler;
-    @Autowired private HealthIndicatorResultHandler resultHandler;
+    @Autowired private S3EDCInitiatorImpl s3EDCInitiator;
+    @Autowired private S3EDCRequestMapperInMemory edcRequestMapper;
     @Autowired private ObjectMapper mapper;
     @Autowired private S3Handler s3Handler;
     @Value("${cloud.inputFile.key}") private String key;
@@ -47,19 +47,26 @@ public class DataCollector {
     public void doUpdate() throws OemDatabaseException, IOException, MinioException, NoSuchAlgorithmException,
             InvalidKeyException {
         List<Vehicle> updatedVehicles = collectUpdatedVehicles();
+        setNewestCounterIfNewVehicles(updatedVehicles);
         if(updatedVehicles.size() == 0) {
             System.out.println("[DataCollector] No updated vehicles this time!");
             return;
         }
         String requestId = getRequestId();
         System.out.println("[DataCollector] Found " + updatedVehicles.size() + " updated vehicles!");
-        HealthIndicatorServiceInput healthIndicatorServiceInput = buildHealthIndicatorInputJson(requestId, updatedVehicles);
+        HealthIndicatorServiceInput healthIndicatorServiceInput =
+                buildHealthIndicatorInputJson(requestId, updatedVehicles);
+        storeRequest(requestId);
         dispatchRequestWithS3(requestId, healthIndicatorServiceInput);
     }
 
     @NotNull
     private String getRequestId() {
         return UUID.randomUUID().toString();
+    }
+
+    private void storeRequest(String requestId) {
+        edcRequestMapper.storePendingRequest(requestId, new HIS3EDCRequestMetadata(lastCounter));
     }
 
 
@@ -73,15 +80,12 @@ public class DataCollector {
                                        HealthIndicatorServiceInput healthIndicatorServiceInput)
             throws IOException, MinioException, NoSuchAlgorithmException, InvalidKeyException {
         uploadToS3(healthIndicatorServiceInput);
-        edcHandler.startAsyncRequest(requestId, suplierHiServiceEndpoint.toString(),
-                generateNotificationBody(), resultHandler::processHealthIndicatorResponse,
-                HealthIndicatorResponse.class);
+        s3EDCInitiator.startAsyncRequest(requestId, suplierHiServiceEndpoint.toString(),
+                generateNotificationBody());
     }
 
     private List<Vehicle> collectUpdatedVehicles() throws OemDatabaseException {
-        var result = vehicleTable.getSyncCounterSinceNewTransaction(lastCounter);
-        setNewestCounterIfNewVehicles(result);
-        return result;
+        return vehicleTable.getSyncCounterSinceNewTransaction(lastCounter);
     }
 
     private void setNewestCounterIfNewVehicles(List<Vehicle> result) {
