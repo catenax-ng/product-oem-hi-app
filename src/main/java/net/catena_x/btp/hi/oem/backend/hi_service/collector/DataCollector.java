@@ -9,6 +9,7 @@ import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInput;
 import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorServiceInput;
 import net.catena_x.btp.libraries.bamm.custom.adaptionvalues.AdaptionValues;
 import net.catena_x.btp.libraries.bamm.custom.classifiedloadspectrum.ClassifiedLoadSpectrum;
+import net.catena_x.btp.libraries.bamm.custom.classifiedloadspectrum.items.LoadSpectrumType;
 import net.catena_x.btp.libraries.oem.backend.model.dto.infoitem.InfoTable;
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.VehicleTable;
 import net.catena_x.btp.libraries.oem.backend.model.dto.telematicsdata.TelematicsData;
@@ -109,7 +110,8 @@ public class DataCollector {
         List<AdaptionValues> adaptionValues = telematicsData.getAdaptionValues();
         verifyInput(loadSpectra, adaptionValues);
 
-        ClassifiedLoadSpectrum classifiedLoadSpectrum = findLoadSpectrum(loadSpectra, "Clutch");
+        ClassifiedLoadSpectrum classifiedLoadSpectrum = findLoadSpectrum(
+                loadSpectra, LoadSpectrumType.CLUTCH);
         AdaptionValueList adaptionValueList = convertAdaptionValues(adaptionValues.get(0));
 
         return new HealthIndicatorInput(componentId, classifiedLoadSpectrum, adaptionValueList);
@@ -128,10 +130,10 @@ public class DataCollector {
     }
 
     private ClassifiedLoadSpectrum findLoadSpectrum(@NotNull final List<ClassifiedLoadSpectrum> loadSpectra,
-                                                    @NotNull final String componentDescription) {
+                                                    @NotNull final LoadSpectrumType componentDescription) {
 
         for (final ClassifiedLoadSpectrum loadSpectrum: loadSpectra) {
-            if(loadSpectrum.getMetadata().getComponentDescription().equals(componentDescription)) {
+            if(loadSpectrum.getMetadata().getComponentDescription() == componentDescription) {
                 return loadSpectrum;
             }
         }
