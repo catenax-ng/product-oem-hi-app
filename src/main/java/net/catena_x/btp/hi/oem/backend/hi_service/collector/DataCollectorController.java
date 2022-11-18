@@ -5,17 +5,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 // TODO all endpoints need to be authenticated!
 
 @Controller
+@RequestMapping("/datacollector")
 public class DataCollectorController {
 
     @Autowired DataCollector dataCollector;
     boolean runningRequest = false;
     boolean startNextImmediately = false;
 
-    @GetMapping("/datacollector/run")
+    @GetMapping("/run")
     public ResponseEntity<String> run() {
         if(!runningRequest) {
             try {
@@ -39,7 +41,7 @@ public class DataCollectorController {
 
     }
 
-    @GetMapping("/datacollector/setstate")
+    @GetMapping("/setstate")
     public ResponseEntity<String> pause_resume() {
         // TODO read parameter and set execution state
         throw new NotImplementedException();

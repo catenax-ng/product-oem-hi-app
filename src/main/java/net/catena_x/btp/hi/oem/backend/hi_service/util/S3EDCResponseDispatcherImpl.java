@@ -4,7 +4,7 @@ import net.catena_x.btp.hi.oem.backend.hi_service.receiver.HIResultReceiver;
 import net.catena_x.btp.hi.oem.backend.hi_service.util.notification.dao.supplierhiservice.HINotificationFromSupplierContentDAO;
 import net.catena_x.btp.hi.oem.backend.hi_service.util.notification.dto.supplierhiservice.HINotificationFromSupplierConverter;
 import net.catena_x.btp.libraries.notification.dao.NotificationDAO;
-import net.catena_x.btp.libraries.oem.backend.edc.S3EDCResponseDispatcher;
+import net.catena_x.btp.libraries.edc.util.S3EDCResponseDispatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

@@ -1,7 +1,7 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.util;
 
-import net.catena_x.btp.libraries.oem.backend.edc.S3EDCRequestMapper;
-import net.catena_x.btp.libraries.oem.backend.edc.S3EDCRequestMetadata;
+import net.catena_x.btp.libraries.edc.util.S3EDCRequestMapper;
+import net.catena_x.btp.libraries.edc.util.S3EDCRequestMetadata;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
