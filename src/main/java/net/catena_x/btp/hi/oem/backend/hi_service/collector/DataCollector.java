@@ -13,6 +13,7 @@ import net.catena_x.btp.hi.oem.backend.hi_service.util.notification.enums.Notifi
 import net.catena_x.btp.libraries.bamm.custom.adaptionvalues.AdaptionValues;
 import net.catena_x.btp.libraries.bamm.custom.classifiedloadspectrum.ClassifiedLoadSpectrum;
 import net.catena_x.btp.libraries.bamm.custom.classifiedloadspectrum.items.LoadSpectrumType;
+import net.catena_x.btp.libraries.edc.util.exceptions.EdcException;
 import net.catena_x.btp.libraries.notification.dto.Notification;
 import net.catena_x.btp.libraries.notification.dto.items.NotificationHeader;
 import net.catena_x.btp.libraries.notification.enums.NFSeverity;
@@ -30,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -62,7 +64,7 @@ public class DataCollector {
 
     Logger logger = LoggerFactory.getLogger(DataCollector.class);
 
-    public void doUpdate() throws OemDatabaseException, IOException, NoSuchAlgorithmException, // MinioException,
+    public void doUpdate() throws OemDatabaseException, EdcException, NoSuchAlgorithmException, // MinioException,
             InvalidKeyException {
         final List<Vehicle> updatedVehicles = collectUpdatedVehicles();
         setNewestCounterIfNewVehicles(updatedVehicles);
@@ -97,7 +99,7 @@ public class DataCollector {
 
     private void dispatchRequestWithHttp(final String requestId,
                                          final HINotificationToSupplierContent hiNotificationToSupplierContent)
-            throws IOException {
+            throws EdcException {
 
         final HINotificationToSupplierContentDAO healthIndicatorServiceInputDAO =
                 hiNotificationToSupplierContentConverter.toDAO(hiNotificationToSupplierContent);
@@ -105,9 +107,9 @@ public class DataCollector {
         Notification<HINotificationToSupplierContent> notification =
                 generateNotificationBodyForHttp(requestId, hiNotificationToSupplierContent);
 
-
-
-
+        //TODO Implement response class.
+        final ResponseEntity<String> result = s3EDCInitiator.startAsyncRequest(requestId, suplierHiServiceEndpoint.toString(),
+                inputAssetName, notification, String.class);
     }
 
     private void dispatchRequestWithS3(final String requestId,
@@ -118,8 +120,8 @@ public class DataCollector {
                 hiNotificationToSupplierContentConverter.toDAO(hiNotificationToSupplierContent);
 
         uploadToS3(hiNotificationToSupplierContent);
-        s3EDCInitiator.startAsyncRequest(requestId, suplierHiServiceEndpoint.toString(),
-                generateNotificationBodyForS3());
+//FA: Not used        s3EDCInitiator.startAsyncRequest(requestId, suplierHiServiceEndpoint.toString(),
+//                generateNotificationBodyForS3());
     }
 
     private List<Vehicle> collectUpdatedVehicles() throws OemDatabaseException {
