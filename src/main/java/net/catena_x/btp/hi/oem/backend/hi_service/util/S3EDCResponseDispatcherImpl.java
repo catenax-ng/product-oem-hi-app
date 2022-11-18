@@ -15,6 +15,7 @@ public class S3EDCResponseDispatcherImpl implements S3EDCResponseDispatcher {
     @Override
     @PostMapping("/edc/notification")
     public ResponseEntity<String> receiveNotification(String notificationBody) {
-        return null;
+        System.out.println(notificationBody);
+        return ResponseEntity.ok().build();
     }
 }

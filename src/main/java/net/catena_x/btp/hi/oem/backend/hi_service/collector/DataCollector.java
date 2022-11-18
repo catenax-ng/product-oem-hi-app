@@ -19,6 +19,8 @@ import net.catena_x.btp.libraries.oem.backend.model.enums.InfoKey;
 import net.catena_x.btp.hi.oem.backend.hi_service.util.S3EDCInitiatorImpl;
 import net.catena_x.btp.libraries.oem.backend.util.S3Handler;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -44,17 +46,18 @@ public class DataCollector {
 
     private long lastCounter = -1;      // TODO should this be made persistent somehow?
 
+    Logger logger = LoggerFactory.getLogger(DataCollector.class);
 
     public void doUpdate() throws OemDatabaseException, IOException, MinioException, NoSuchAlgorithmException,
             InvalidKeyException {
         List<Vehicle> updatedVehicles = collectUpdatedVehicles();
         setNewestCounterIfNewVehicles(updatedVehicles);
         if(updatedVehicles.size() == 0) {
-            System.out.println("[DataCollector] No updated vehicles this time!");
+            logger.info("No updated vehicles this time!");
             return;
         }
         String requestId = getRequestId();
-        System.out.println("[DataCollector] Found " + updatedVehicles.size() + " updated vehicles!");
+        logger.info("Found " + updatedVehicles.size() + " updated vehicles!");
         HealthIndicatorServiceInput healthIndicatorServiceInput =
                 buildHealthIndicatorInputJson(requestId, updatedVehicles);
         storeRequest(requestId);

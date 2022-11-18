@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 // TODO all endpoints need to be authenticated!
 
-// TODO only execute one calculation at a time and
-//  use GETDATE() on database instead of local timestamp!
-
 @Controller
 public class DataCollectorController {
 
