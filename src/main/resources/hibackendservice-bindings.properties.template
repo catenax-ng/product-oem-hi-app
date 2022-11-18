@@ -1,1 +1,16 @@
 server.port=25553
+
+cloud.endpoint=${HEALTHINDICATOR_CLOUD_ENDPOINT}
+cloud.accessKey=${HEALTHINDICATOR_CLOUD_ACCESS_KEY}
+cloud.secretKey=${HEALTHINDICATOR_CLOUD_SECRET_KEY}
+cloud.region=eu-west-1
+cloud.bucket=test
+cloud.inputFile.bucketName=testbucket
+cloud.inputFile.key=testfile
+
+supplier.hiservice.endpoint=http://edc.supplier.com/endpoint
+supplier.bpn=BPN0000
+supplier.hiservice.inputAssetName=urn:example:id
+
+edc.bpn=BPN0000
+edc.endpoint=https://oem.com/edc

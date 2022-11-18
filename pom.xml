@@ -98,7 +98,6 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-inline</artifactId>
 		</dependency>
-
     </dependencies>
 
 	<build>

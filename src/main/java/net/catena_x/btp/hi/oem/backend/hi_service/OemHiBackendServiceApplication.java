@@ -16,8 +16,10 @@ import org.springframework.context.annotation.ComponentScan;
 		HibernateJpaAutoConfiguration.class})
 @ComponentScan(basePackages = {
 		"net.catena_x.btp.hi.oem.backend.hi_service",
+		"net.catena_x.btp.libraries.notification",
 		"net.catena_x.btp.libraries.oem.backend.model.dto",
-		"net.catena_x.btp.libraries.oem.backend.util",
+		"net.catena_x.btp.libraries.oem.backend.cloud",
+		"net.catena_x.btp.libraries.oem.backend.edc",
 		"net.catena_x.btp.libraries.oem.backend.database.rawdata"		// TODO later "rawdata" can be removed here for HIdb-libraries
 })
 @OpenAPIDefinition(info = @Info(title = "OEM hi backend service", version = "0.0.99"))

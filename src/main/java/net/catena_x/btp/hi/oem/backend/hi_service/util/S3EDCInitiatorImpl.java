@@ -1,7 +1,6 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.util;
 
-import net.catena_x.btp.libraries.oem.backend.util.S3EDCInitiator;
-import net.catena_x.btp.libraries.oem.backend.util.S3EDCRequestMapper;
+import net.catena_x.btp.libraries.oem.backend.edc.S3EDCInitiator;
 import org.springframework.stereotype.Component;
 
 @Component

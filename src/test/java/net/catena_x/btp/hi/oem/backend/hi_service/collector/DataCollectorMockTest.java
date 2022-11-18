@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import net.catena_x.btp.hi.oem.backend.hi_service.receiver.HIResultReceiver;
 import net.catena_x.btp.hi.oem.backend.hi_service.util.S3EDCInitiatorImpl;
-import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorInput;
-import net.catena_x.btp.hi.supplier.data.input.HealthIndicatorServiceInput;
+import net.catena_x.btp.hi.oem.backend.hi_service.util.notification.dto.supplierhiservice.HINotificationToSupplierContent;
+import net.catena_x.btp.hi.oem.backend.hi_service.util.notification.dto.supplierhiservice.items.HealthIndicatorInput;
 import net.catena_x.btp.libraries.bamm.common.BammStatus;
 import net.catena_x.btp.libraries.bamm.custom.adaptionvalues.AdaptionValues;
 import net.catena_x.btp.libraries.bamm.custom.classifiedloadspectrum.ClassifiedLoadSpectrum;
@@ -15,7 +15,7 @@ import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.Vehicle;
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.VehicleTable;
 import net.catena_x.btp.libraries.oem.backend.model.dto.telematicsdata.TelematicsData;
 import net.catena_x.btp.libraries.oem.backend.model.enums.InfoKey;
-import net.catena_x.btp.libraries.oem.backend.util.S3Handler;
+import net.catena_x.btp.libraries.oem.backend.cloud.S3Handler;
 import net.catena_x.btp.libraries.util.TimeStampDeserializer;
 import net.catena_x.btp.libraries.util.TimeStampSerializer;
 import org.junit.jupiter.api.Assertions;
@@ -48,7 +48,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ComponentScan(basePackages = {
         "net.catena_x.btp.hi.oem.backend.hi_service.collector",
         "net.catena_x.btp.libraries.oem.backend.model.dto",
-        "net.catena_x.btp.libraries.oem.backend.util",
+        "net.catena_x.btp.libraries.oem.backend.cloud",
+        "net.catena_x.btp.libraries.oem.backend.edc",
         "net.catena_x.btp.hi.oem.backend.hi_service"
 })
 @EntityScan(basePackages = {"net.catena_x.btp.libraries.oem.backend.database.rawdata.model"})
@@ -112,7 +113,7 @@ class DataCollectorMockTest {
 
         // load expected result
         String expectedJson = om.writeValueAsString(om.readValue(readFromResourceFile("/update-expected-s3-1.json"),
-                HealthIndicatorServiceInput.class));
+                HINotificationToSupplierContent.class));
 
         // mock UUID class to always return the same UUID
         try (MockedStatic<UUID> mocked = Mockito.mockStatic(UUID.class)) {

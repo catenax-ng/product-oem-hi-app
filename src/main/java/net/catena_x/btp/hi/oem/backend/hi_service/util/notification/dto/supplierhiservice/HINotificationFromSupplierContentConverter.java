@@ -1,0 +1,32 @@
+package net.catena_x.btp.hi.oem.backend.hi_service.util.notification.dto.supplierhiservice;
+
+import net.catena_x.btp.hi.oem.backend.hi_service.util.notification.dao.supplierhiservice.HINotificationFromSupplierContentDAO;
+import net.catena_x.btp.hi.oem.backend.hi_service.util.notification.dto.supplierhiservice.items.HealthIndicatorOutputConverter;
+import net.catena_x.btp.libraries.oem.backend.database.rawdata.dao.base.converter.DAOConverter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.validation.constraints.NotNull;
+
+@Component
+public class HINotificationFromSupplierContentConverter
+        extends DAOConverter<HINotificationFromSupplierContentDAO, HINotificationFromSupplierContent> {
+    @Autowired HealthIndicatorOutputConverter healthIndicatorOutputConverter;
+
+    protected HINotificationFromSupplierContent toDTOSourceExists(
+            @NotNull final HINotificationFromSupplierContentDAO source) {
+
+        return new HINotificationFromSupplierContent(
+                source.getRequestRefId(),
+                healthIndicatorOutputConverter.toDTO(source.getHealthIndicatorOutputs()));
+    }
+
+    protected HINotificationFromSupplierContentDAO toDAOSourceExists(
+            @NotNull final HINotificationFromSupplierContent source) {
+
+        return new HINotificationFromSupplierContentDAO(
+                source.getRequestRefId(),
+                healthIndicatorOutputConverter.toDAO(source.getHealthIndicatorOutputs())
+        );
+    }
+}
