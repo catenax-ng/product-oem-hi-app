@@ -8,9 +8,13 @@ cloud.bucket=test
 cloud.inputFile.bucketName=testbucket
 cloud.inputFile.key=testfile
 
+edc.apiwrapper.url=http://myapiwrapper.url
+edc.apiwrapper.username=user
+edc.apiwrapper.password=pass
+
 supplier.hiservice.endpoint=http://edc.supplier.com/endpoint
-supplier.bpn=BPN0000
+supplier.bpn=BPN0000SUPPLIER
 supplier.hiservice.inputAssetName=urn:example:id
 
-edc.bpn=BPN0000
+edc.bpn=BPN0000OEM
 edc.endpoint=https://oem.com/edc

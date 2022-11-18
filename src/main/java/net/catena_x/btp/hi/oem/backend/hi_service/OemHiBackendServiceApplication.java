@@ -20,7 +20,8 @@ import org.springframework.context.annotation.ComponentScan;
 		"net.catena_x.btp.libraries.oem.backend.model.dto",
 		"net.catena_x.btp.libraries.oem.backend.cloud",
 		"net.catena_x.btp.libraries.oem.backend.edc",
-		"net.catena_x.btp.libraries.oem.backend.database.rawdata"		// TODO later "rawdata" can be removed here for HIdb-libraries
+		"net.catena_x.btp.libraries.edc",
+		"net.catena_x.btp.libraries.oem.backend.database.rawdata"
 })
 @OpenAPIDefinition(info = @Info(title = "OEM hi backend service", version = "0.0.99"))
 public class OemHiBackendServiceApplication {
