@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @Component
 public class HINotificationFromSupplierContentConverter
         extends DAOConverter<HINotificationFromSupplierContentDAO, HINotificationFromSupplierContent> {
-    @Autowired HealthIndicatorOutputConverter healthIndicatorOutputConverter;
+    @Autowired private HealthIndicatorOutputConverter healthIndicatorOutputConverter;
 
     protected HINotificationFromSupplierContent toDTOSourceExists(
             @NotNull final HINotificationFromSupplierContentDAO source) {

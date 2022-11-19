@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class S3EDCInitiatorImpl {
-    @Autowired EdcApi edcApi;
+    @Autowired private EdcApi edcApi;
 
     public <BodyType, ResponseType> ResponseEntity<ResponseType> startAsyncRequest(
             @NotNull final String requestId,

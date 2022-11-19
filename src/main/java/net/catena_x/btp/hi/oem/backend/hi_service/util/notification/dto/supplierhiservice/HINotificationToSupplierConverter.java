@@ -15,8 +15,8 @@ public class HINotificationToSupplierConverter
         extends DAOConverter<NotificationDAO<HINotificationToSupplierContentDAO>,
                                         Notification<HINotificationToSupplierContent>> {
 
-    @Autowired HINotificationToSupplierContentConverter HINotificationToSupplierContentConverter;
-    @Autowired NotificationHeaderConverter notificationHeaderConverter;
+    @Autowired private HINotificationToSupplierContentConverter HINotificationToSupplierContentConverter;
+    @Autowired private NotificationHeaderConverter notificationHeaderConverter;
 
     protected Notification<HINotificationToSupplierContent> toDTOSourceExists(
             @NotNull final NotificationDAO<HINotificationToSupplierContentDAO> source) {

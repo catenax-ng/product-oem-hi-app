@@ -51,8 +51,8 @@ public class DataCollector {
     @Autowired private S3EDCRequestMapperInMemory edcRequestMapper;
     @Autowired private ObjectMapper mapper;
     @Autowired private S3Handler s3Handler;
-    @Autowired HINotificationToSupplierContentConverter hiNotificationToSupplierContentConverter;
-    @Autowired HINotificationToSupplierConverter hiNotificationToSupplierConverter;
+    @Autowired private HINotificationToSupplierContentConverter hiNotificationToSupplierContentConverter;
+    @Autowired private HINotificationToSupplierConverter hiNotificationToSupplierConverter;
     @Value("${cloud.inputFile.key}") private String key;
     @Value("${supplier.hiservice.endpoint}") private URL suplierHiServiceEndpoint;
     @Value("${supplier.bpn}") private String supplierBpn;

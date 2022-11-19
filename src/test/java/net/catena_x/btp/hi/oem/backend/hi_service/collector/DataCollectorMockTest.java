@@ -72,10 +72,9 @@ class DataCollectorMockTest {
     @MockBean
     private InfoTable infoTable;
 
-    @Autowired
-    private DataCollector collector;
+    @Autowired private DataCollector collector;
 
-    @Autowired ObjectMapper om;
+    @Autowired private ObjectMapper om;
     boolean objectMapperInitialized = false;
 
     @BeforeEach

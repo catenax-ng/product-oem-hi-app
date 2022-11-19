@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/datacollector")
 public class DataCollectorController {
 
-    @Autowired DataCollector dataCollector;
-    boolean runningRequest = false;
-    boolean startNextImmediately = false;
+    @Autowired private DataCollector dataCollector;
+    private boolean runningRequest = false;
+    private boolean startNextImmediately = false;
 
     @GetMapping("/run")
     public ResponseEntity<String> run() {
