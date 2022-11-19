@@ -10,10 +10,8 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.ComponentScan;
 
-@SpringBootApplication()
-@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class,
-		DataSourceTransactionManagerAutoConfiguration.class,
-		HibernateJpaAutoConfiguration.class})
+@SpringBootApplication
+@EnableAutoConfiguration
 @ComponentScan(basePackages = {
 		"net.catena_x.btp.hi.oem.backend.hi_service",
 		"net.catena_x.btp.libraries.notification",
