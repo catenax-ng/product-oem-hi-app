@@ -18,3 +18,7 @@ supplier.hiservice.inputAssetName=urn:example:id
 
 edc.bpn=BPN0000OEM
 edc.endpoint=https://oem.com/edc
+
+security.api.username=${HIBACKENDSERVICE_API_USER}
+security.api.password=${HIBACKENDSERVICE_API_PASS}
+security.api.role=USER
