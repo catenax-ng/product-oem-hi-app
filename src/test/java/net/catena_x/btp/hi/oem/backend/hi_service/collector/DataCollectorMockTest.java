@@ -3,10 +3,10 @@ package net.catena_x.btp.hi.oem.backend.hi_service.collector;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import net.catena_x.btp.hi.oem.backend.hi_service.receiver.HIResultReceiver;
+import net.catena_x.btp.hi.oem.backend.hi_service.receiver.HIResultProcessor;
 import net.catena_x.btp.hi.oem.backend.hi_service.util.S3EDCInitiatorImpl;
-import net.catena_x.btp.hi.oem.backend.hi_service.util.notification.dto.supplierhiservice.HINotificationToSupplierContent;
-import net.catena_x.btp.hi.oem.backend.hi_service.util.notification.dto.supplierhiservice.items.HealthIndicatorInput;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HINotificationToSupplierContent;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.HealthIndicatorInput;
 import net.catena_x.btp.libraries.bamm.common.BammStatus;
 import net.catena_x.btp.libraries.bamm.custom.adaptionvalues.AdaptionValues;
 import net.catena_x.btp.libraries.bamm.custom.classifiedloadspectrum.ClassifiedLoadSpectrum;
@@ -62,7 +62,7 @@ class DataCollectorMockTest {
     private final UUID testUUID = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
     @MockBean
-    private HIResultReceiver resultHandler;
+    private HIResultProcessor resultHandler;
     @MockBean
     private S3EDCInitiatorImpl edcHandler;
     @MockBean
@@ -72,7 +72,7 @@ class DataCollectorMockTest {
     @MockBean
     private InfoTable infoTable;
 
-    @Autowired private DataCollector collector;
+    @Autowired private HIDataCollector collector;
 
     @Autowired private ObjectMapper om;
     boolean objectMapperInitialized = false;
@@ -202,7 +202,7 @@ class DataCollectorMockTest {
     }
 
     private Method getConvertMethod() throws NoSuchMethodException {
-        Method method = DataCollector.class.getDeclaredMethod("convert", TelematicsData.class, String.class);
+        Method method = HIDataCollector.class.getDeclaredMethod("convert", TelematicsData.class, String.class);
         Objects.requireNonNull(method);
         method.setAccessible(true);
         return method;
@@ -270,7 +270,7 @@ class DataCollectorMockTest {
     }
 
     private Field getLastCounterField() throws NoSuchFieldException {
-        var field = DataCollector.class.getDeclaredField("lastCounter");
+        var field = HIDataCollector.class.getDeclaredField("lastCounter");
         field.setAccessible(true);
         return field;
     }

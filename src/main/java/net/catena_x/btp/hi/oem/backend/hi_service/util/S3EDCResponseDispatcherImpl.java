@@ -1,8 +1,8 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.util;
 
-import net.catena_x.btp.hi.oem.backend.hi_service.receiver.HIResultReceiver;
-import net.catena_x.btp.hi.oem.backend.hi_service.util.notification.dao.supplierhiservice.HINotificationFromSupplierContentDAO;
-import net.catena_x.btp.hi.oem.backend.hi_service.util.notification.dto.supplierhiservice.HINotificationFromSupplierConverter;
+import net.catena_x.btp.hi.oem.backend.hi_service.receiver.HIResultProcessor;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.HINotificationFromSupplierContentDAO;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HINotificationFromSupplierConverter;
 import net.catena_x.btp.libraries.notification.dao.NotificationDAO;
 import net.catena_x.btp.libraries.edc.util.S3EDCResponseDispatcher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @Controller
 public class S3EDCResponseDispatcherImpl implements S3EDCResponseDispatcher<HINotificationFromSupplierContentDAO> {
 
-    @Autowired private HIResultReceiver hiResultReceiver;
+    @Autowired private HIResultProcessor hiResultReceiver;
     @Autowired private HINotificationFromSupplierConverter hiNotificationFromSupplierConverter;
 
     @Override
@@ -24,7 +24,8 @@ public class S3EDCResponseDispatcherImpl implements S3EDCResponseDispatcher<HINo
     public ResponseEntity<String> receiveNotification(
             @RequestBody @NotNull final NotificationDAO<HINotificationFromSupplierContentDAO> notificationBody) {
         //System.out.println(notificationBody);
-        hiResultReceiver.processHealthIndicatorResponse(hiNotificationFromSupplierConverter.toDTO(notificationBody));
+        hiResultReceiver.process(hiNotificationFromSupplierConverter.toDTO(notificationBody),
+                ()->{/* Not implemented: Use Http-Endpoint: hidatareceiver/notifyresult */});
 
         return ResponseEntity.ok().build();
     }
