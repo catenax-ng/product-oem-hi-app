@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -62,9 +63,25 @@ public class DataCollector {
 
     private long lastCounter = -1;      // TODO should this be made persistent somehow?
 
-    Logger logger = LoggerFactory.getLogger(DataCollector.class);
+    private final Logger logger = LoggerFactory.getLogger(DataCollector.class);
+
+    //FA: TEST
+    //TODO: Remvove test mode
+    private String option = null;
+
+    public void doUpdate(@NotNull final String option) throws OemDatabaseException, EdcException,
+            NoSuchAlgorithmException, InvalidKeyException {
+        this.option = option.toUpperCase();
+        doUpdateCheckOption();
+    }
 
     public void doUpdate() throws OemDatabaseException, EdcException, NoSuchAlgorithmException, // MinioException,
+            InvalidKeyException {
+        this.option = null;
+        doUpdateCheckOption();
+    }
+
+    private void doUpdateCheckOption() throws OemDatabaseException, EdcException, NoSuchAlgorithmException, // MinioException,
             InvalidKeyException {
         final List<Vehicle> updatedVehicles = collectUpdatedVehicles();
         setNewestCounterIfNewVehicles(updatedVehicles);
@@ -108,8 +125,60 @@ public class DataCollector {
                 generateNotificationBodyForHttp(requestId, hiNotificationToSupplierContent);
 
         //TODO Implement response class.
-        final ResponseEntity<String> result = s3EDCInitiator.startAsyncRequest(requestId, suplierHiServiceEndpoint.toString(),
-                inputAssetName, notification, String.class);
+
+        //FA: For Test!
+        //TODO Remove test: notificationAsString -> notification, no options!
+        ResponseEntity<String> result = null;
+        if(this.option != null) {
+            Notification<HINotificationToSupplierContent> notificationToSend = notification;
+            if (this.option.length() > 0) {
+                String limit = null;
+                boolean bReplace = false;
+                if(this.option.substring(0,1).equals("R") ) {
+                    limit = this.option.substring(1);
+                    bReplace = true;
+                }
+                else{
+                    limit =  this.option;
+                }
+
+                if(limit.length()>0) {
+                    final int limitValue = Integer.parseInt(limit);
+                    if(limitValue < notificationToSend.getContent().getHealthIndicatorInputs().size()) {
+                        List<HealthIndicatorInput> limitedInputs = notificationToSend.getContent().getHealthIndicatorInputs().subList(0,limitValue );
+                        notificationToSend.getContent().setHealthIndicatorInputs(limitedInputs);
+                    }
+                }
+
+                String notificationAsString = null;
+                try {
+                    notificationAsString = mapper.writeValueAsString(notification);
+                } catch(IOException exception) {
+                    throw new EdcException("Error whihle converting inputs to json!", exception);
+                }
+
+                notificationAsString.replace("Spectrum", "Collective");
+
+                result = s3EDCInitiator.startAsyncRequest(requestId,
+                        suplierHiServiceEndpoint.toString(),
+                        inputAssetName, notificationAsString, String.class);
+            }
+        }
+        else {
+            result = s3EDCInitiator.startAsyncRequest(requestId,
+                                                      suplierHiServiceEndpoint.toString(),
+                                                      inputAssetName, notification, String.class);
+        }
+
+        Instant timeStamp = Instant.now();
+        System.out.print("    [" + timeStamp + "] dispatchRequestWithHttp(): ");
+        if(result.getStatusCode() == HttpStatus.OK) {
+            System.out.println("OK");
+        } else {
+            System.out.println("ERROR, http-code " + result.getStatusCode().toString());
+        }
+
+        System.out.println("    [" + timeStamp + "] Response-Body: " + result.getBody().toString());
     }
 
     private void dispatchRequestWithS3(final String requestId,
