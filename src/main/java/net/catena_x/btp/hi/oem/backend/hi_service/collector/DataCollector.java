@@ -27,6 +27,8 @@ import net.catena_x.btp.libraries.oem.backend.model.enums.InfoKey;
 import net.catena_x.btp.hi.oem.backend.hi_service.util.S3EDCInitiatorImpl;
 import net.catena_x.btp.libraries.oem.backend.cloud.S3Handler;
 import javax.validation.constraints.NotNull;
+
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +71,13 @@ public class DataCollector {
     //TODO: Remvove test mode
     private String option = null;
 
-    public void doUpdate(@NotNull final String option) throws OemDatabaseException, EdcException,
+    public void doUpdate(@Nullable final String option) throws OemDatabaseException, EdcException,
             NoSuchAlgorithmException, InvalidKeyException {
+
+        if(option == null) {
+            doUpdate();
+        }
+
         this.option = option.toUpperCase();
         doUpdateCheckOption();
     }
