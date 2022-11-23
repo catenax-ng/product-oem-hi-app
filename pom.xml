@@ -129,7 +129,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>net.catena_x.btp.hi.oem.frontend.OemHiFrontendApplication</mainClass>
+					<mainClass>net.catena_x.btp.hi.oem.backend.hi_service.OemHiBackendServiceApplication</mainClass>
 				</configuration>
 				<version>2.7.5</version>
 			</plugin>
