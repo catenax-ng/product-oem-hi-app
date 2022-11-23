@@ -53,7 +53,7 @@ public class DataCollectorController {
             }
             catch (Exception e) {       // TODO refine!
                 return ResponseEntity.internalServerError()
-                        .body("Execution of update failed!");
+                        .body("Execution of update failed: " + e.getMessage());
             }
         }
         else if(!startNextImmediately) {

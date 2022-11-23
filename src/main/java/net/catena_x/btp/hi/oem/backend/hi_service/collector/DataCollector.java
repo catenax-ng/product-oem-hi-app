@@ -157,7 +157,7 @@ public class DataCollector {
                     throw new EdcException("Error whihle converting inputs to json!", exception);
                 }
 
-                notificationAsString.replace("Spectrum", "Collective");
+                notificationAsString = notificationAsString.replace("Spectrum", "Collective");
 
                 result = s3EDCInitiator.startAsyncRequest(requestId,
                         suplierHiServiceEndpoint.toString(),
