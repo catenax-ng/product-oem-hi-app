@@ -48,7 +48,7 @@ public class HIController {
         return jobRunner.resetQueue();
     }
 
-    @GetMapping(RECEIVER_API_BASEPATH + "/notifyresult")
+    @PostMapping(RECEIVER_API_BASEPATH + "/notifyresult")
     public ResponseEntity<ApiResult> notifyResult(
             @RequestBody @NotNull Notification<HINotificationFromSupplierContent> result) {
 
