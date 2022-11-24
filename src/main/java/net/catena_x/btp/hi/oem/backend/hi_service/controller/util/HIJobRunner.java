@@ -37,21 +37,6 @@ public class HIJobRunner {
         }
     }
 
-    public void startJobIntern(@Nullable final String options) throws HIBackendException {
-        try {
-            dataCollector.doUpdate(options);
-        } catch (Exception exception) {
-            try {
-                setJobFinishedAndStartQueued();
-            } catch (Exception nestedException) {
-                throw new HIBackendException("Start of job and queued job failed: "
-                        + exception.getMessage() + nestedException.getMessage());
-            }
-
-            throw new HIBackendException(exception);
-        }
-    }
-
     public ResponseEntity<ApiResult> setJobFinishedAndStartQueued() {
         try {
             return startJobIntern(queue.removeJobFromQueueReturnNextQueuedElement());
@@ -62,7 +47,7 @@ public class HIJobRunner {
 
     public ResponseEntity<ApiResult> resetQueue() {
         try {
-            //Removing queued and runnig element (if existing).
+            //Removing queued and running element (if existing).
             queue.removeJobFromQueueReturnNextQueuedElement();
             queue.removeJobFromQueueReturnNextQueuedElement();
             return apiHelper.ok("Queue is reset!");
@@ -94,6 +79,21 @@ public class HIJobRunner {
             default: {
                 throw unknownError();
             }
+        }
+    }
+
+    private void startJobIntern(@Nullable final String options) throws HIBackendException {
+        try {
+            dataCollector.doUpdate(options);
+        } catch (Exception exception) {
+            try {
+                setJobFinishedAndStartQueued();
+            } catch (Exception nestedException) {
+                throw new HIBackendException("Start of job and queued job failed: "
+                        + exception.getMessage() + nestedException.getMessage());
+            }
+
+            throw new HIBackendException(exception);
         }
     }
 

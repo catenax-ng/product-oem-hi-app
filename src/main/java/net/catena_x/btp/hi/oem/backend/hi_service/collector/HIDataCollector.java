@@ -67,8 +67,6 @@ public class HIDataCollector {
 
     private final Logger logger = LoggerFactory.getLogger(HIDataCollector.class);
 
-    //FA: TEST
-    //TODO: Remvove test mode
     private String option = null;
 
     public void doUpdate(@Nullable final String option) throws OemDatabaseException, EdcException,
@@ -166,26 +164,29 @@ public class HIDataCollector {
 
                 notificationAsString = notificationAsString.replace("Spectrum", "Collective");
 
+                logger.info("Starting request for Id " + requestId + " ("
+                        + notificationToSend.getContent().getHealthIndicatorInputs().size() + " vehicles." );
+
                 result = s3EDCInitiator.startAsyncRequest(requestId,
                         suplierHiServiceEndpoint.toString(),
                         inputAssetName, notificationAsString, String.class);
             }
         }
         else {
+            logger.info("Starting request for Id " + requestId + " ("
+                    + notification.getContent().getHealthIndicatorInputs().size() + " vehicles." );
+
             result = s3EDCInitiator.startAsyncRequest(requestId,
                                                       suplierHiServiceEndpoint.toString(),
                                                       inputAssetName, notification, String.class);
         }
 
-        Instant timeStamp = Instant.now();
-        System.out.print("    [" + timeStamp + "] dispatchRequestWithHttp(): ");
         if(result.getStatusCode() == HttpStatus.OK) {
-            System.out.println("OK");
+            logger.info("Request for Id " + requestId + " started.");
         } else {
-            System.out.println("ERROR, http-code " + result.getStatusCode().toString());
+            logger.error("ERROR starting request for Id " + requestId + ": http-code "
+                    + result.getStatusCode().toString() + "\nResponse-Body: " + result.getBody().toString());
         }
-
-        System.out.println("    [" + timeStamp + "] Response-Body: " + result.getBody().toString());
     }
 
     private void dispatchRequestWithS3(final String requestId,

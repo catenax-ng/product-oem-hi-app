@@ -18,8 +18,8 @@ import javax.validation.constraints.NotNull;
 
 @RestController
 public class HIController {
-    private static final String COLLECTOR_API_BASEPATH = "/hidatacollector";
-    private static final String RECEIVER_API_BASEPATH = "/hidatareceiver";
+    public static final String COLLECTOR_API_BASEPATH = "/hidatacollector";
+    public static final String RECEIVER_API_BASEPATH = "/hidatareceiver";
 
     @Autowired private ApiHelper apiHelper;
     @Autowired private HIJobRunner jobRunner;
