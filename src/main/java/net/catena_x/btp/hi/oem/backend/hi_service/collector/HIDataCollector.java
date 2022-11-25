@@ -74,6 +74,7 @@ public class HIDataCollector {
 
         if(option == null) {
             doUpdate();
+            return;
         }
 
         this.option = option.toUpperCase();
@@ -165,7 +166,7 @@ public class HIDataCollector {
                 notificationAsString = notificationAsString.replace("Spectrum", "Collective");
 
                 logger.info("Starting request for Id " + requestId + " ("
-                        + notificationToSend.getContent().getHealthIndicatorInputs().size() + " vehicles." );
+                        + notificationToSend.getContent().getHealthIndicatorInputs().size() + " vehicles)." );
 
                 result = s3EDCInitiator.startAsyncRequest(requestId,
                         suplierHiServiceEndpoint.toString(),
@@ -174,7 +175,7 @@ public class HIDataCollector {
         }
         else {
             logger.info("Starting request for Id " + requestId + " ("
-                    + notification.getContent().getHealthIndicatorInputs().size() + " vehicles." );
+                    + notification.getContent().getHealthIndicatorInputs().size() + " vehicles)." );
 
             result = s3EDCInitiator.startAsyncRequest(requestId,
                                                       suplierHiServiceEndpoint.toString(),
