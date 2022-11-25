@@ -1,7 +1,7 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.controller.util;
 
 import net.catena_x.btp.hi.oem.backend.hi_service.collector.HIDataCollector;
-import net.catena_x.btp.hi.oem.backend.util.exceptions.HIBackendException;
+import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import net.catena_x.btp.libraries.oem.backend.datasource.model.api.ApiResult;
 import net.catena_x.btp.libraries.util.apihelper.ApiHelper;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +20,7 @@ public class HIJobRunner {
     public ResponseEntity<ApiResult> startJob() {
         try {
             return startJobIntern(queue.addNewJobToQueue(null));
-        } catch (HIBackendException exception) {
+        } catch (OemHIException exception) {
             return apiHelper.failed(exception.getMessage());
         }
     }
@@ -32,7 +32,7 @@ public class HIJobRunner {
 
         try {
             return startJobIntern(queue.addNewJobToQueue(options.toUpperCase()));
-        } catch (HIBackendException exception) {
+        } catch (OemHIException exception) {
             return apiHelper.failed(exception.getMessage());
         }
     }
@@ -40,7 +40,7 @@ public class HIJobRunner {
     public ResponseEntity<ApiResult> setJobFinishedAndStartQueued() {
         try {
             return startJobIntern(queue.removeJobFromQueueReturnNextQueuedElement());
-        } catch (HIBackendException exception) {
+        } catch (OemHIException exception) {
             return apiHelper.failed(exception.getMessage());
         }
     }
@@ -51,13 +51,13 @@ public class HIJobRunner {
             queue.removeJobFromQueueReturnNextQueuedElement();
             queue.removeJobFromQueueReturnNextQueuedElement();
             return apiHelper.ok("Queue is reset!");
-        } catch (HIBackendException exception) {
+        } catch (OemHIException exception) {
             return apiHelper.failed(exception.getMessage());
         }
     }
 
     private ResponseEntity<ApiResult> startJobIntern(@NotNull final HIQueueElement currentQueueElement)
-            throws HIBackendException {
+            throws OemHIException {
 
         switch(currentQueueElement.queueState()) {
             case NOT_RUNNING: {
@@ -82,22 +82,22 @@ public class HIJobRunner {
         }
     }
 
-    private void startJobIntern(@Nullable final String options) throws HIBackendException {
+    private void startJobIntern(@Nullable final String options) throws OemHIException {
         try {
             dataCollector.doUpdate(options);
         } catch (Exception exception) {
             try {
                 setJobFinishedAndStartQueued();
             } catch (Exception nestedException) {
-                throw new HIBackendException("Start of job and queued job failed: "
+                throw new OemHIException("Start of job and queued job failed: "
                         + exception.getMessage() + nestedException.getMessage());
             }
 
-            throw new HIBackendException(exception);
+            throw new OemHIException(exception);
         }
     }
 
-    private HIBackendException unknownError() {
-        return new HIBackendException("External hi calculation cannot be started. Unknown error!");
+    private OemHIException unknownError() {
+        return new OemHIException("External hi calculation cannot be started. Unknown error!");
     }
 }

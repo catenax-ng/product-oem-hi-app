@@ -2,7 +2,7 @@ package net.catena_x.btp.hi.oem.backend.hi_service.receiver;
 
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HINotificationFromSupplierContent;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.HealthIndicatorOutput;
-import net.catena_x.btp.hi.oem.backend.util.exceptions.HIBackendException;
+import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import net.catena_x.btp.libraries.notification.dto.Notification;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public class HIResultProcessor {
         try {
             assertHeaderAndBody(result);
             this.processIntern(result.getContent(), getReferenceId(result));
-        } catch (HIBackendException exception) {
+        } catch (OemHIException exception) {
             logError(exception.getMessage());
         }
 
@@ -39,10 +39,10 @@ public class HIResultProcessor {
 
     private void processIntern(@NotNull final HINotificationFromSupplierContent result,
                                @NotNull final String referenceId)
-            throws HIBackendException {
+            throws OemHIException {
 
         if(result.getHealthIndicatorOutputs().isEmpty()) {
-            throw new HIBackendException("HI result for " + referenceId
+            throw new OemHIException("HI result for " + referenceId
                     + " is empty (maybe a format or calculation error occurred)!");
         }
 
@@ -52,30 +52,30 @@ public class HIResultProcessor {
     }
 
     private void assertHeaderAndBody(@Nullable final Notification<HINotificationFromSupplierContent> result)
-        throws HIBackendException {
+        throws OemHIException {
 
         if (result == null) {
-            throw new HIBackendException("Notification is null!");
+            throw new OemHIException("Notification is null!");
         }
 
         if (result.getHeader() == null) {
-            throw new HIBackendException("Notification header is not present!");
+            throw new OemHIException("Notification header is not present!");
         }
 
         if (result.getContent() == null) {
-            throw new HIBackendException("Notification content is not present!");
+            throw new OemHIException("Notification content is not present!");
         }
     }
 
     private void assertContentReferenceId(@Nullable final Notification<HINotificationFromSupplierContent> result)
-            throws HIBackendException {
+            throws OemHIException {
         if (result.getContent().getRequestRefId() == null) {
-            throw new HIBackendException("No reference id in Notification content present!");
+            throw new OemHIException("No reference id in Notification content present!");
         }
     }
 
     private String getReferenceId(@NotNull final Notification<HINotificationFromSupplierContent> result)
-            throws HIBackendException {
+            throws OemHIException {
 
         if(result.getHeader().getReferencedNotificationID() == null) {
             assertContentReferenceId(result);
@@ -86,7 +86,7 @@ public class HIResultProcessor {
     }
 
     private void processSingleOutput(@NotNull final HealthIndicatorOutput output,
-                                     @NotNull final String referenceId) throws HIBackendException {
+                                     @NotNull final String referenceId) throws OemHIException {
 
         //TODO: Implement writing to hi database (and remove logging).
 

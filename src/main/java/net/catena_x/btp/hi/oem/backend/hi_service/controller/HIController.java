@@ -3,7 +3,7 @@ package net.catena_x.btp.hi.oem.backend.hi_service.controller;
 import net.catena_x.btp.hi.oem.backend.hi_service.controller.util.HIJobRunner;
 import net.catena_x.btp.hi.oem.backend.hi_service.receiver.HIResultProcessor;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HINotificationFromSupplierContent;
-import net.catena_x.btp.hi.oem.backend.util.exceptions.HIBackendException;
+import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import net.catena_x.btp.libraries.notification.dto.Notification;
 import net.catena_x.btp.libraries.oem.backend.datasource.model.api.ApiResult;
 import net.catena_x.btp.libraries.util.apihelper.ApiHelper;
@@ -69,7 +69,7 @@ public class HIController {
         return apiHelper.failed("Database reset is not implemented!");
     }
 
-    public ResponseEntity<ApiResult> setJobFinishedStartWaiting() throws HIBackendException {
+    public ResponseEntity<ApiResult> setJobFinishedStartWaiting() throws OemHIException {
         return jobRunner.setJobFinishedAndStartQueued();
     }
 

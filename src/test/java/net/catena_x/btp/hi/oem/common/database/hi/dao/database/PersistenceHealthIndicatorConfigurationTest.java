@@ -1,5 +1,6 @@
 package net.catena_x.btp.hi.oem.common.database.hi.dao.database;
 
+import net.catena_x.btp.hi.oem.common.database.hi.config.PersistenceHealthIndicatorConfiguration;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

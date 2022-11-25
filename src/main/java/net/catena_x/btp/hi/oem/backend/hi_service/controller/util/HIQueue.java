@@ -1,6 +1,6 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.controller.util;
 
-import net.catena_x.btp.hi.oem.backend.util.exceptions.HIBackendException;
+import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +9,7 @@ public class HIQueue {
     private HIQueueElement queue = new HIQueueElement(HIQueueState.NOT_RUNNING, null);
 
     public synchronized HIQueueElement addNewJobToQueue(@Nullable final String options)
-            throws HIBackendException {
+            throws OemHIException {
 
         switch(queue.queueState()) {
             case NOT_RUNNING: {
@@ -29,7 +29,7 @@ public class HIQueue {
             }
 
             default: {
-                throw new HIBackendException("Unknown hi job queue state!");
+                throw new OemHIException("Unknown hi job queue state!");
             }
         }
 
@@ -37,7 +37,7 @@ public class HIQueue {
     }
 
     public synchronized HIQueueElement removeJobFromQueueReturnNextQueuedElement()
-            throws HIBackendException {
+            throws OemHIException {
 
         switch(queue.queueState()) {
             case NOT_RUNNING: {
@@ -57,21 +57,21 @@ public class HIQueue {
             }
 
             default: {
-                throw new HIBackendException("Unknown hi job queue state!");
+                throw new OemHIException("Unknown hi job queue state!");
             }
         }
 
         return queue;
     }
 
-    private void assertQueuedOptionsCompatible(@Nullable final String options) throws HIBackendException {
+    private void assertQueuedOptionsCompatible(@Nullable final String options) throws OemHIException {
         if((options == null) != (queue.options() == null)) {
-            throw new HIBackendException("There is already a queued job with incompatible options!");
+            throw new OemHIException("There is already a queued job with incompatible options!");
         }
 
         if(options != null) {
             if (!options.equals(queue.options())) {
-                throw new HIBackendException("There is already a queued job with incompatible options!");
+                throw new OemHIException("There is already a queued job with incompatible options!");
             }
         }
     }
