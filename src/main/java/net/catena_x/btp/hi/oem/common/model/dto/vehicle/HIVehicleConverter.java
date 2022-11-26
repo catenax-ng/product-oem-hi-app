@@ -1,7 +1,7 @@
 package net.catena_x.btp.hi.oem.common.model.dto.vehicle;
 
 import net.catena_x.btp.hi.oem.common.database.hi.tables.vehicle.HIVehicleDAO;
-import net.catena_x.btp.hi.oem.common.database.hi.tables.vehicle.HIVehicleWithHealthindicatorsDAO;
+import net.catena_x.btp.hi.oem.common.database.hi.tables.vehicle.HIVehicleWithHealthIndicatorsDAO;
 import net.catena_x.btp.hi.oem.common.model.dto.healthindicators.HIHealthIndicators;
 import net.catena_x.btp.hi.oem.common.model.dto.healthindicators.HIHealthIndicatorsConverter;
 import net.catena_x.btp.libraries.util.database.converter.DAOConverter;
@@ -40,7 +40,7 @@ public class HIVehicleConverter extends DAOConverter<HIVehicleDAO, HIVehicle> {
         return converted;
     }
 
-    public HIVehicleWithHealthindicatorsDAO toDAOWithNewestHealthIndicators(@Nullable final HIVehicle source) {
+    public HIVehicleWithHealthIndicatorsDAO toDAOWithNewestHealthIndicators(@Nullable final HIVehicle source) {
         if(source == null) {
             return null;
         }
@@ -49,15 +49,15 @@ public class HIVehicleConverter extends DAOConverter<HIVehicleDAO, HIVehicle> {
         final HIHealthIndicators healthIndicators = source.getNewestHealthindicators();
 
         if(healthIndicators == null) {
-            return new HIVehicleWithHealthindicatorsDAO(converted, null);
+            return new HIVehicleWithHealthIndicatorsDAO(converted, null);
         }
 
         converted.setNewestHealthindicatorsId(healthIndicators.getId());
-        return new HIVehicleWithHealthindicatorsDAO(converted,
+        return new HIVehicleWithHealthIndicatorsDAO(converted,
                 hiHealthIndicatorsConverter.toDAO(healthIndicators));
     }
 
-    public List<HIVehicleWithHealthindicatorsDAO> toDAOWithNewestHealthIndicators(
+    public List<HIVehicleWithHealthIndicatorsDAO> toDAOWithNewestHealthIndicators(
             @Nullable final List<HIVehicle> source) {
         if(source == null) {
             return null;
@@ -66,7 +66,7 @@ public class HIVehicleConverter extends DAOConverter<HIVehicleDAO, HIVehicle> {
         return source.stream().map((vehicle -> toDAOWithNewestHealthIndicators(vehicle))).collect(Collectors.toList());
     }
 
-    public HIVehicle toDTOWithHealthIndicators(@Nullable final HIVehicleWithHealthindicatorsDAO source) {
+    public HIVehicle toDTOWithHealthIndicators(@Nullable final HIVehicleWithHealthIndicatorsDAO source) {
         if(source == null) {
             return null;
         }
@@ -79,7 +79,7 @@ public class HIVehicleConverter extends DAOConverter<HIVehicleDAO, HIVehicle> {
         return converted;
     }
 
-    public List<HIVehicle> toDTOWithTelematicsData(@Nullable final List<HIVehicleWithHealthindicatorsDAO> source) {
+    public List<HIVehicle> toDTOWithHealthIndicators(@Nullable final List<HIVehicleWithHealthIndicatorsDAO> source) {
         if(source == null) {
             return null;
         }

@@ -17,6 +17,24 @@ public class HICalculationTableInternal extends HITableBase {
     @Autowired private HICalculationRepository HICalculationRepository;
 
     @TransactionSerializableUseExisting
+    public void insertExternalTransaction(@NotNull final String id, @NotNull final Instant calculationTimestamp,
+                                          @NotNull final long calculationSyncCounter,
+                                          @NotNull final CalculationStatus status) throws OemHIException {
+        try {
+            HICalculationRepository.insert(id, calculationTimestamp, calculationSyncCounter, status.toString());
+        } catch (final Exception exception) {
+            throw failed("Inserting calculation failed!", exception);
+        }
+    }
+
+    @TransactionSerializableCreateNew
+    public void insertNewTransaction(@NotNull final String id, @NotNull final Instant calculationTimestamp,
+                                     @NotNull final long calculationSyncCounter,
+                                     @NotNull final CalculationStatus status) throws OemHIException {
+        insertExternalTransaction(id, calculationTimestamp, calculationSyncCounter, status);
+    }
+
+    @TransactionSerializableUseExisting
     public String insertGetIdExternalTransaction(@NotNull final Instant calculationTimestamp,
                                                  @NotNull final long calculationSyncCounter,
                                                  @NotNull final CalculationStatus status) throws OemHIException {
@@ -32,9 +50,24 @@ public class HICalculationTableInternal extends HITableBase {
     @TransactionSerializableCreateNew
     public String insertGetIdNewTransaction(@NotNull final Instant calculationTimestamp,
                                             @NotNull final long calculationSyncCounter,
-                                            @NotNull final CalculationStatus status)
-            throws OemHIException {
+                                            @NotNull final CalculationStatus status) throws OemHIException {
         return insertGetIdExternalTransaction(calculationTimestamp, calculationSyncCounter, status);
+    }
+
+    @TransactionSerializableUseExisting
+    public void createNowExternalTransaction(@NotNull final String id, @NotNull final long calculationSyncCounter)
+            throws OemHIException {
+        try {
+            HICalculationRepository.createNow(id, calculationSyncCounter, CalculationStatus.CREATED.toString());
+        } catch (final Exception exception) {
+            throw failed("Inserting calculation failed!", exception);
+        }
+    }
+
+    @TransactionSerializableCreateNew
+    public void createNowNewTransaction(@NotNull final String id, @NotNull final long calculationSyncCounter)
+            throws OemHIException {
+        createNowExternalTransaction(id, calculationSyncCounter);
     }
 
     @TransactionSerializableUseExisting
@@ -81,7 +114,7 @@ public class HICalculationTableInternal extends HITableBase {
     }
 
     @TransactionSerializableCreateNew
-    public void setSMessageNewTransaction(@NotNull final String id, @NotNull final String message)
+    public void setMessageNewTransaction(@NotNull final String id, @NotNull final String message)
             throws OemHIException {
         setMessageExternalTransaction(id, message);
     }
@@ -111,14 +144,12 @@ public class HICalculationTableInternal extends HITableBase {
     }
 
     @TransactionSerializableCreateNew
-    public void deleteByStatusNewTransaction(@NotNull final CalculationStatus status)
-            throws OemHIException {
+    public void deleteByStatusNewTransaction(@NotNull final CalculationStatus status) throws OemHIException {
         deleteByStatusExternalTransaction(status);
     }
 
     @TransactionSerializableUseExisting
-    public void deleteCalculatedUntilExternalTransaction(@NotNull final Instant calculatedUntil)
-            throws OemHIException {
+    public void deleteCalculatedUntilExternalTransaction(@NotNull final Instant calculatedUntil) throws OemHIException {
         try {
             HICalculationRepository.deleteCalculatedUntil(calculatedUntil);
         } catch (final Exception exception) {

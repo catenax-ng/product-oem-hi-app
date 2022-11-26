@@ -161,7 +161,8 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
     }
 
     @TransactionDefaultCreateNew
-    public List<HIHealthIndicatorsDAO> getByVehicleIdNewTransaction(final String vehicleId) throws OemHIException {
+    public List<HIHealthIndicatorsDAO> getByVehicleIdNewTransaction(@NotNull final String vehicleId)
+            throws OemHIException {
         return getByVehicleIdExternalTransaction(vehicleId);
     }
 
@@ -177,7 +178,8 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
     }
 
     @TransactionDefaultCreateNew
-    public List<HIHealthIndicatorsDAO> getByGearboxIdNewTransaction(final String gearboxId) throws OemHIException {
+    public List<HIHealthIndicatorsDAO> getByGearboxIdNewTransaction(@NotNull final String gearboxId)
+            throws OemHIException {
         return getByGearboxIdExternalTransaction(gearboxId);
     }
 
@@ -193,8 +195,8 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
     }
 
     @TransactionDefaultCreateNew
-    public List<HIHealthIndicatorsDAO> getByVehicleIdOrderByCalculationSyncCounterNewTransaction(final String vehicleId)
-            throws OemHIException {
+    public List<HIHealthIndicatorsDAO> getByVehicleIdOrderByCalculationSyncCounterNewTransaction(
+            @NotNull final String vehicleId) throws OemHIException {
         return getByVehicleIdOrderByCalculationSyncCounterExternalTransaction(vehicleId);
     }
 
@@ -210,8 +212,8 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
     }
 
     @TransactionDefaultCreateNew
-    public List<HIHealthIndicatorsDAO> getByGearboxIdOrderByCalculationSyncCounterNewTransaction(final String gearboxId)
-            throws OemHIException {
+    public List<HIHealthIndicatorsDAO> getByGearboxIdOrderByCalculationSyncCounterNewTransaction(
+            @NotNull final String gearboxId) throws OemHIException {
         return getByGearboxIdOrderByCalculationSyncCounterExternalTransaction(gearboxId);
     }
 

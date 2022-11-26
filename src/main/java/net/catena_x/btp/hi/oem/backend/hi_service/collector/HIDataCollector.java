@@ -120,8 +120,8 @@ public class HIDataCollector {
         s3Handler.uploadFileToS3(resultJson, key);
     }
 
-    private void dispatchRequestWithHttp(final String requestId,
-                                         final HINotificationToSupplierContent hiNotificationToSupplierContent)
+    private void dispatchRequestWithHttp(@NotNull final String requestId,
+                                         @NotNull final HINotificationToSupplierContent hiNotificationToSupplierContent)
             throws EdcException {
 
         final HINotificationToSupplierContentDAO healthIndicatorServiceInputDAO =
@@ -190,8 +190,8 @@ public class HIDataCollector {
         }
     }
 
-    private void dispatchRequestWithS3(final String requestId,
-                                       final HINotificationToSupplierContent hiNotificationToSupplierContent)
+    private void dispatchRequestWithS3(@NotNull final String requestId,
+                                       @NotNull final HINotificationToSupplierContent hiNotificationToSupplierContent)
             throws IOException, NoSuchAlgorithmException, InvalidKeyException //, MinioException,
     {
         final HINotificationToSupplierContentDAO healthIndicatorServiceInputDAO =
@@ -206,7 +206,7 @@ public class HIDataCollector {
         return vehicleTable.getSyncCounterSinceWithTelematicsDataNewTransaction(lastCounter);
     }
 
-    private void setNewestCounterIfNewVehicles(final List<Vehicle> result) {
+    private void setNewestCounterIfNewVehicles(@NotNull final List<Vehicle> result) {
         final Optional<Vehicle> maxCounterVehicle = result.stream().max(Comparator.comparing(Vehicle::getSyncCounter));
         maxCounterVehicle.ifPresent(vehicle -> lastCounter = vehicle.getSyncCounter());
     }
@@ -222,8 +222,8 @@ public class HIDataCollector {
         return new HINotificationToSupplierContent(requestId, healthIndicatorInputs);
     }
 
-    private HealthIndicatorInput convert(final TelematicsData telematicsData,
-                                         final String componentId) throws OemDatabaseException {
+    private HealthIndicatorInput convert(@NotNull final TelematicsData telematicsData,
+                                         @NotNull final String componentId) throws OemDatabaseException {
         // List has only one element!
         final List<ClassifiedLoadSpectrum> loadSpectra = telematicsData.getLoadSpectra();
         final List<AdaptionValues> adaptionValues = telematicsData.getAdaptionValues();
@@ -236,8 +236,8 @@ public class HIDataCollector {
         return new HealthIndicatorInput(componentId, classifiedLoadSpectrum, adaptionValueList);
     }
 
-    private void verifyInput(final List<ClassifiedLoadSpectrum> loadSpectra,
-                             final List<AdaptionValues> adaptionValues) throws OemDatabaseException {
+    private void verifyInput(@NotNull final List<ClassifiedLoadSpectrum> loadSpectra,
+                             @NotNull final List<AdaptionValues> adaptionValues) throws OemDatabaseException {
         if(loadSpectra.size() < 1) {
             throw new OemDatabaseException("Found more than one LoadSpectrum! " +
                     "Data format seems to have changed!");

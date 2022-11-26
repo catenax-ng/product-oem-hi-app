@@ -67,7 +67,7 @@ public class HIVehicleTableInternal extends HITableBase {
                                                           @NotNull final Instant calculationTimestamp,
                                                           @NotNull final long calculationSyncCounter)
             throws OemHIException {
-        appendHealthindicators(getByIdWithHealthindicatorsExternalTransaction(vehicleId),
+        appendHealthindicators(getByIdWithHealthIndicatorsExternalTransaction(vehicleId),
                                newHealthIndicators, calculationTimestamp, calculationSyncCounter);
     }
 
@@ -81,7 +81,7 @@ public class HIVehicleTableInternal extends HITableBase {
                                                   calculationTimestamp, calculationSyncCounter);
     }
 
-    private void appendHealthindicators(@NotNull final HIVehicleWithHealthindicatorsDAO vehicle,
+    private void appendHealthindicators(@NotNull final HIVehicleWithHealthIndicatorsDAO vehicle,
                                         @NotNull final HealthIndicatorOutput newHealthIndicators,
                                         @NotNull final Instant calculationTimestamp,
                                         @NotNull final long calculationSyncCounter)
@@ -157,7 +157,7 @@ public class HIVehicleTableInternal extends HITableBase {
     }
 
     @TransactionDefaultUseExisting
-    public HIVehicleWithHealthindicatorsDAO getByIdWithHealthindicatorsExternalTransaction(@NotNull final String vehicleId)
+    public HIVehicleWithHealthIndicatorsDAO getByIdWithHealthIndicatorsExternalTransaction(@NotNull final String vehicleId)
             throws OemHIException {
         try {
             final NativeQuery<Object[]> query = createJoinQueryVehicleHealthIndicators("v.vehicle_id=:vehicle_id")
@@ -169,13 +169,13 @@ public class HIVehicleTableInternal extends HITableBase {
     }
 
     @TransactionDefaultCreateNew
-    public HIVehicleWithHealthindicatorsDAO getByIdWithHealthindicatorsNewTransaction(@NotNull final String vehicleId)
+    public HIVehicleWithHealthIndicatorsDAO getByIdWithHealthIndicatorsNewTransaction(@NotNull final String vehicleId)
             throws OemHIException {
-        return getByIdWithHealthindicatorsExternalTransaction(vehicleId);
+        return getByIdWithHealthIndicatorsExternalTransaction(vehicleId);
     }
 
     @TransactionDefaultUseExisting
-    public HIVehicleDAO findByVanExternalTransaction(@NotNull final String van) throws OemHIException {
+    public HIVehicleDAO getByVanExternalTransaction(@NotNull final String van) throws OemHIException {
         try {
             return HIVehicleRepository.queryByVan(van);
         } catch(final Exception exception) {
@@ -184,12 +184,12 @@ public class HIVehicleTableInternal extends HITableBase {
     }
 
     @TransactionDefaultCreateNew
-    public HIVehicleDAO findByVanNewTransaction(@NotNull final String van) throws OemHIException {
-        return findByVanExternalTransaction(van);
+    public HIVehicleDAO getByVanNewTransaction(@NotNull final String van) throws OemHIException {
+        return getByVanExternalTransaction(van);
     }
 
     @TransactionDefaultUseExisting
-    public HIVehicleWithHealthindicatorsDAO getByVanWithHealthindicatorsExternalTransaction(@NotNull final String van)
+    public HIVehicleWithHealthIndicatorsDAO getByVanWithHealthIndicatorsExternalTransaction(@NotNull final String van)
             throws OemHIException {
         try {
             final NativeQuery<Object[]> query = createJoinQueryVehicleHealthIndicators("v.van=:van")
@@ -201,9 +201,9 @@ public class HIVehicleTableInternal extends HITableBase {
     }
 
     @TransactionDefaultCreateNew
-    public HIVehicleWithHealthindicatorsDAO getByVanWithHealthindicatorsNewTransaction(
+    public HIVehicleWithHealthIndicatorsDAO getByVanWithHealthIndicatorsNewTransaction(
             @NotNull final String van) throws OemHIException {
-        return getByVanWithHealthindicatorsExternalTransaction(van);
+        return getByVanWithHealthIndicatorsExternalTransaction(van);
     }
 
     @TransactionDefaultUseExisting
@@ -221,7 +221,7 @@ public class HIVehicleTableInternal extends HITableBase {
     }
 
     @TransactionDefaultUseExisting
-    public HIVehicleWithHealthindicatorsDAO getByGearboxIdWithHealthindicatorsExternalTransaction(
+    public HIVehicleWithHealthIndicatorsDAO getByGearboxIdWithHealthIndicatorsExternalTransaction(
             @NotNull final String gearboxId) throws OemHIException {
         try {
             final NativeQuery<Object[]> query = createJoinQueryVehicleHealthIndicators(
@@ -234,21 +234,21 @@ public class HIVehicleTableInternal extends HITableBase {
     }
 
     @TransactionDefaultCreateNew
-    public HIVehicleWithHealthindicatorsDAO getByGearboxIdWithHealthindicatorsNewTransaction(
+    public HIVehicleWithHealthIndicatorsDAO getByGearboxIdWithHealthIndicatorsNewTransaction(
             @NotNull final String gearboxId) throws OemHIException {
-        return getByGearboxIdWithHealthindicatorsExternalTransaction(gearboxId);
+        return getByGearboxIdWithHealthIndicatorsExternalTransaction(gearboxId);
     }
 
-    private HIVehicleWithHealthindicatorsDAO queryAndAppendHealthindicators(final HIVehicleDAO vehicleFromDB)
+    private HIVehicleWithHealthIndicatorsDAO queryAndAppendHealthindicators(final HIVehicleDAO vehicleFromDB)
             throws OemHIException {
         try {
             final String newestHealthindicatorsId = vehicleFromDB.getNewestHealthindicatorsId();
 
             if(newestHealthindicatorsId == null) {
-                return new HIVehicleWithHealthindicatorsDAO(vehicleFromDB, null);
+                return new HIVehicleWithHealthIndicatorsDAO(vehicleFromDB, null);
             }
 
-            return new HIVehicleWithHealthindicatorsDAO(vehicleFromDB, healthindicatorsTable.getByIdExternalTransaction(
+            return new HIVehicleWithHealthIndicatorsDAO(vehicleFromDB, healthindicatorsTable.getByIdExternalTransaction(
                                                                          vehicleFromDB.getNewestHealthindicatorsId()));
         } catch(final Exception exception) {
             throw failed("Querying vehicle by van failed!", exception);
@@ -271,7 +271,7 @@ public class HIVehicleTableInternal extends HITableBase {
     }
 
     @TransactionDefaultUseExisting
-    public List<HIVehicleWithHealthindicatorsDAO> getAllWithHealthindicatorsExternalTransaction() throws OemHIException {
+    public List<HIVehicleWithHealthIndicatorsDAO> getAllWithHealthIndicatorsExternalTransaction() throws OemHIException {
         try {
             final NativeQuery<Object[]> query = createJoinQueryVehicleHealthIndicators();
             return executeQueryVehicleHealthindicators(query);
@@ -282,8 +282,8 @@ public class HIVehicleTableInternal extends HITableBase {
     }
 
     @TransactionDefaultCreateNew
-    public List<HIVehicleWithHealthindicatorsDAO> getAllWithHealthindicatorsNewTransaction() throws OemHIException {
-        return getAllWithHealthindicatorsExternalTransaction();
+    public List<HIVehicleWithHealthIndicatorsDAO> getAllWithHealthIndicatorsNewTransaction() throws OemHIException {
+        return getAllWithHealthIndicatorsExternalTransaction();
     }
 
     @TransactionDefaultUseExisting
@@ -301,6 +301,26 @@ public class HIVehicleTableInternal extends HITableBase {
     public List<HIVehicleDAO> getUpdatedSinceNewTransaction(@NotNull final Instant updatedSince)
             throws OemHIException {
         return getUpdatedSinceExternalTransaction(updatedSince);
+    }
+
+    @TransactionDefaultUseExisting
+    public List<HIVehicleWithHealthIndicatorsDAO> getUpdatedSinceWithHealthIndicatorsExternalTransaction(
+            @NotNull final Instant updatedSince) throws OemHIException {
+        try {
+            final NativeQuery<Object[]> query = createJoinQueryVehicleHealthIndicators(
+                    "v.update_timestamp>=:updated_since")
+                    .setParameter("updated_since", updatedSince);
+            return executeQueryVehicleHealthindicators(query);
+        }
+        catch(final Exception exception) {
+            throw failed("Querying vehicles failed!", exception);
+        }
+    }
+
+    @TransactionDefaultCreateNew
+    public List<HIVehicleWithHealthIndicatorsDAO> getUpdatedSinceWithHealthIndicatorsNewTransaction(
+            @NotNull final Instant updatedSince) throws OemHIException {
+        return getUpdatedSinceWithHealthIndicatorsExternalTransaction(updatedSince);
     }
 
     @TransactionDefaultUseExisting
@@ -323,7 +343,7 @@ public class HIVehicleTableInternal extends HITableBase {
     }
 
     @TransactionDefaultUseExisting
-    public List<HIVehicleWithHealthindicatorsDAO> getProducedBetweenWithHealthindicatorsExternalTransaction(
+    public List<HIVehicleWithHealthIndicatorsDAO> getProducedBetweenWithHealthIndicatorsExternalTransaction(
             @NotNull final Instant producedSince, @NotNull final Instant producedUntil) throws OemHIException {
         try {
             final NativeQuery<Object[]> query = createJoinQueryVehicleHealthIndicators(
@@ -338,19 +358,19 @@ public class HIVehicleTableInternal extends HITableBase {
     }
 
     @TransactionDefaultCreateNew
-    public List<HIVehicleWithHealthindicatorsDAO> getProducedBetweenWithHealthindicatorsNewTransaction(
+    public List<HIVehicleWithHealthIndicatorsDAO> getProducedBetweenWithHealthIndicatorsNewTransaction(
             @NotNull final Instant producedSince, @NotNull final Instant producedUntil) throws OemHIException {
-        return getProducedBetweenWithHealthindicatorsExternalTransaction(producedSince, producedUntil);
+        return getProducedBetweenWithHealthIndicatorsExternalTransaction(producedSince, producedUntil);
     }
 
-    private List<HIVehicleWithHealthindicatorsDAO> executeQueryVehicleHealthindicators(
+    private List<HIVehicleWithHealthIndicatorsDAO> executeQueryVehicleHealthindicators(
             @NotNull final NativeQuery<Object[]> query) throws OemHIException {
         try {
             final List<Object[]> results = query.list();
-            final List<HIVehicleWithHealthindicatorsDAO> vehicles = new ArrayList<>(results.size());
+            final List<HIVehicleWithHealthIndicatorsDAO> vehicles = new ArrayList<>(results.size());
 
             results.stream().forEach((record) -> vehicles.add(
-                    new HIVehicleWithHealthindicatorsDAO((HIVehicleDAO)record[0], (HIHealthIndicatorsDAO)record[1])));
+                    new HIVehicleWithHealthIndicatorsDAO((HIVehicleDAO)record[0], (HIHealthIndicatorsDAO)record[1])));
 
             return vehicles;
         } catch(final Exception exception) {
@@ -384,7 +404,7 @@ public class HIVehicleTableInternal extends HITableBase {
         }
     }
 
-    private HIVehicleWithHealthindicatorsDAO getSingle(@Nullable final List<HIVehicleWithHealthindicatorsDAO> vehicles)
+    private HIVehicleWithHealthIndicatorsDAO getSingle(@Nullable final List<HIVehicleWithHealthIndicatorsDAO> vehicles)
             throws OemHIException {
         if(vehicles == null) {
             return null;
