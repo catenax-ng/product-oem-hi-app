@@ -159,7 +159,7 @@ public class HIDataCollector {
                 String notificationAsString = null;
                 try {
                     notificationAsString = mapper.writeValueAsString(notification);
-                } catch(IOException exception) {
+                } catch(final IOException exception) {
                     throw new EdcException("Error whihle converting inputs to json!", exception);
                 }
 

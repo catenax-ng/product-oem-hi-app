@@ -20,7 +20,7 @@ public class HIJobRunner {
     public ResponseEntity<ApiResult> startJob() {
         try {
             return startJobInternal(queue.addNewJobToQueue(null));
-        } catch (OemHIException exception) {
+        } catch (final OemHIException exception) {
             return apiHelper.failed(exception.getMessage());
         }
     }
@@ -32,7 +32,7 @@ public class HIJobRunner {
 
         try {
             return startJobInternal(queue.addNewJobToQueue(options.toUpperCase()));
-        } catch (OemHIException exception) {
+        } catch (final OemHIException exception) {
             return apiHelper.failed(exception.getMessage());
         }
     }
@@ -40,7 +40,7 @@ public class HIJobRunner {
     public ResponseEntity<ApiResult> setJobFinishedAndStartQueued() {
         try {
             return startJobInternal(queue.removeJobFromQueueReturnNextQueuedElement());
-        } catch (OemHIException exception) {
+        } catch (final OemHIException exception) {
             return apiHelper.failed(exception.getMessage());
         }
     }
@@ -51,7 +51,7 @@ public class HIJobRunner {
             queue.removeJobFromQueueReturnNextQueuedElement();
             queue.removeJobFromQueueReturnNextQueuedElement();
             return apiHelper.ok("Queue is reset!");
-        } catch (OemHIException exception) {
+        } catch (final OemHIException exception) {
             return apiHelper.failed(exception.getMessage());
         }
     }
@@ -85,10 +85,10 @@ public class HIJobRunner {
     private void startJobInternal(@Nullable final String options) throws OemHIException {
         try {
             dataCollector.doUpdate(options);
-        } catch (Exception exception) {
+        } catch (final Exception exception) {
             try {
                 setJobFinishedAndStartQueued();
-            } catch (Exception nestedException) {
+            } catch (final Exception nestedException) {
                 throw new OemHIException("Start of job and queued job failed: "
                         + exception.getMessage() + nestedException.getMessage());
             }

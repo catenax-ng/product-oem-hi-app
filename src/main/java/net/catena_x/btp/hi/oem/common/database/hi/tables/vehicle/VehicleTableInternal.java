@@ -37,7 +37,7 @@ public class VehicleTableInternal extends HITableBase {
             vehicleRepository.insert(newVehicle.getVehicleId(), newVehicle.getVan(),
                     newVehicle.getGearboxId(), newVehicle.getProductionDate());
         }
-        catch(Exception exception) {
+        catch(final Exception exception) {
             throw failed("Failed to insert vehicle!", exception);
         }
     }
@@ -132,7 +132,7 @@ public class VehicleTableInternal extends HITableBase {
         try {
             vehicleRepository.deleteByVan(van);
         }
-        catch(Exception exception) {
+        catch(final Exception exception) {
             throw failed("Deleting vehicle by van failed!", exception);
         }
     }
@@ -260,7 +260,7 @@ public class VehicleTableInternal extends HITableBase {
         try {
             return vehicleRepository.queryAll();
         }
-        catch(Exception exception) {
+        catch(final Exception exception) {
             throw failed("Querying vehicles failed!", exception);
         }
     }
@@ -292,7 +292,7 @@ public class VehicleTableInternal extends HITableBase {
         try {
             return vehicleRepository.queryUpdatedSince(updatedSince);
         }
-        catch(Exception exception) {
+        catch(final Exception exception) {
             throw failed("Querying vehicles failed!", exception);
         }
     }
@@ -379,7 +379,7 @@ public class VehicleTableInternal extends HITableBase {
         try {
             return (NativeQuery<Object[]>)((Session)this.entityManager.getDelegate()).createSQLQuery(query);
         }
-        catch(Exception exception) {
+        catch(final Exception exception) {
             throw failed("Initializing query failed!", exception);
         }
     }

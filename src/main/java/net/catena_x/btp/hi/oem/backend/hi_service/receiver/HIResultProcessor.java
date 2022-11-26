@@ -19,7 +19,7 @@ public class HIResultProcessor {
                         @NotNull final Runnable notifyProcessed) {
         try {
             new Thread(() -> processingThread(result, notifyProcessed)).start();
-        } catch (Exception exception) {
+        } catch (final Exception exception) {
             logError(exception.getMessage());
             notifyProcessed.run();
         }
@@ -30,7 +30,7 @@ public class HIResultProcessor {
         try {
             assertHeaderAndBody(result);
             this.processInternal(result.getContent(), getReferenceId(result));
-        } catch (OemHIException exception) {
+        } catch (final OemHIException exception) {
             logError(exception.getMessage());
         }
 
