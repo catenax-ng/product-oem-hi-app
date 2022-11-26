@@ -24,24 +24,24 @@ import java.time.Instant;
         query = "DELETE FROM vehicles WHERE vehicle_id=:vehicle_id")
 @NamedNativeQuery(name = "VehicleDAO.deleteByVan",
         query = "DELETE FROM vehicles WHERE van=:van")
-@NamedNativeQuery(name = "VehicleDAO.queryAll", resultClass = VehicleDAO.class,
+@NamedNativeQuery(name = "VehicleDAO.queryAll", resultClass = HIVehicleDAO.class,
         query = "SELECT * FROM vehicles")
-@NamedNativeQuery(name = "VehicleDAO.queryByVehicleId", resultClass = VehicleDAO.class,
+@NamedNativeQuery(name = "VehicleDAO.queryByVehicleId", resultClass = HIVehicleDAO.class,
         query = "SELECT * FROM vehicles WHERE vehicle_id=:vehicle_id")
-@NamedNativeQuery(name = "VehicleDAO.queryByVan", resultClass = VehicleDAO.class,
+@NamedNativeQuery(name = "VehicleDAO.queryByVan", resultClass = HIVehicleDAO.class,
         query = "SELECT * FROM vehicles WHERE van=:van")
-@NamedNativeQuery(name = "VehicleDAO.queryByGearboxId", resultClass = VehicleDAO.class,
+@NamedNativeQuery(name = "VehicleDAO.queryByGearboxId", resultClass = HIVehicleDAO.class,
         query = "SELECT * FROM vehicles WHERE gearbox_id=:gearbox_id")
-@NamedNativeQuery(name = "VehicleDAO.queryUpdatedSince", resultClass = VehicleDAO.class,
+@NamedNativeQuery(name = "VehicleDAO.queryUpdatedSince", resultClass = HIVehicleDAO.class,
         query = "SELECT * FROM vehicles WHERE update_timestamp>=:updated_since")
-@NamedNativeQuery(name = "VehicleDAO.queryByProductionDate", resultClass = VehicleDAO.class,
+@NamedNativeQuery(name = "VehicleDAO.queryByProductionDate", resultClass = HIVehicleDAO.class,
         query = "SELECT * FROM vehicles WHERE production_date>=:produced_since " +
                 "AND production_date<=:produced_until")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class VehicleDAO {
+public class HIVehicleDAO {
     @Id
     @Column(name="vehicle_id", length=50, nullable=false)
     private String vehicleId;
@@ -52,11 +52,11 @@ public class VehicleDAO {
     @Column(name="gearbox_id", length=50, nullable=false)
     private String gearboxId;
 
-    @Column(name="update_timestamp", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable=false)
-    private Instant updateTimestamp;
-
     @Column(name="production_date", nullable=false)
     private Instant productionDate;
+
+    @Column(name="update_timestamp", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable=false)
+    private Instant updateTimestamp;
 
     @Column(name="newest_healthindicators_id", length=50)
     private String newestHealthindicatorsId;

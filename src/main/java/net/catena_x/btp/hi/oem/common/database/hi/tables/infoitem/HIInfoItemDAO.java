@@ -17,15 +17,15 @@ import javax.persistence.*;
         query = "DELETE FROM info")
 @NamedNativeQuery(name = "InfoItemDAO.delete",
         query = "DELETE FROM info WHERE key=:key")
-@NamedNativeQuery(name = "InfoItemDAO.queryAll", resultClass = InfoItemDAO.class,
+@NamedNativeQuery(name = "InfoItemDAO.queryAll", resultClass = HIInfoItemDAO.class,
         query = "SELECT key, value FROM info")
-@NamedNativeQuery(name = "InfoItemDAO.queryByKey", resultClass = InfoItemDAO.class,
+@NamedNativeQuery(name = "InfoItemDAO.queryByKey", resultClass = HIInfoItemDAO.class,
         query = "SELECT key, value FROM info WHERE key=:key")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InfoItemDAO {
+public class HIInfoItemDAO {
     @Id
     @Column(name="key", length=50, nullable=false)
     private String key;

@@ -16,8 +16,8 @@ public class HIVehicle {
     private String vehicleId;
     private String van;
     private String gearboxId;
-    private Instant updateTimestamp;
     private Instant productionDate;
-    private HIHealthIndicators healthindicators;
+    private Instant updateTimestamp;
+    private HIHealthIndicators newestHealthindicators;
 }
 

@@ -30,29 +30,29 @@ import java.time.Instant;
         query = "DELETE FROM calculations WHERE calculation_timestamp<=:calculated_until")
 @NamedNativeQuery(name = "CalculationDAO.deleteCalculationSyncCounterUntil",
         query = "DELETE FROM calculations WHERE calculation_sync_counter<=:calculation_sync_counter")
-@NamedNativeQuery(name = "CalculationDAO.queryAll", resultClass = CalculationDAO.class,
+@NamedNativeQuery(name = "CalculationDAO.queryAll", resultClass = HICalculationDAO.class,
         query = "SELECT * FROM calculations")
-@NamedNativeQuery(name = "CalculationDAO.queryById", resultClass = CalculationDAO.class,
+@NamedNativeQuery(name = "CalculationDAO.queryById", resultClass = HICalculationDAO.class,
         query = "SELECT * FROM calculations WHERE id=:id")
-@NamedNativeQuery(name = "CalculationDAO.queryByStatus", resultClass = CalculationDAO.class,
+@NamedNativeQuery(name = "CalculationDAO.queryByStatus", resultClass = HICalculationDAO.class,
         query = "SELECT * FROM calculations WHERE status=:status")
-@NamedNativeQuery(name = "CalculationDAO.queryAllOrderByCalculationTimestamp", resultClass = CalculationDAO.class,
+@NamedNativeQuery(name = "CalculationDAO.queryAllOrderByCalculationTimestamp", resultClass = HICalculationDAO.class,
         query = "SELECT * FROM calculations ORDER BY calculation_timestamp")
-@NamedNativeQuery(name = "CalculationDAO.queryAllOrderByCalculationSyncCounter", resultClass = CalculationDAO.class,
+@NamedNativeQuery(name = "CalculationDAO.queryAllOrderByCalculationSyncCounter", resultClass = HICalculationDAO.class,
         query = "SELECT * FROM calculations ORDER BY calculation_sync_counter")
-@NamedNativeQuery(name = "CalculationDAO.queryByCalculationSince", resultClass = CalculationDAO.class,
+@NamedNativeQuery(name = "CalculationDAO.queryByCalculationSince", resultClass = HICalculationDAO.class,
         query = "SELECT * FROM calculations WHERE calculation_timestamp<=:calculation_timestamp_since")
-@NamedNativeQuery(name = "CalculationDAO.queryByCalculationUntil", resultClass = CalculationDAO.class,
+@NamedNativeQuery(name = "CalculationDAO.queryByCalculationUntil", resultClass = HICalculationDAO.class,
         query = "SELECT * FROM calculations WHERE calculation_timestamp<=:calculation_timestamp_until")
-@NamedNativeQuery(name = "CalculationDAO.queryByCalculationSyncCounterSince", resultClass = CalculationDAO.class,
+@NamedNativeQuery(name = "CalculationDAO.queryByCalculationSyncCounterSince", resultClass = HICalculationDAO.class,
         query = "SELECT * FROM calculations WHERE sync_counter>=:calculation_sync_counter_since")
-@NamedNativeQuery(name = "CalculationDAO.queryByCalculationSyncCounterUntil", resultClass = CalculationDAO.class,
+@NamedNativeQuery(name = "CalculationDAO.queryByCalculationSyncCounterUntil", resultClass = HICalculationDAO.class,
         query = "SELECT * FROM calculations WHERE sync_counter<=:calculation_sync_counter_until")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CalculationDAO {
+public class HICalculationDAO {
     @Id
     @Column(name="id", length=50, updatable=false, nullable=false, unique=true)
     private String id;

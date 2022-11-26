@@ -26,41 +26,41 @@ import java.time.Instant;
         query = "DELETE FROM healthindicators WHERE calculation_timestamp<=:calculated_until")
 @NamedNativeQuery(name = "HealthIndicatorsDAO.deleteCalculationSyncCounterUntil",
         query = "DELETE FROM healthindicators WHERE calculation_sync_counter<=:calculation_sync_counter")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryAll", resultClass = HealthIndicatorsDAO.class,
+@NamedNativeQuery(name = "HealthIndicatorsDAO.queryAll", resultClass = HIHealthIndicatorsDAO.class,
         query = "SELECT * FROM healthindicators")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryById", resultClass = HealthIndicatorsDAO.class,
+@NamedNativeQuery(name = "HealthIndicatorsDAO.queryById", resultClass = HIHealthIndicatorsDAO.class,
         query = "DELETE * FROM healthindicators WHERE id=:id")
 @NamedNativeQuery(name = "HealthIndicatorsDAO.queryAllOrderByCalculationTimestamp",
-        resultClass = HealthIndicatorsDAO.class,
+        resultClass = HIHealthIndicatorsDAO.class,
         query = "SELECT * FROM healthindicators ORDER BY calculation_timestamp")
 @NamedNativeQuery(name = "HealthIndicatorsDAO.queryAllOrderByCalculationSyncCounter",
-        resultClass = HealthIndicatorsDAO.class,
+        resultClass = HIHealthIndicatorsDAO.class,
         query = "SELECT * FROM healthindicators ORDER BY calculation_sync_counter")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryByVehicleId", resultClass = HealthIndicatorsDAO.class,
+@NamedNativeQuery(name = "HealthIndicatorsDAO.queryByVehicleId", resultClass = HIHealthIndicatorsDAO.class,
         query = "SELECT * FROM healthindicators WHERE vehicle_id=:vehicle_id")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryByGearboxId", resultClass = HealthIndicatorsDAO.class,
+@NamedNativeQuery(name = "HealthIndicatorsDAO.queryByGearboxId", resultClass = HIHealthIndicatorsDAO.class,
         query = "SELECT * FROM healthindicators WHERE gearbox_id=:gearbox_id")
 @NamedNativeQuery(name = "HealthIndicatorsDAO.queryByVehicleIdOrderByCalculationSyncCounter",
-        resultClass = HealthIndicatorsDAO.class,
+        resultClass = HIHealthIndicatorsDAO.class,
         query = "SELECT * FROM healthindicators WHERE vehicle_id=:vehicle_id ORDER BY calculation_sync_counter")
 @NamedNativeQuery(name = "HealthIndicatorsDAO.queryByGearboxIdOrderByCalculationSyncCounter",
-        resultClass = HealthIndicatorsDAO.class,
+        resultClass = HIHealthIndicatorsDAO.class,
         query = "SELECT * FROM healthindicators WHERE gearbox_id=:gearbox_id ORDER BY calculation_sync_counter")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryByCalculationSince", resultClass = HealthIndicatorsDAO.class,
+@NamedNativeQuery(name = "HealthIndicatorsDAO.queryByCalculationSince", resultClass = HIHealthIndicatorsDAO.class,
         query = "SELECT * FROM healthindicators WHERE calculation_timestamp<=:calculation_timestamp_since")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryByCalculationUntil", resultClass = HealthIndicatorsDAO.class,
+@NamedNativeQuery(name = "HealthIndicatorsDAO.queryByCalculationUntil", resultClass = HIHealthIndicatorsDAO.class,
         query = "SELECT * FROM healthindicators WHERE calculation_timestamp<=:calculation_timestamp_until")
 @NamedNativeQuery(name = "HealthIndicatorsDAO.queryByCalculationSyncCounterSince",
-        resultClass = HealthIndicatorsDAO.class,
+        resultClass = HIHealthIndicatorsDAO.class,
         query = "SELECT * FROM healthindicators WHERE calculation_sync_counter>=:calculation_sync_counter_since")
 @NamedNativeQuery(name = "HealthIndicatorsDAO.queryByCalculationSyncCounterUntil",
-        resultClass = HealthIndicatorsDAO.class,
+        resultClass = HIHealthIndicatorsDAO.class,
         query = "SELECT * FROM healthindicators WHERE calculation_sync_counter<=:calculation_sync_counter_until")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class HealthIndicatorsDAO {
+public class HIHealthIndicatorsDAO {
     @Id
     @Column(name="id", length=50, updatable=false, nullable=false, unique=true)
     private String id;
