@@ -13,10 +13,19 @@ import java.time.Instant;
 @NamedNativeQuery(name = "CalculationDAO.insert",
         query = "INSERT INTO calculations (id, calculation_timestamp, calculation_sync_counter, status) "
                 + "VALUES (:id, :calculation_timestamp, :calculation_sync_counter, :status)")
+@NamedNativeQuery(name = "CalculationDAO.createNow",
+        query = "INSERT INTO calculations (id, calculation_timestamp, calculation_sync_counter, status) "
+                + "VALUES (:id, CURRENT_TIMESTAMP, :calculation_sync_counter, :status)")
+@NamedNativeQuery(name = "CalculationDAO.updateStatus",
+        query = "UPDATE calculations SET status=:status WHERE id=:id")
+@NamedNativeQuery(name = "CalculationDAO.setMessage",
+        query = "UPDATE calculations SET message=:message WHERE id=:id")
 @NamedNativeQuery(name = "CalculationDAO.deleteAll",
         query = "DELETE FROM calculations")
 @NamedNativeQuery(name = "CalculationDAO.deleteById",
         query = "DELETE FROM calculations WHERE id=:id")
+@NamedNativeQuery(name = "CalculationDAO.deleteByStatus",
+        query = "DELETE FROM calculations WHERE status=:status")
 @NamedNativeQuery(name = "CalculationDAO.deleteCalculatedUntil",
         query = "DELETE FROM calculations WHERE calculation_timestamp<=:calculated_until")
 @NamedNativeQuery(name = "CalculationDAO.deleteCalculationSyncCounterUntil",
@@ -54,6 +63,9 @@ public class CalculationDAO {
     @Column(name="calculation_sync_counter", updatable=false, nullable=false)
     private long calculationSyncCounter;
 
-    @Column(name="status", updatable=false, nullable=false)
+    @Column(name="status", updatable=true, nullable=false)
     private String status;
+
+    @Column(name="message", length=65000, updatable=true, nullable=true)
+    private String message;
 }

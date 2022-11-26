@@ -4,7 +4,9 @@ public enum CalculationStatus {
     CREATED,
     SENT,
     RUNNING,
-    FAILED,
+    FAILED_INTERNAL,
+    FAILED_EXTERNAL,
+    ABANDONED,
     CALCULATED,
     READY
 }

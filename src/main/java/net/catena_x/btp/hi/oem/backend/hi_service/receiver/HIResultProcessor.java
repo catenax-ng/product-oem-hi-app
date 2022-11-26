@@ -29,7 +29,7 @@ public class HIResultProcessor {
                                   @NotNull final Runnable notifyProcessed) {
         try {
             assertHeaderAndBody(result);
-            this.processIntern(result.getContent(), getReferenceId(result));
+            this.processInternal(result.getContent(), getReferenceId(result));
         } catch (OemHIException exception) {
             logError(exception.getMessage());
         }
@@ -37,8 +37,8 @@ public class HIResultProcessor {
         notifyProcessed.run();
     }
 
-    private void processIntern(@NotNull final HINotificationFromSupplierContent result,
-                               @NotNull final String referenceId)
+    private void processInternal(@NotNull final HINotificationFromSupplierContent result,
+                                 @NotNull final String referenceId)
             throws OemHIException {
 
         if(result.getHealthIndicatorOutputs().isEmpty()) {

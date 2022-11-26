@@ -19,7 +19,7 @@ public class HIJobRunner {
 
     public ResponseEntity<ApiResult> startJob() {
         try {
-            return startJobIntern(queue.addNewJobToQueue(null));
+            return startJobInternal(queue.addNewJobToQueue(null));
         } catch (OemHIException exception) {
             return apiHelper.failed(exception.getMessage());
         }
@@ -31,7 +31,7 @@ public class HIJobRunner {
         }
 
         try {
-            return startJobIntern(queue.addNewJobToQueue(options.toUpperCase()));
+            return startJobInternal(queue.addNewJobToQueue(options.toUpperCase()));
         } catch (OemHIException exception) {
             return apiHelper.failed(exception.getMessage());
         }
@@ -39,7 +39,7 @@ public class HIJobRunner {
 
     public ResponseEntity<ApiResult> setJobFinishedAndStartQueued() {
         try {
-            return startJobIntern(queue.removeJobFromQueueReturnNextQueuedElement());
+            return startJobInternal(queue.removeJobFromQueueReturnNextQueuedElement());
         } catch (OemHIException exception) {
             return apiHelper.failed(exception.getMessage());
         }
@@ -56,7 +56,7 @@ public class HIJobRunner {
         }
     }
 
-    private ResponseEntity<ApiResult> startJobIntern(@NotNull final HIQueueElement currentQueueElement)
+    private ResponseEntity<ApiResult> startJobInternal(@NotNull final HIQueueElement currentQueueElement)
             throws OemHIException {
 
         switch(currentQueueElement.queueState()) {
@@ -72,7 +72,7 @@ public class HIJobRunner {
             }
 
             case RUNNING: {
-                startJobIntern(currentQueueElement.options());
+                startJobInternal(currentQueueElement.options());
                 return apiHelper.ok("Started external hi calculation.");
             }
 
@@ -82,7 +82,7 @@ public class HIJobRunner {
         }
     }
 
-    private void startJobIntern(@Nullable final String options) throws OemHIException {
+    private void startJobInternal(@Nullable final String options) throws OemHIException {
         try {
             dataCollector.doUpdate(options);
         } catch (Exception exception) {

@@ -9,15 +9,16 @@ import java.time.Instant;
 import java.util.List;
 
 public interface HealthIndicatorsRepository extends Repository<HealthIndicatorsDAO, String> {
-    @Modifying
-    void insert(@Param("id") @NotNull final String id,
-                @Param("vehicle_id") @NotNull final String vehicleId,
-                @Param("calculation_timestamp") @NotNull final Instant calculationTimestamp,
-                @Param("calculation_sync_counter") @NotNull final long calculationSyncCounter,
-                @Param("values") @NotNull final String values);
+    @Modifying void insert(@Param("id") @NotNull final String id,
+                           @Param("vehicle_id") @NotNull final String vehicleId,
+                           @Param("gearbox_id") @NotNull final String gearboxId,
+                           @Param("calculation_timestamp") @NotNull final Instant calculationTimestamp,
+                           @Param("calculation_sync_counter") @NotNull final long calculationSyncCounter,
+                           @Param("values") @NotNull final String values);
     @Modifying void deleteAll();
     @Modifying void deleteById(@Param("id") @NotNull final String id);
     @Modifying void deleteByVehicleId(@Param("vehicle_id") @NotNull final String vehicleId);
+    @Modifying void deleteByGearboxId(@Param("gearbox_id") @NotNull final String gearboxId);
     @Modifying void deleteCalculatedUntil(@Param("calculated_until") @NotNull final Instant calculatedUntil);
     @Modifying void deleteCalculationSyncCounterUntil(
             @Param("calculation_sync_counter") @NotNull final long calculationSyncCounter);
@@ -26,8 +27,11 @@ public interface HealthIndicatorsRepository extends Repository<HealthIndicatorsD
     List<HealthIndicatorsDAO> queryAllOrderByCalculationTimestamp();
     List<HealthIndicatorsDAO> queryAllOrderByCalculationSyncCounter();
     List<HealthIndicatorsDAO> queryByVehicleId(@Param("vehicle_id") @NotNull final String vehicleId);
+    List<HealthIndicatorsDAO> queryByGearboxId(@Param("gearbox_id") @NotNull final String gearboxId);
     List<HealthIndicatorsDAO> queryByVehicleIdOrderByCalculationSyncCounter(
             @Param("vehicle_id") @NotNull final String vehicleId);
+    List<HealthIndicatorsDAO> queryByGearboxIdOrderByCalculationSyncCounter(
+            @Param("gearbox_id") @NotNull final String gearboxId);
     List<HealthIndicatorsDAO> queryByCalculationSince(
             @Param("calculation_timestamp_since") @NotNull final Instant calculationTimestampSince);
     List<HealthIndicatorsDAO> queryByCalculationUntil(
