@@ -1,7 +1,7 @@
 package net.catena_x.btp.hi.oem.common.database.hi.tables.infoitem;
 
 import net.catena_x.btp.hi.oem.common.database.hi.base.HITableBase;
-import net.catena_x.btp.hi.oem.common.model.enums.InfoKey;
+import net.catena_x.btp.hi.oem.common.model.enums.HiInfoKey;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import net.catena_x.btp.libraries.util.database.annotations.TransactionDefaultCreateNew;
 import net.catena_x.btp.libraries.util.database.annotations.TransactionDefaultUseExisting;
@@ -16,7 +16,7 @@ public class InfoTableInternal extends HITableBase {
     @Autowired private InfoItemRepository infoItemRepository;
 
     @TransactionDefaultUseExisting
-    public void setInfoItemExternalTransaction(@NotNull final InfoKey key, @NotNull final String value)
+    public void setInfoItemExternalTransaction(@NotNull final HiInfoKey key, @NotNull final String value)
             throws OemHIException {
         try {
             infoItemRepository.insert(key.toString(), value);
@@ -26,13 +26,13 @@ public class InfoTableInternal extends HITableBase {
     }
 
     @TransactionDefaultCreateNew
-    public void setInfoItemNewTransaction(@NotNull final InfoKey key, @NotNull final String value)
+    public void setInfoItemNewTransaction(@NotNull final HiInfoKey key, @NotNull final String value)
             throws OemHIException {
         setInfoItemExternalTransaction(key, value);
     }
     
     @TransactionDefaultUseExisting
-    public void updateInfoItemExternalTransaction(@NotNull final InfoKey key, @NotNull final String value)
+    public void updateInfoItemExternalTransaction(@NotNull final HiInfoKey key, @NotNull final String value)
             throws OemHIException {
         try {
             infoItemRepository.update(key.toString(), value);
@@ -42,13 +42,13 @@ public class InfoTableInternal extends HITableBase {
     }
 
     @TransactionDefaultCreateNew
-    public void updateInfoItemNewTransaction(@NotNull final InfoKey key, @NotNull final String value)
+    public void updateInfoItemNewTransaction(@NotNull final HiInfoKey key, @NotNull final String value)
             throws OemHIException {
         updateInfoItemExternalTransaction(key, value);
     }
     
     @TransactionDefaultUseExisting
-    public InfoItemDAO getInfoItemExternalTransaction(@NotNull final InfoKey key) throws OemHIException {
+    public InfoItemDAO getInfoItemExternalTransaction(@NotNull final HiInfoKey key) throws OemHIException {
         try {
             return infoItemRepository.queryByKey(key.toString());
         } catch (final Exception exception) {
@@ -57,7 +57,7 @@ public class InfoTableInternal extends HITableBase {
     }
 
     @TransactionDefaultCreateNew
-    public InfoItemDAO getInfoItemNewTransaction(@NotNull final InfoKey key) throws OemHIException {
+    public InfoItemDAO getInfoItemNewTransaction(@NotNull final HiInfoKey key) throws OemHIException {
         return getInfoItemExternalTransaction(key);
     }
 
@@ -90,7 +90,7 @@ public class InfoTableInternal extends HITableBase {
     }
 
     @TransactionDefaultUseExisting
-    public void deleteExternalTransaction(@NotNull final InfoKey key) throws OemHIException {
+    public void deleteExternalTransaction(@NotNull final HiInfoKey key) throws OemHIException {
         try {
             infoItemRepository.delete(key.toString());
         } catch (final Exception exception) {
@@ -99,17 +99,17 @@ public class InfoTableInternal extends HITableBase {
     }
 
     @TransactionDefaultCreateNew
-    public void deleteNewTransaction(@NotNull final InfoKey key) throws OemHIException {
+    public void deleteNewTransaction(@NotNull final HiInfoKey key) throws OemHIException {
         deleteExternalTransaction(key);
     }
 
     @TransactionDefaultUseExisting
-    public String getInfoValueExternalTransaction(@NotNull final InfoKey key) throws OemHIException {
+    public String getInfoValueExternalTransaction(@NotNull final HiInfoKey key) throws OemHIException {
         return getInfoItemExternalTransaction(key).getValue();
     }
 
     @TransactionDefaultCreateNew
-    public String getInfoValueNewTransaction(@NotNull final InfoKey key) throws OemHIException {
+    public String getInfoValueNewTransaction(@NotNull final HiInfoKey key) throws OemHIException {
         return getInfoValueExternalTransaction(key);
     }
 }

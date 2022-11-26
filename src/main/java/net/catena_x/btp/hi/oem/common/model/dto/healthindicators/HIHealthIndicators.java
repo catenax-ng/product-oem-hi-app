@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class HealthIndicators {
+public class HIHealthIndicators {
     long calculationSyncCounter;
     double[] values;
 }
