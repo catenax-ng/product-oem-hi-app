@@ -24,6 +24,14 @@ public class HIVehicleTable {
         internal.insertVehicleExternalTransaction(newVehicle);
     }
 
+    public void insertIfNewNewTransaction(@NotNull final Vehicle vehicle) throws OemHIException {
+        internal.insertIfNewNewTransaction(vehicle);
+    }
+
+    public void insertIfNewExternalTransaction(@NotNull final Vehicle vehicle) throws OemHIException {
+        internal.insertIfNewExternalTransaction(vehicle);
+    }
+
     public void deleteAllNewTransaction() throws OemHIException {
         internal.deleteAllNewTransaction();
     }

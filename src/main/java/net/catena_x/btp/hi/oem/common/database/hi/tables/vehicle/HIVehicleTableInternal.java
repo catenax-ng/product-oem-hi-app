@@ -8,6 +8,8 @@ import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSeria
 import net.catena_x.btp.hi.oem.common.database.hi.base.HITableBase;
 import net.catena_x.btp.hi.oem.common.database.hi.tables.healthindicators.HIHealthIndicatorsDAO;
 import net.catena_x.btp.hi.oem.common.database.hi.tables.healthindicators.HIHealthIndicatorsTableInternal;
+import net.catena_x.btp.hi.oem.common.database.hi.util.VehicleComperator;
+import net.catena_x.btp.hi.oem.common.model.dto.vehicle.HIVehicle;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import net.catena_x.btp.libraries.oem.backend.database.rawdata.dao.config.PersistenceRawDataConfiguration;
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.Vehicle;
@@ -30,10 +32,10 @@ public class HIVehicleTableInternal extends HITableBase {
 
     @Autowired private HIVehicleRepository hiVehicleRepository;
     @Autowired private HIHealthIndicatorsTableInternal healthindicatorsTable;
+    @Autowired private VehicleComperator vehicleComperator;
 
     @HITransactionDefaultUseExisting
-    public void insertVehicleExternalTransaction(@NotNull final Vehicle newVehicle)
-            throws OemHIException {
+    public void insertVehicleExternalTransaction(@NotNull final Vehicle newVehicle) throws OemHIException {
         try {
             hiVehicleRepository.insert(newVehicle.getVehicleId(), newVehicle.getVan(),
                     newVehicle.getGearboxId(), newVehicle.getProductionDate());
@@ -43,9 +45,31 @@ public class HIVehicleTableInternal extends HITableBase {
         }
     }
 
-    @HITransactionDefaultCreateNew
+    @HITransactionSerializableCreateNew
     public void insertVehicleNewTransaction(@NotNull Vehicle newVehicle) throws OemHIException {
         insertVehicleExternalTransaction(newVehicle);
+    }
+
+    @HITransactionSerializableUseExisting
+    public void insertIfNewExternalTransaction(@NotNull final Vehicle vehicle) throws OemHIException {
+        try {
+            final HIVehicleDAO existingVehicle = getByIdExternalTransaction(vehicle.getVehicleId());
+
+            if(existingVehicle != null) {
+                vehicleComperator.assertEqual(existingVehicle, vehicle);
+                return;
+            }
+
+            insertVehicleExternalTransaction(vehicle);
+        }
+        catch(final Exception exception) {
+            throw failed("Failed to insert vehicle!", exception);
+        }
+    }
+
+    @HITransactionDefaultCreateNew
+    public void insertIfNewNewTransaction(@NotNull Vehicle vehicle) throws OemHIException {
+        insertVehicleExternalTransaction(vehicle);
     }
 
     @HITransactionDefaultUseExisting

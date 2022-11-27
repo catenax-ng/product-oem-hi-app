@@ -44,6 +44,7 @@ public class HIDataCollector {
     @Autowired private HIVehicleCollector hiVehicleCollector;
     @Autowired private HIInputDataBuilder hiInputDataBuilder;
     @Autowired private HICalculationTable hiCalculationTable;
+    @Autowired private HIVehicleRegistrator vehicleRegistrator;
     @Autowired private EdcApi edcApi;
     @Autowired private ObjectMapper objectMapper;
 
@@ -72,10 +73,16 @@ public class HIDataCollector {
 
             logger.info("Found " + updatedVehicles.size() + " updated vehicles!");
 
+            registerNewVehicles(updatedVehicles);
+
             buildHIServiceInputsAndDispatch(updatedVehicles, syncCounterMin, options);
         } catch (final Exception exception) {
             throw new OemHIException(exception);
         }
+    }
+
+    private void registerNewVehicles(@NotNull final List<Vehicle> updatedVehicles) throws BtpException {
+        vehicleRegistrator.registerNewVehicles(updatedVehicles);
     }
 
     private void buildHIServiceInputsAndDispatch(@NotNull final List<Vehicle> updatedVehicles,
