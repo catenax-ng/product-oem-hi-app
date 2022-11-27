@@ -10,12 +10,14 @@ import javax.validation.constraints.NotNull;
 @Component
 public final class HICalculationConverter extends DAOConverter<HICalculationDAO, HICalculation> {
     protected HICalculation toDTOSourceExists(@NotNull final HICalculationDAO source) {
-        return new HICalculation(source.getId(), source.getCalculationTimestamp(), source.getCalculationSyncCounter(),
+        return new HICalculation(source.getId(), source.getCalculationTimestamp(),
+                source.getCalculationSyncCounterMin(), source.getCalculationSyncCounterMax(),
                 CalculationStatus.valueOf(source.getStatus()), source.getMessage());
     }
 
     protected HICalculationDAO toDAOSourceExists(@NotNull final HICalculation source) {
         return new HICalculationDAO(source.getId(), source.getCalculationTimestamp(),
-                source.getCalculationSyncCounter(), source.getStatus().toString(), source.getMessage());
+                source.getCalculationSyncCounterMin(), source.getCalculationSyncCounterMax(),
+                source.getStatus().toString(), source.getMessage());
     }
 }

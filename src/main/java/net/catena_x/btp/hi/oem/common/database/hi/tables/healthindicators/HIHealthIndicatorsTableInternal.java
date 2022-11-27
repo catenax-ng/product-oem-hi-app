@@ -1,12 +1,12 @@
 package net.catena_x.btp.hi.oem.common.database.hi.tables.healthindicators;
 
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.HealthIndicatorOutput;
+import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionDefaultCreateNew;
+import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionDefaultUseExisting;
+import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableCreateNew;
+import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableUseExisting;
 import net.catena_x.btp.hi.oem.common.database.hi.base.HITableBase;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
-import net.catena_x.btp.libraries.util.database.annotations.TransactionDefaultCreateNew;
-import net.catena_x.btp.libraries.util.database.annotations.TransactionDefaultUseExisting;
-import net.catena_x.btp.libraries.util.database.annotations.TransactionSerializableCreateNew;
-import net.catena_x.btp.libraries.util.database.annotations.TransactionSerializableUseExisting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,9 +16,9 @@ import java.util.List;
 
 @Component
 public class HIHealthIndicatorsTableInternal extends HITableBase {
-    @Autowired private HIHealthIndicatorsRepository HIHealthIndicatorsRepository;
+    @Autowired private HIHealthIndicatorsRepository hiHealthIndicatorsRepository;
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public String updateHealthIndicatorsGetIdExternalTransaction(
             @NotNull final HealthIndicatorOutput newHealthIndicators,
             @NotNull final String vehicleId,
@@ -26,7 +26,7 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
             @NotNull final long calculationSyncCounter) throws OemHIException {
         try {
             final String newId = generateNewId();
-            HIHealthIndicatorsRepository.insert(newId, vehicleId, newHealthIndicators.getComponentId(),
+            hiHealthIndicatorsRepository.insert(newId, vehicleId, newHealthIndicators.getComponentId(),
                     calculationTimestamp, calculationSyncCounter,
                     arrayToJsonString(newHealthIndicators.getHealthIndicatorValues()));
 
@@ -37,7 +37,7 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public String updateHealthIndicatorsGetIdNewTransaction(
             @NotNull final HealthIndicatorOutput newHealthIndicators,
             @NotNull final String vehicleId,
@@ -48,284 +48,284 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
                 newHealthIndicators, vehicleId, calculationTimestamp, calculationSyncCounter);
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public void deleteAllExternalTransaction() throws OemHIException {
         try {
-            HIHealthIndicatorsRepository.deleteAll();
+            hiHealthIndicatorsRepository.deleteAll();
         } catch(final Exception exception) {
             throw failed("Deleting all health indicators failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public void deleteAllNewTransaction() throws OemHIException {
         deleteAllExternalTransaction();
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public void deleteByIdExternalTransaction(@NotNull final String id) throws OemHIException {
         try {
-            HIHealthIndicatorsRepository.deleteById(id);
+            hiHealthIndicatorsRepository.deleteById(id);
         } catch(final Exception exception) {
             throw failed("Deleting health indicators by id failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public void deleteByIdNewTransaction(@NotNull final String id) throws OemHIException {
         deleteByIdExternalTransaction(id);
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public void deleteByVehicleIdExternalTransaction(@NotNull final String vehicleId) throws OemHIException {
         try {
-            HIHealthIndicatorsRepository.deleteByVehicleId(vehicleId);
+            hiHealthIndicatorsRepository.deleteByVehicleId(vehicleId);
         } catch(final Exception exception) {
             throw failed("Deleting health indicators by vehicle is failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public void deleteByVehicleIdNewTransaction(@NotNull final String vehicleId) throws OemHIException {
         deleteByVehicleIdExternalTransaction(vehicleId);
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public void deleteByGearboxIdExternalTransaction(@NotNull final String gearboxId) throws OemHIException {
         try {
-            HIHealthIndicatorsRepository.deleteByGearboxId(gearboxId);
+            hiHealthIndicatorsRepository.deleteByGearboxId(gearboxId);
         } catch(final Exception exception) {
             throw failed("Deleting health indicators by gearbox is failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public void deleteByGearboxIdNewTransaction(@NotNull final String gearboxId) throws OemHIException {
         deleteByGearboxIdExternalTransaction(gearboxId);
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public void deleteCalculatedUntilExternalTransaction(@NotNull final Instant calculatedUntil) throws OemHIException {
         try {
-            HIHealthIndicatorsRepository.deleteCalculatedUntil(calculatedUntil);
+            hiHealthIndicatorsRepository.deleteCalculatedUntil(calculatedUntil);
         } catch(final Exception exception) {
             throw failed("Deleting health indicators by calculation timestamp is failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public void deleteCalculatedUntilNewTransaction(@NotNull final Instant calculatedUntil) throws OemHIException {
         deleteCalculatedUntilExternalTransaction(calculatedUntil);
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public void deleteCalculationSyncCounterUntilExternalTransaction(@NotNull final long calculationSyncCounter)
             throws OemHIException {
         try {
-            HIHealthIndicatorsRepository.deleteCalculationSyncCounterUntil(calculationSyncCounter);
+            hiHealthIndicatorsRepository.deleteCalculationSyncCounterUntil(calculationSyncCounter);
         } catch(final Exception exception) {
             throw failed("Deleting health indicators by calculation sync counter is failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public void deleteCalculationSyncCounterUntilNewTransaction(@NotNull final long calculationSyncCounter)
             throws OemHIException {
         deleteCalculationSyncCounterUntilExternalTransaction(calculationSyncCounter);
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public HIHealthIndicatorsDAO getByIdExternalTransaction(@NotNull final String id) throws OemHIException {
         try {
-            return HIHealthIndicatorsRepository.queryById(id);
+            return hiHealthIndicatorsRepository.queryById(id);
         }
         catch(final Exception exception) {
             throw failed("Querying database for health indicators by id failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public HIHealthIndicatorsDAO getByIdNewTransaction(@NotNull final String id) throws OemHIException {
         return getByIdExternalTransaction(id);
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public List<HIHealthIndicatorsDAO> getByVehicleIdExternalTransaction(@NotNull final String vehicleId)
             throws OemHIException {
         try {
-            return HIHealthIndicatorsRepository.queryByVehicleId(vehicleId);
+            return hiHealthIndicatorsRepository.queryByVehicleId(vehicleId);
         }
         catch(final Exception exception) {
             throw failed("Querying database for health indicators by vehicle id failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public List<HIHealthIndicatorsDAO> getByVehicleIdNewTransaction(@NotNull final String vehicleId)
             throws OemHIException {
         return getByVehicleIdExternalTransaction(vehicleId);
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public List<HIHealthIndicatorsDAO> getByGearboxIdExternalTransaction(@NotNull final String gearboxId)
             throws OemHIException {
         try {
-            return HIHealthIndicatorsRepository.queryByGearboxId(gearboxId);
+            return hiHealthIndicatorsRepository.queryByGearboxId(gearboxId);
         }
         catch(final Exception exception) {
             throw failed("Querying database for health indicators by gearbox id failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public List<HIHealthIndicatorsDAO> getByGearboxIdNewTransaction(@NotNull final String gearboxId)
             throws OemHIException {
         return getByGearboxIdExternalTransaction(gearboxId);
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public List<HIHealthIndicatorsDAO> getByVehicleIdOrderByCalculationSyncCounterExternalTransaction(
             @NotNull final String vehicleId) throws OemHIException {
         try {
-            return HIHealthIndicatorsRepository.queryByVehicleIdOrderByCalculationSyncCounter(vehicleId);
+            return hiHealthIndicatorsRepository.queryByVehicleIdOrderByCalculationSyncCounter(vehicleId);
         }
         catch(final Exception exception) {
             throw failed("Querying database for health indicators by vehicle id failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public List<HIHealthIndicatorsDAO> getByVehicleIdOrderByCalculationSyncCounterNewTransaction(
             @NotNull final String vehicleId) throws OemHIException {
         return getByVehicleIdOrderByCalculationSyncCounterExternalTransaction(vehicleId);
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public List<HIHealthIndicatorsDAO> getByGearboxIdOrderByCalculationSyncCounterExternalTransaction(
             @NotNull final String gearboxId) throws OemHIException {
         try {
-            return HIHealthIndicatorsRepository.queryByGearboxIdOrderByCalculationSyncCounter(gearboxId);
+            return hiHealthIndicatorsRepository.queryByGearboxIdOrderByCalculationSyncCounter(gearboxId);
         }
         catch(final Exception exception) {
             throw failed("Querying database for health indicators by vehicle id failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public List<HIHealthIndicatorsDAO> getByGearboxIdOrderByCalculationSyncCounterNewTransaction(
             @NotNull final String gearboxId) throws OemHIException {
         return getByGearboxIdOrderByCalculationSyncCounterExternalTransaction(gearboxId);
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public List<HIHealthIndicatorsDAO> getCalculatedSinceExternalTransaction(@NotNull final Instant timestamp)
             throws OemHIException {
         try {
-            return HIHealthIndicatorsRepository.queryByCalculationSince(timestamp);
+            return hiHealthIndicatorsRepository.queryByCalculationSince(timestamp);
         }
         catch(final Exception exception) {
             throw failed("Querying database for health indicators by calculation timestamp failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public List<HIHealthIndicatorsDAO> getCalculatedSinceNewTransaction(@NotNull final Instant timestamp)
             throws OemHIException {
         return getCalculatedSinceExternalTransaction(timestamp);
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public List<HIHealthIndicatorsDAO> getCalculatedUntilExternalTransaction(@NotNull final Instant timestamp)
             throws OemHIException {
         try {
-            return HIHealthIndicatorsRepository.queryByCalculationUntil(timestamp);
+            return hiHealthIndicatorsRepository.queryByCalculationUntil(timestamp);
         }
         catch(final Exception exception) {
             throw failed("Querying database for health indicators by calculation timestamp failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public List<HIHealthIndicatorsDAO> getCalculatedUntilNewTransaction(@NotNull final Instant timestamp)
             throws OemHIException {
         return getCalculatedUntilExternalTransaction(timestamp);
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public List<HIHealthIndicatorsDAO> getCalculationSyncCounterSinceExternalTransaction(
             @NotNull final long calculationSyncCounterSince) throws OemHIException {
         try {
-            return HIHealthIndicatorsRepository.queryByCalculationSyncCounterSince(calculationSyncCounterSince);
+            return hiHealthIndicatorsRepository.queryByCalculationSyncCounterSince(calculationSyncCounterSince);
         }
         catch(final Exception exception) {
             throw failed("Querying database for health indicators by calculation timestamp failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public List<HIHealthIndicatorsDAO> getCalculationSyncCounterSinceNewTransaction(
             @NotNull final long calculationSyncCounterSince) throws OemHIException {
         return getCalculationSyncCounterSinceExternalTransaction(calculationSyncCounterSince);
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public List<HIHealthIndicatorsDAO> getCalculationSyncCounterUntilExternalTransaction(
             @NotNull final long calculationSyncCounterUntil) throws OemHIException {
         try {
-            return HIHealthIndicatorsRepository.queryByCalculationSyncCounterUntil(calculationSyncCounterUntil);
+            return hiHealthIndicatorsRepository.queryByCalculationSyncCounterUntil(calculationSyncCounterUntil);
         }
         catch(final Exception exception) {
             throw failed("Querying database for health indicators by calculation timestamp failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public List<HIHealthIndicatorsDAO> getCalculationSyncCounterUntilNewTransaction(
             @NotNull final long calculationSyncCounterUntil) throws OemHIException {
         return getCalculationSyncCounterUntilExternalTransaction(calculationSyncCounterUntil);
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public List<HIHealthIndicatorsDAO> getAllExternalTransaction() throws OemHIException {
         try {
-            return HIHealthIndicatorsRepository.queryAll();
+            return hiHealthIndicatorsRepository.queryAll();
         }
         catch(final Exception exception) {
             throw failed("Querying database for all health indicators failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public List<HIHealthIndicatorsDAO> getAllNewTransaction() throws OemHIException {
         return getAllExternalTransaction();
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public List<HIHealthIndicatorsDAO> getAllOrderByCalculationTimestampExternalTransaction() throws OemHIException {
         try {
-            return HIHealthIndicatorsRepository.queryAllOrderByCalculationTimestamp();
+            return hiHealthIndicatorsRepository.queryAllOrderByCalculationTimestamp();
         }
         catch(final Exception exception) {
             throw failed("Querying database for all health indicators failed!", exception);
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public List<HIHealthIndicatorsDAO> getAllOrderByCalculationTimestampNewTransaction() throws OemHIException {
         return getAllOrderByCalculationTimestampExternalTransaction();
     }
 
-    @TransactionDefaultUseExisting
+    @HITransactionDefaultUseExisting
     public List<HIHealthIndicatorsDAO> getAllOrderByCalculationSyncCounterExternalTransaction() throws OemHIException {
         try {
-            return HIHealthIndicatorsRepository.queryAllOrderByCalculationSyncCounter();
+            return hiHealthIndicatorsRepository.queryAllOrderByCalculationSyncCounter();
         }
         catch(final Exception exception) {
             throw failed("Querying database for all health indicators failed!", exception );
         }
     }
 
-    @TransactionDefaultCreateNew
+    @HITransactionDefaultCreateNew
     public List<HIHealthIndicatorsDAO> getAllOrderByCalculationSyncCounterNewTransaction() throws OemHIException {
         return getAllOrderByCalculationSyncCounterExternalTransaction();
     }

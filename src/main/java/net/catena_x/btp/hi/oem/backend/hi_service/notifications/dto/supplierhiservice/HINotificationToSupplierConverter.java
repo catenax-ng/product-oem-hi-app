@@ -13,21 +13,21 @@ import javax.validation.constraints.NotNull;
 @Component
 public class HINotificationToSupplierConverter
         extends DAOConverter<NotificationDAO<HINotificationToSupplierContentDAO>,
-                                        Notification<HINotificationToSupplierContent>> {
+                                        Notification<DataToSupplierContent>> {
 
     @Autowired private HINotificationToSupplierContentConverter HINotificationToSupplierContentConverter;
     @Autowired private NotificationHeaderConverter notificationHeaderConverter;
 
-    protected Notification<HINotificationToSupplierContent> toDTOSourceExists(
+    protected Notification<DataToSupplierContent> toDTOSourceExists(
             @NotNull final NotificationDAO<HINotificationToSupplierContentDAO> source) {
 
-        return new Notification<HINotificationToSupplierContent>(
+        return new Notification<DataToSupplierContent>(
                 notificationHeaderConverter.toDTO(source.getHeader()),
                 HINotificationToSupplierContentConverter.toDTO(source.getContent()));
     }
 
     protected NotificationDAO<HINotificationToSupplierContentDAO> toDAOSourceExists(
-            @NotNull final Notification<HINotificationToSupplierContent> source) {
+            @NotNull final Notification<DataToSupplierContent> source) {
 
         return new NotificationDAO<HINotificationToSupplierContentDAO>(
                 notificationHeaderConverter.toDAO(source.getHeader()),

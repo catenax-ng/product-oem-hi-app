@@ -16,47 +16,59 @@ public class HICalculationTable {
     @Autowired private HICalculationConverter hiCalculationConverter;
 
     public void insertNewTransaction(@NotNull final String id, @NotNull final Instant calculationTimestamp,
-                                     @NotNull final long calculationSyncCounter,
+                                     @NotNull final long calculationSyncCounterMin,
+                                     @NotNull final long calculationSyncCounterMax,
                                      @NotNull final CalculationStatus status) throws OemHIException {
-        internal.insertNewTransaction(id, calculationTimestamp, calculationSyncCounter, status);
+        internal.insertNewTransaction(id, calculationTimestamp, calculationSyncCounterMin,
+                calculationSyncCounterMax, status);
     }
 
     public void insertExternalTransaction(@NotNull final String id, @NotNull final Instant calculationTimestamp,
-                                          @NotNull final long calculationSyncCounter,
+                                          @NotNull final long calculationSyncCounterMin,
+                                          @NotNull final long calculationSyncCounterMax,
                                           @NotNull final CalculationStatus status) throws OemHIException {
-        internal.insertExternalTransaction(id, calculationTimestamp, calculationSyncCounter, status);
+        internal.insertExternalTransaction(id, calculationTimestamp, calculationSyncCounterMin,
+                calculationSyncCounterMax, status);
     }
 
     public String insertGetIdNewTransaction(@NotNull final Instant calculationTimestamp,
-                                            @NotNull final long calculationSyncCounter,
+                                            @NotNull final long calculationSyncCounterMin,
+                                            @NotNull final long calculationSyncCounterMax,
                                             @NotNull final CalculationStatus status) throws OemHIException {
-        return internal.insertGetIdNewTransaction(calculationTimestamp, calculationSyncCounter, status);
+        return internal.insertGetIdNewTransaction(calculationTimestamp, calculationSyncCounterMin,
+                calculationSyncCounterMax, status);
     }
 
     public String insertGetIdExternalTransaction(@NotNull final Instant calculationTimestamp,
-                                                 @NotNull final long calculationSyncCounter,
+                                                 @NotNull final long calculationSyncCounterMin,
+                                                 @NotNull final long calculationSyncCounterMax,
                                                  @NotNull final CalculationStatus status) throws OemHIException {
-        return internal.insertGetIdExternalTransaction(calculationTimestamp, calculationSyncCounter, status);
+        return internal.insertGetIdExternalTransaction(calculationTimestamp, calculationSyncCounterMin,
+                calculationSyncCounterMax, status);
     }
 
-    public void createNowNewTransaction(@NotNull final String id, @NotNull final long calculationSyncCounter)
+    public void createNowNewTransaction(@NotNull final String id, @NotNull final long calculationSyncCounterMin,
+                                        @NotNull final long calculationSyncCounterMax)
             throws OemHIException {
-        internal.createNowNewTransaction(id, calculationSyncCounter);
+        internal.createNowNewTransaction(id, calculationSyncCounterMin, calculationSyncCounterMax);
     }
 
-    public void createNowExternalTransaction(@NotNull final String id, @NotNull final long calculationSyncCounter)
+    public void createNowExternalTransaction(@NotNull final String id, @NotNull final long calculationSyncCounterMin,
+                                             @NotNull final long calculationSyncCounterMax)
             throws OemHIException {
-        internal.createNowExternalTransaction(id, calculationSyncCounter);
+        internal.createNowExternalTransaction(id, calculationSyncCounterMin, calculationSyncCounterMax);
     }
 
-    public String createNowGetIdNewTransaction(@NotNull final long calculationSyncCounter)
+    public String createNowGetIdNewTransaction(@NotNull final long calculationSyncCounterMin,
+                                               @NotNull final long calculationSyncCounterMax)
             throws OemHIException {
-        return internal.createNowGetIdNewTransaction(calculationSyncCounter);
+        return internal.createNowGetIdNewTransaction(calculationSyncCounterMin, calculationSyncCounterMax);
     }
 
-    public String createNowGetIdExternalTransaction(@NotNull final long calculationSyncCounter)
+    public String createNowGetIdExternalTransaction(@NotNull final long calculationSyncCounterMin,
+                                                    @NotNull final long calculationSyncCounterMax)
             throws OemHIException {
-        return internal.createNowGetIdExternalTransaction(calculationSyncCounter);
+        return internal.createNowGetIdExternalTransaction(calculationSyncCounterMin, calculationSyncCounterMax);
     }
 
     public void updateStatusNewTransaction(@NotNull final String id, @NotNull final CalculationStatus newStatus)
@@ -131,6 +143,17 @@ public class HICalculationTable {
     public List<HICalculation> getByStatusExternalTransaction(@NotNull final CalculationStatus status)
             throws OemHIException {
         return hiCalculationConverter.toDTO(internal.getByStatusExternalTransaction(status));
+    }
+
+    public List<HICalculation> getByStatusOrderByCalculationSyncCounterNewTransaction(
+            @NotNull final CalculationStatus status) throws OemHIException {
+        return hiCalculationConverter.toDTO(internal.getByStatusOrderByCalculationSyncCounterNewTransaction(status));
+    }
+
+    public List<HICalculation> getByStatusOrderByCalculationSyncCounterExternalTransaction(
+            @NotNull final CalculationStatus status) throws OemHIException {
+        return hiCalculationConverter.toDTO(internal.getByStatusOrderByCalculationSyncCounterExternalTransaction(
+                status));
     }
 
     public List<HICalculation> getAllOrderByCalculationTimestampNewTransaction() throws OemHIException {

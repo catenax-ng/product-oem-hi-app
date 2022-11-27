@@ -1,28 +1,26 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.collector;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.DataToSupplierContent;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.HealthIndicatorInput;
 import net.catena_x.btp.hi.oem.backend.hi_service.receiver.HIResultProcessor;
 import net.catena_x.btp.hi.oem.backend.hi_service.util.S3EDCInitiatorImpl;
-import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HINotificationToSupplierContent;
-import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.HealthIndicatorInput;
 import net.catena_x.btp.libraries.bamm.common.BammStatus;
 import net.catena_x.btp.libraries.bamm.custom.adaptionvalues.AdaptionValues;
 import net.catena_x.btp.libraries.bamm.custom.classifiedloadspectrum.ClassifiedLoadSpectrum;
+import net.catena_x.btp.libraries.oem.backend.cloud.S3Handler;
 import net.catena_x.btp.libraries.oem.backend.model.dto.infoitem.InfoTable;
+import net.catena_x.btp.libraries.oem.backend.model.dto.telematicsdata.TelematicsData;
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.Vehicle;
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.VehicleTable;
-import net.catena_x.btp.libraries.oem.backend.model.dto.telematicsdata.TelematicsData;
 import net.catena_x.btp.libraries.oem.backend.model.enums.InfoKey;
-import net.catena_x.btp.libraries.oem.backend.cloud.S3Handler;
-import net.catena_x.btp.libraries.util.json.TimeStampDeserializer;
-import net.catena_x.btp.libraries.util.json.TimeStampSerializer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -61,38 +59,18 @@ class DataCollectorMockTest {
 
     private final UUID testUUID = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
-    @MockBean
-    private HIResultProcessor resultHandler;
-    @MockBean
-    private S3EDCInitiatorImpl edcHandler;
-    @MockBean
-    private S3Handler s3Handler;
-    @MockBean
-    private VehicleTable vehicleTable;
-    @MockBean
-    private InfoTable infoTable;
+    @MockBean private HIResultProcessor resultHandler;
+    @MockBean private S3EDCInitiatorImpl edcHandler;
+    @MockBean private S3Handler s3Handler;
+    @MockBean private VehicleTable vehicleTable;
+    @MockBean private InfoTable infoTable;
 
     @Autowired private HIDataCollector collector;
 
-    @Autowired private ObjectMapper om;
-    boolean objectMapperInitialized = false;
+    @Autowired private ObjectMapper objectMapper;
 
     @BeforeEach
     void beforeEach() {
-        if(!objectMapperInitialized){
-            om.registerModule(new JavaTimeModule());
-
-            SimpleModule timestampSerializerModule = new SimpleModule();
-            timestampSerializerModule.addSerializer(Instant.class, new TimeStampSerializer());
-            om.registerModule(timestampSerializerModule);
-
-            SimpleModule timestampDeserializerModule = new SimpleModule();
-            timestampDeserializerModule.addDeserializer(Instant.class, new TimeStampDeserializer());
-            om.registerModule(timestampDeserializerModule);
-
-            objectMapperInitialized = true;
-        }
-
         MockitoAnnotations.openMocks(this);
     }
 
@@ -111,8 +89,9 @@ class DataCollectorMockTest {
         Mockito.when(infoTable.getInfoValueNewTransaction(InfoKey.DATAVERSION)).thenReturn(dataversion);
 
         // load expected result
-        String expectedJson = om.writeValueAsString(om.readValue(readFromResourceFile("/update-expected-s3-1.json"),
-                HINotificationToSupplierContent.class));
+        String expectedJson = objectMapper.writeValueAsString(
+                objectMapper.readValue(readFromResourceFile("/update-expected-s3-1.json"),
+                DataToSupplierContent.class));
 
         // mock UUID class to always return the same UUID
         try (MockedStatic<UUID> mocked = Mockito.mockStatic(UUID.class)) {
@@ -164,7 +143,7 @@ class DataCollectorMockTest {
 
         Mockito.when(infoTable.getInfoValueNewTransaction(InfoKey.DATAVERSION)).thenReturn(dataversion);
 
-        ClassifiedLoadSpectrum loadSpectum = om.readValue(
+        ClassifiedLoadSpectrum loadSpectum = objectMapper.readValue(
                 readFromResourceFile("/load-collective-1.json"),
                 ClassifiedLoadSpectrum.class);
 
@@ -193,12 +172,12 @@ class DataCollectorMockTest {
         HealthIndicatorInput result = (HealthIndicatorInput) getConvertMethod().invoke(collector, input,
                 "urn:uuid:2343245-2442-2344-2345423");
 
-        HealthIndicatorInput expected = om.readValue(
+        HealthIndicatorInput expected = objectMapper.readValue(
                 readFromResourceFile("/convert-expected-result-1.json"), HealthIndicatorInput.class
         );
 
         // comparing the objects directly fails because of the nested primitive arrays
-        assertEquals(om.writeValueAsString(expected), om.writeValueAsString(result));
+        assertEquals(objectMapper.writeValueAsString(expected), objectMapper.writeValueAsString(result));
     }
 
     private Method getConvertMethod() throws NoSuchMethodException {
@@ -209,7 +188,7 @@ class DataCollectorMockTest {
     }
 
     private List<Vehicle> generateMockDatabaseResponse(long counter) throws Exception {
-        ClassifiedLoadSpectrum loadSpectum = om.readValue(
+        ClassifiedLoadSpectrum loadSpectum = objectMapper.readValue(
                 readFromResourceFile("/load-collective-1.json"),
                 ClassifiedLoadSpectrum.class);
 

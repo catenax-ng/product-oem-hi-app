@@ -1,10 +1,10 @@
 package net.catena_x.btp.hi.oem.common.database.hi.tables.calculation;
 
+import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableCreateNew;
+import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableUseExisting;
 import net.catena_x.btp.hi.oem.common.database.hi.base.HITableBase;
 import net.catena_x.btp.hi.oem.common.model.enums.CalculationStatus;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
-import net.catena_x.btp.libraries.util.database.annotations.TransactionSerializableCreateNew;
-import net.catena_x.btp.libraries.util.database.annotations.TransactionSerializableUseExisting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,302 +14,332 @@ import java.util.List;
 
 @Component
 public class HICalculationTableInternal extends HITableBase {
-    @Autowired private HICalculationRepository HICalculationRepository;
+    @Autowired private HICalculationRepository hiCalculationRepository;
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public void insertExternalTransaction(@NotNull final String id, @NotNull final Instant calculationTimestamp,
-                                          @NotNull final long calculationSyncCounter,
+                                          @NotNull final long calculationSyncCounterMin,
+                                          @NotNull final long calculationSyncCounterMax,
                                           @NotNull final CalculationStatus status) throws OemHIException {
         try {
-            HICalculationRepository.insert(id, calculationTimestamp, calculationSyncCounter, status.toString());
+            hiCalculationRepository.insert(id, calculationTimestamp, calculationSyncCounterMin,
+                    calculationSyncCounterMax, status.toString());
         } catch (final Exception exception) {
             throw failed("Inserting calculation failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public void insertNewTransaction(@NotNull final String id, @NotNull final Instant calculationTimestamp,
-                                     @NotNull final long calculationSyncCounter,
+                                     @NotNull final long calculationSyncCounterMin,
+                                     @NotNull final long calculationSyncCounterMax,
                                      @NotNull final CalculationStatus status) throws OemHIException {
-        insertExternalTransaction(id, calculationTimestamp, calculationSyncCounter, status);
+        insertExternalTransaction(id, calculationTimestamp, calculationSyncCounterMin,
+                calculationSyncCounterMax, status);
     }
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public String insertGetIdExternalTransaction(@NotNull final Instant calculationTimestamp,
-                                                 @NotNull final long calculationSyncCounter,
+                                                 @NotNull final long calculationSyncCounterMin,
+                                                 @NotNull final long calculationSyncCounterMax,
                                                  @NotNull final CalculationStatus status) throws OemHIException {
         try {
             final String id = generateNewId();
-            HICalculationRepository.insert(id, calculationTimestamp, calculationSyncCounter, status.toString());
+            hiCalculationRepository.insert(id, calculationTimestamp, calculationSyncCounterMin,
+                    calculationSyncCounterMax, status.toString());
             return id;
         } catch (final Exception exception) {
             throw failed("Inserting calculation failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public String insertGetIdNewTransaction(@NotNull final Instant calculationTimestamp,
-                                            @NotNull final long calculationSyncCounter,
+                                            @NotNull final long calculationSyncCounterMin,
+                                            @NotNull final long calculationSyncCounterMax,
                                             @NotNull final CalculationStatus status) throws OemHIException {
-        return insertGetIdExternalTransaction(calculationTimestamp, calculationSyncCounter, status);
+        return insertGetIdExternalTransaction(calculationTimestamp, calculationSyncCounterMin,
+                calculationSyncCounterMax, status);
     }
 
-    @TransactionSerializableUseExisting
-    public void createNowExternalTransaction(@NotNull final String id, @NotNull final long calculationSyncCounter)
-            throws OemHIException {
+    @HITransactionSerializableUseExisting
+    public void createNowExternalTransaction(@NotNull final String id, @NotNull final long calculationSyncCounterMin,
+                                             @NotNull final long calculationSyncCounterMax) throws OemHIException {
         try {
-            HICalculationRepository.createNow(id, calculationSyncCounter, CalculationStatus.CREATED.toString());
+            hiCalculationRepository.createNow(id, calculationSyncCounterMin,calculationSyncCounterMax,
+                    CalculationStatus.CREATED.toString());
         } catch (final Exception exception) {
             throw failed("Inserting calculation failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
-    public void createNowNewTransaction(@NotNull final String id, @NotNull final long calculationSyncCounter)
+    @HITransactionSerializableCreateNew
+    public void createNowNewTransaction(@NotNull final String id, @NotNull final long calculationSyncCounterMin,
+                                        @NotNull final long calculationSyncCounterMax)
             throws OemHIException {
-        createNowExternalTransaction(id, calculationSyncCounter);
+        createNowExternalTransaction(id, calculationSyncCounterMin, calculationSyncCounterMax);
     }
 
-    @TransactionSerializableUseExisting
-    public String createNowGetIdExternalTransaction(@NotNull final long calculationSyncCounter) throws OemHIException {
+    @HITransactionSerializableUseExisting
+    public String createNowGetIdExternalTransaction(@NotNull final long calculationSyncCounterMin,
+                                                    @NotNull final long calculationSyncCounterMax)
+            throws OemHIException {
         try {
             final String id = generateNewId();
-            HICalculationRepository.createNow(id, calculationSyncCounter, CalculationStatus.CREATED.toString());
+            hiCalculationRepository.createNow(id, calculationSyncCounterMin, calculationSyncCounterMax,
+                    CalculationStatus.CREATED.toString());
             return id;
         } catch (final Exception exception) {
             throw failed("Inserting calculation failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
-    public String createNowGetIdNewTransaction(@NotNull final long calculationSyncCounter)
+    @HITransactionSerializableCreateNew
+    public String createNowGetIdNewTransaction(@NotNull final long calculationSyncCounterMin,
+                                               @NotNull final long calculationSyncCounterMax)
             throws OemHIException {
-        return createNowGetIdExternalTransaction(calculationSyncCounter);
+        return createNowGetIdExternalTransaction(calculationSyncCounterMin, calculationSyncCounterMax);
     }
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public void updateStatusExternalTransaction(@NotNull final String id, @NotNull final CalculationStatus newStatus)
             throws OemHIException {
         try {
-            HICalculationRepository.updateStatus(id, newStatus.toString());
+            hiCalculationRepository.updateStatus(id, newStatus.toString());
         } catch (final Exception exception) {
             throw failed("Updating calculation status failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public void updateStatusNewTransaction(@NotNull final String id, @NotNull final CalculationStatus newStatus)
             throws OemHIException {
         updateStatusExternalTransaction(id, newStatus);
     }
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public void setMessageExternalTransaction(@NotNull final String id, @NotNull final String message)
             throws OemHIException {
         try {
-            HICalculationRepository.setMessage(id, message);
+            hiCalculationRepository.setMessage(id, message);
         } catch (final Exception exception) {
             throw failed("Updating message for calculation failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public void setMessageNewTransaction(@NotNull final String id, @NotNull final String message)
             throws OemHIException {
         setMessageExternalTransaction(id, message);
     }
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public void deleteByIdExternalTransaction(@NotNull final String id) throws OemHIException {
         try {
-            HICalculationRepository.deleteById(id);
+            hiCalculationRepository.deleteById(id);
         } catch (final Exception exception) {
             throw failed("Deleting calculation failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public void deleteByIdNewTransaction(@NotNull final String id) throws OemHIException {
         deleteByIdExternalTransaction(id);
     }
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public void deleteByStatusExternalTransaction(@NotNull final CalculationStatus status)
             throws OemHIException {
         try {
-            HICalculationRepository.deleteByStatus(status.toString());
+            hiCalculationRepository.deleteByStatus(status.toString());
         } catch (final Exception exception) {
             throw failed("Deleting calculation failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public void deleteByStatusNewTransaction(@NotNull final CalculationStatus status) throws OemHIException {
         deleteByStatusExternalTransaction(status);
     }
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public void deleteCalculatedUntilExternalTransaction(@NotNull final Instant calculatedUntil) throws OemHIException {
         try {
-            HICalculationRepository.deleteCalculatedUntil(calculatedUntil);
+            hiCalculationRepository.deleteCalculatedUntil(calculatedUntil);
         } catch (final Exception exception) {
             throw failed("Deleting calculation failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public void deleteCalculatedUntilNewTransaction(@NotNull final Instant calculatedUntil)
             throws OemHIException {
         deleteCalculatedUntilExternalTransaction(calculatedUntil);
     }
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public void deleteCalculationSyncCounterUntilExternalTransaction(@NotNull final long calculationSyncCounter)
             throws OemHIException {
         try {
-            HICalculationRepository.deleteCalculationSyncCounterUntil(calculationSyncCounter);
+            hiCalculationRepository.deleteCalculationSyncCounterUntil(calculationSyncCounter);
         } catch (final Exception exception) {
             throw failed("Deleting calculation failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public void deleteCalculationSyncCounterUntilNewTransaction(@NotNull final long calculationSyncCounter)
             throws OemHIException {
         deleteCalculationSyncCounterUntilExternalTransaction(calculationSyncCounter);
     }
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public List<HICalculationDAO> getAllExternalTransaction() throws OemHIException {
         try {
-            return HICalculationRepository.queryAll();
+            return hiCalculationRepository.queryAll();
         } catch (final Exception exception) {
             throw failed("Querying calculations failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public List<HICalculationDAO> getAllNewTransaction() throws OemHIException {
         return getAllExternalTransaction();
     }
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public HICalculationDAO getByIdExternalTransaction(@NotNull final String id) throws OemHIException {
         try {
-            return HICalculationRepository.queryById(id);
+            return hiCalculationRepository.queryById(id);
         } catch (final Exception exception) {
             throw failed("Querying calculation by id failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public HICalculationDAO getByIdNewTransaction(@NotNull final String id) throws OemHIException {
         return getByIdExternalTransaction(id);
     }
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public List<HICalculationDAO> getByStatusExternalTransaction(@NotNull final CalculationStatus status)
             throws OemHIException {
         try {
-            return HICalculationRepository.queryByStatus(status.toString());
+            return hiCalculationRepository.queryByStatus(status.toString());
         } catch (final Exception exception) {
             throw failed("Querying calculations by status failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public List<HICalculationDAO> getByStatusNewTransaction(@NotNull final CalculationStatus status)
             throws OemHIException {
         return getByStatusExternalTransaction(status);
     }
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
+    public List<HICalculationDAO> getByStatusOrderByCalculationSyncCounterExternalTransaction(
+            @NotNull final CalculationStatus status) throws OemHIException {
+        try {
+            return hiCalculationRepository.queryByStatusOrderByCalculationSyncCounter(status.toString());
+        } catch (final Exception exception) {
+            throw failed("Querying calculations by status failed!", exception);
+        }
+    }
+
+    @HITransactionSerializableCreateNew
+    public List<HICalculationDAO> getByStatusOrderByCalculationSyncCounterNewTransaction(
+            @NotNull final CalculationStatus status) throws OemHIException {
+        return getByStatusOrderByCalculationSyncCounterExternalTransaction(status);
+    }
+
+    @HITransactionSerializableUseExisting
     public List<HICalculationDAO> getAllOrderByCalculationTimestampExternalTransaction() throws OemHIException {
         try {
-            return HICalculationRepository.queryAllOrderByCalculationTimestamp();
+            return hiCalculationRepository.queryAllOrderByCalculationTimestamp();
         } catch (final Exception exception) {
             throw failed("Querying calculations failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public List<HICalculationDAO> getAllOrderByCalculationTimestampNewTransaction() throws OemHIException {
         return getAllOrderByCalculationTimestampExternalTransaction();
     }
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public List<HICalculationDAO> getAllOrderByCalculationSyncCounterExternalTransaction() throws OemHIException {
         try {
-            return HICalculationRepository.queryAllOrderByCalculationSyncCounter();
+            return hiCalculationRepository.queryAllOrderByCalculationSyncCounter();
         } catch (final Exception exception) {
             throw failed("Querying calculations failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public List<HICalculationDAO> getAllOrderByCalculationSyncCounterNewTransaction() throws OemHIException {
         return getAllOrderByCalculationSyncCounterExternalTransaction();
     }
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public List<HICalculationDAO> getByCalculationSinceExternalTransaction(
             @NotNull final Instant calculationTimestampSince) throws OemHIException {
         try {
-            return HICalculationRepository.queryByCalculationSince(calculationTimestampSince);
+            return hiCalculationRepository.queryByCalculationSince(calculationTimestampSince);
         } catch (final Exception exception) {
             throw failed("Querying calculations failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public List<HICalculationDAO> getByCalculationSinceNewTransaction(
             @NotNull final Instant calculationTimestampSince) throws OemHIException {
         return getByCalculationSinceExternalTransaction(calculationTimestampSince);
     }
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public List<HICalculationDAO> getByCalculationUntilExternalTransaction(
             @NotNull final Instant calculationTimestampUntil) throws OemHIException {
         try {
-            return HICalculationRepository.queryByCalculationUntil(calculationTimestampUntil);
+            return hiCalculationRepository.queryByCalculationUntil(calculationTimestampUntil);
         } catch (final Exception exception) {
             throw failed("Querying calculations failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public List<HICalculationDAO> getByCalculationUntilNewTransaction(
             @NotNull final Instant calculationTimestampUntil) throws OemHIException {
         return getByCalculationUntilExternalTransaction(calculationTimestampUntil);
     }
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public List<HICalculationDAO> getByCalculationSyncCounterSinceExternalTransaction(
             @NotNull final long calculationSyncCounterSince) throws OemHIException {
         try {
-            return HICalculationRepository.queryByCalculationSyncCounterSince(calculationSyncCounterSince);
+            return hiCalculationRepository.queryByCalculationSyncCounterSince(calculationSyncCounterSince);
         } catch (final Exception exception) {
             throw failed("Querying calculations failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public List<HICalculationDAO> getByCalculationSyncCounterSinceNewTransaction(
             @NotNull final long calculationSyncCounterSince) throws OemHIException {
         return getByCalculationSyncCounterSinceExternalTransaction(calculationSyncCounterSince);
     }
 
-    @TransactionSerializableUseExisting
+    @HITransactionSerializableUseExisting
     public List<HICalculationDAO> getByCalculationSyncCounterUntilExternalTransaction(
             @NotNull final long calculationSyncCounterUntil) throws OemHIException {
         try {
-            return HICalculationRepository.queryByCalculationSyncCounterUntil(calculationSyncCounterUntil);
+            return hiCalculationRepository.queryByCalculationSyncCounterUntil(calculationSyncCounterUntil);
         } catch (final Exception exception) {
             throw failed("Querying calculations failed!", exception);
         }
     }
 
-    @TransactionSerializableCreateNew
+    @HITransactionSerializableCreateNew
     public List<HICalculationDAO> getByCalculationSyncCounterUntilNewTransaction(
             @NotNull final long calculationSyncCounterUntil) throws OemHIException {
         return getByCalculationSyncCounterUntilExternalTransaction(calculationSyncCounterUntil);

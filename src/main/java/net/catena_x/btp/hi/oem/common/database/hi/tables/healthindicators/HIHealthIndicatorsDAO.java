@@ -9,53 +9,53 @@ import javax.persistence.*;
 import java.time.Instant;
 
 @Entity
-@Table(name = "healthindicators")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.insert",
-        query = "INSERT INTO healthindicators (id, vehicle_id, gearbox_id, calculation_timestamp, " +
+@Table(name = "hihealthindicators")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.insert",
+        query = "INSERT INTO hihealthindicators (id, vehicle_id, gearbox_id, calculation_timestamp, " +
                 "calculation_sync_counter, values) "
                 + "VALUES (:id, :vehicle_id, :gearbox_id, :calculation_timestamp, :calculation_sync_counter, :values)")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.deleteAll",
-        query = "DELETE FROM healthindicators")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.deleteById",
-        query = "DELETE FROM healthindicators WHERE id=:id")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.deleteByVehicleId",
-        query = "DELETE FROM healthindicators WHERE vehicleId=:vehicle_id")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.deleteByGearboxId",
-        query = "DELETE FROM healthindicators WHERE gearbox_id=:gearbox_id")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.deleteCalculatedUntil",
-        query = "DELETE FROM healthindicators WHERE calculation_timestamp<=:calculated_until")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.deleteCalculationSyncCounterUntil",
-        query = "DELETE FROM healthindicators WHERE calculation_sync_counter<=:calculation_sync_counter")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryAll", resultClass = HIHealthIndicatorsDAO.class,
-        query = "SELECT * FROM healthindicators")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryById", resultClass = HIHealthIndicatorsDAO.class,
-        query = "DELETE * FROM healthindicators WHERE id=:id")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryAllOrderByCalculationTimestamp",
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.deleteAll",
+        query = "DELETE FROM hihealthindicators")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.deleteById",
+        query = "DELETE FROM hihealthindicators WHERE id=:id")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.deleteByVehicleId",
+        query = "DELETE FROM hihealthindicators WHERE vehicleId=:vehicle_id")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.deleteByGearboxId",
+        query = "DELETE FROM hihealthindicators WHERE gearbox_id=:gearbox_id")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.deleteCalculatedUntil",
+        query = "DELETE FROM hihealthindicators WHERE calculation_timestamp<=:calculated_until")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.deleteCalculationSyncCounterUntil",
+        query = "DELETE FROM hihealthindicators WHERE calculation_sync_counter<=:calculation_sync_counter")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.queryAll", resultClass = HIHealthIndicatorsDAO.class,
+        query = "SELECT * FROM hihealthindicators")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.queryById", resultClass = HIHealthIndicatorsDAO.class,
+        query = "DELETE * FROM hihealthindicators WHERE id=:id")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.queryAllOrderByCalculationTimestamp",
         resultClass = HIHealthIndicatorsDAO.class,
-        query = "SELECT * FROM healthindicators ORDER BY calculation_timestamp")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryAllOrderByCalculationSyncCounter",
+        query = "SELECT * FROM hihealthindicators ORDER BY calculation_timestamp")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.queryAllOrderByCalculationSyncCounter",
         resultClass = HIHealthIndicatorsDAO.class,
-        query = "SELECT * FROM healthindicators ORDER BY calculation_sync_counter")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryByVehicleId", resultClass = HIHealthIndicatorsDAO.class,
-        query = "SELECT * FROM healthindicators WHERE vehicle_id=:vehicle_id")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryByGearboxId", resultClass = HIHealthIndicatorsDAO.class,
-        query = "SELECT * FROM healthindicators WHERE gearbox_id=:gearbox_id")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryByVehicleIdOrderByCalculationSyncCounter",
+        query = "SELECT * FROM hihealthindicators ORDER BY calculation_sync_counter")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.queryByVehicleId", resultClass = HIHealthIndicatorsDAO.class,
+        query = "SELECT * FROM hihealthindicators WHERE vehicle_id=:vehicle_id")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.queryByGearboxId", resultClass = HIHealthIndicatorsDAO.class,
+        query = "SELECT * FROM hihealthindicators WHERE gearbox_id=:gearbox_id")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.queryByVehicleIdOrderByCalculationSyncCounter",
         resultClass = HIHealthIndicatorsDAO.class,
-        query = "SELECT * FROM healthindicators WHERE vehicle_id=:vehicle_id ORDER BY calculation_sync_counter")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryByGearboxIdOrderByCalculationSyncCounter",
+        query = "SELECT * FROM hihealthindicators WHERE vehicle_id=:vehicle_id ORDER BY calculation_sync_counter")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.queryByGearboxIdOrderByCalculationSyncCounter",
         resultClass = HIHealthIndicatorsDAO.class,
-        query = "SELECT * FROM healthindicators WHERE gearbox_id=:gearbox_id ORDER BY calculation_sync_counter")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryByCalculationSince", resultClass = HIHealthIndicatorsDAO.class,
-        query = "SELECT * FROM healthindicators WHERE calculation_timestamp<=:calculation_timestamp_since")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryByCalculationUntil", resultClass = HIHealthIndicatorsDAO.class,
-        query = "SELECT * FROM healthindicators WHERE calculation_timestamp<=:calculation_timestamp_until")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryByCalculationSyncCounterSince",
+        query = "SELECT * FROM hihealthindicators WHERE gearbox_id=:gearbox_id ORDER BY calculation_sync_counter")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.queryByCalculationSince", resultClass = HIHealthIndicatorsDAO.class,
+        query = "SELECT * FROM hihealthindicators WHERE calculation_timestamp<=:calculation_timestamp_since")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.queryByCalculationUntil", resultClass = HIHealthIndicatorsDAO.class,
+        query = "SELECT * FROM hihealthindicators WHERE calculation_timestamp<=:calculation_timestamp_until")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.queryByCalculationSyncCounterSince",
         resultClass = HIHealthIndicatorsDAO.class,
-        query = "SELECT * FROM healthindicators WHERE calculation_sync_counter>=:calculation_sync_counter_since")
-@NamedNativeQuery(name = "HealthIndicatorsDAO.queryByCalculationSyncCounterUntil",
+        query = "SELECT * FROM hihealthindicators WHERE calculation_sync_counter>=:calculation_sync_counter_since")
+@NamedNativeQuery(name = "HIHealthIndicatorsDAO.queryByCalculationSyncCounterUntil",
         resultClass = HIHealthIndicatorsDAO.class,
-        query = "SELECT * FROM healthindicators WHERE calculation_sync_counter<=:calculation_sync_counter_until")
+        query = "SELECT * FROM hihealthindicators WHERE calculation_sync_counter<=:calculation_sync_counter_until")
 @Getter
 @Setter
 @NoArgsConstructor

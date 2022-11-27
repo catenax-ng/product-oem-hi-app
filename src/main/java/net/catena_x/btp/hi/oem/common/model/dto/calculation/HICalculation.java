@@ -15,7 +15,8 @@ import java.time.Instant;
 public class HICalculation {
     private String id;
     private Instant calculationTimestamp;
-    private long calculationSyncCounter;
+    private long calculationSyncCounterMin;
+    private long calculationSyncCounterMax;
     private CalculationStatus status;
     private String message;
 }

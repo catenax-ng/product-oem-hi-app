@@ -1,10 +1,11 @@
 package net.catena_x.btp.hi.oem.util.exceptions;
 
+import net.catena_x.btp.libraries.util.exceptions.BtpException;
 import org.jetbrains.annotations.Nullable;
 
 import javax.validation.constraints.NotNull;
 
-public class OemHIException extends Exception {
+public class OemHIException extends BtpException {
     public OemHIException() {
         super();
     }

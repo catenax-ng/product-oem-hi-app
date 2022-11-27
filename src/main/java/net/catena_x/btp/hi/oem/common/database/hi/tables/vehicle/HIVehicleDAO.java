@@ -9,33 +9,33 @@ import javax.persistence.*;
 import java.time.Instant;
 
 @Entity
-@Table(name = "vehicles", uniqueConstraints={@UniqueConstraint(columnNames = {"vehicle_id"}),
+@Table(name = "hivehicles", uniqueConstraints={@UniqueConstraint(columnNames = {"vehicle_id"}),
         @UniqueConstraint(columnNames = {"van"}),
         @UniqueConstraint(columnNames = {"gearbox_id"})})
-@NamedNativeQuery(name = "VehicleDAO.insert",
-        query = "INSERT INTO vehicles (vehicle_id, van, gearbox_id, production_date) " +
+@NamedNativeQuery(name = "HIVehicleDAO.insert",
+        query = "INSERT INTO hivehicles (vehicle_id, van, gearbox_id, production_date) " +
                 "VALUES (:vehicle_id, :van, :gearbox_id, :production_date)")
-@NamedNativeQuery(name = "VehicleDAO.updateNewestHealthindicatorsIdByVehicleId",
-        query = "UPDATE vehicles SET newest_healthindicators_id=:healthindicators_id, " +
+@NamedNativeQuery(name = "HIVehicleDAO.updateNewestHealthindicatorsIdByVehicleId",
+        query = "UPDATE hivehicles SET newest_healthindicators_id=:healthindicators_id, " +
                 "update_timestamp=CURRENT_TIMESTAMP WHERE vehicle_id=:vehicle_id")
-@NamedNativeQuery(name = "VehicleDAO.deleteAll",
-        query = "DELETE FROM vehicles")
-@NamedNativeQuery(name = "VehicleDAO.deleteByVehilceId",
-        query = "DELETE FROM vehicles WHERE vehicle_id=:vehicle_id")
-@NamedNativeQuery(name = "VehicleDAO.deleteByVan",
-        query = "DELETE FROM vehicles WHERE van=:van")
-@NamedNativeQuery(name = "VehicleDAO.queryAll", resultClass = HIVehicleDAO.class,
-        query = "SELECT * FROM vehicles")
-@NamedNativeQuery(name = "VehicleDAO.queryByVehicleId", resultClass = HIVehicleDAO.class,
-        query = "SELECT * FROM vehicles WHERE vehicle_id=:vehicle_id")
-@NamedNativeQuery(name = "VehicleDAO.queryByVan", resultClass = HIVehicleDAO.class,
-        query = "SELECT * FROM vehicles WHERE van=:van")
-@NamedNativeQuery(name = "VehicleDAO.queryByGearboxId", resultClass = HIVehicleDAO.class,
-        query = "SELECT * FROM vehicles WHERE gearbox_id=:gearbox_id")
-@NamedNativeQuery(name = "VehicleDAO.queryUpdatedSince", resultClass = HIVehicleDAO.class,
-        query = "SELECT * FROM vehicles WHERE update_timestamp>=:updated_since")
-@NamedNativeQuery(name = "VehicleDAO.queryByProductionDate", resultClass = HIVehicleDAO.class,
-        query = "SELECT * FROM vehicles WHERE production_date>=:produced_since " +
+@NamedNativeQuery(name = "HIVehicleDAO.deleteAll",
+        query = "DELETE FROM hivehicles")
+@NamedNativeQuery(name = "HIVehicleDAO.deleteByVehilceId",
+        query = "DELETE FROM hivehicles WHERE vehicle_id=:vehicle_id")
+@NamedNativeQuery(name = "HIVehicleDAO.deleteByVan",
+        query = "DELETE FROM hivehicles WHERE van=:van")
+@NamedNativeQuery(name = "HIVehicleDAO.queryAll", resultClass = HIVehicleDAO.class,
+        query = "SELECT * FROM hivehicles")
+@NamedNativeQuery(name = "HIVehicleDAO.queryByVehicleId", resultClass = HIVehicleDAO.class,
+        query = "SELECT * FROM hivehicles WHERE vehicle_id=:vehicle_id")
+@NamedNativeQuery(name = "HIVehicleDAO.queryByVan", resultClass = HIVehicleDAO.class,
+        query = "SELECT * FROM hivehicles WHERE van=:van")
+@NamedNativeQuery(name = "HIVehicleDAO.queryByGearboxId", resultClass = HIVehicleDAO.class,
+        query = "SELECT * FROM hivehicles WHERE gearbox_id=:gearbox_id")
+@NamedNativeQuery(name = "HIVehicleDAO.queryUpdatedSince", resultClass = HIVehicleDAO.class,
+        query = "SELECT * FROM hivehicles WHERE update_timestamp>=:updated_since")
+@NamedNativeQuery(name = "HIVehicleDAO.queryByProductionDate", resultClass = HIVehicleDAO.class,
+        query = "SELECT * FROM hivehicles WHERE production_date>=:produced_since " +
                 "AND production_date<=:produced_until")
 @Getter
 @Setter

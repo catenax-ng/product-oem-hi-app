@@ -1,6 +1,8 @@
 package net.catena_x.btp.hi.oem.common.database.hi.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -13,60 +15,73 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.HashMap;
 
 import static org.hibernate.cfg.AvailableSettings.*;
 
 @Configuration
-@PropertySource({ "classpath:healthindicatordb.properties" })
+@PropertySource({"classpath:healthindicatordb.properties"})
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = "net.catena_x.btp.hi.oem.common.database.hi.dao.tables",
-        entityManagerFactoryRef = "healthindicatorEntityManager",
-        transactionManagerRef = "healthindicatorTransactionManager"
-)
+        basePackages = {PersistenceHealthIndicatorConfiguration.BASE_PACKAGES},
+        entityManagerFactoryRef = PersistenceHealthIndicatorConfiguration.ENTITY_MANAGER_FACTORY,
+        transactionManagerRef = PersistenceHealthIndicatorConfiguration.TRANSACTION_MANAGER)
 public class PersistenceHealthIndicatorConfiguration {
-    public static final String TRANSACTION_MANAGER = "healthindicatorTransactionManager";
+    public static final String PREFIX = "healthindicator";
+    public static final String CONFIG_PREFIX = "healthindicatordb.";
+    public static final String BASE_PACKAGES = "net.catena_x.btp.hi.oem.common.database.hi.tables";
+
+    public static final String ENTITY_MANAGER_FACTORY = PREFIX + "EntityManagerFactory";
+    public static final String ENTITY_MANAGER_FACTORY_BUILDER = ENTITY_MANAGER_FACTORY + "Builder";
+    public static final String DATASOURCE = PREFIX + "DataSource";
+    public static final String TRANSACTION_MANAGER = PREFIX + "TransactionManager";
+    public static final String UNIT_NAME = PREFIX + "PU";
 
     @Autowired private Environment environment;
 
-    @Bean
-    public LocalContainerEntityManagerFactoryBean healthindicatorEntityManager() {
-        LocalContainerEntityManagerFactoryBean entityManager = new LocalContainerEntityManagerFactoryBean();
-        entityManager.setDataSource(healthindicatorDataSource());
-        entityManager.setPackagesToScan(
-                new String[] { "net.catena_x.btp.hi.oem.common.database.hi.dao.tables" });
+    @Bean(name = ENTITY_MANAGER_FACTORY)
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(
+            @Qualifier(ENTITY_MANAGER_FACTORY_BUILDER) EntityManagerFactoryBuilder builder,
+            @Qualifier(DATASOURCE) DataSource dataSource) {
 
-        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        entityManager.setJpaVendorAdapter(vendorAdapter);
-        HashMap<String, Object> properties = new HashMap<>();
-        properties.put(DIALECT, environment.getProperty("healthindicatordb.hibernate.dialect"));
-        properties.put(SHOW_SQL, environment.getProperty("healthindicatordb.show-sql"));
-        properties.put(HBM2DDL_AUTO, environment.getProperty("healthindicatordb.hibernate.hbm2ddl.auto"));
-
-        entityManager.setJpaPropertyMap(properties);
-
-        return entityManager;
+        return builder
+                .dataSource(dataSource)
+                .properties(buildProperties())
+                .packages(BASE_PACKAGES)
+                .persistenceUnit(UNIT_NAME)
+                .build();
     }
 
-    @Bean
-    public DataSource healthindicatorDataSource() {
-
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(environment.getProperty("healthindicatordb.drivername"));
-        dataSource.setUrl(environment.getProperty("healthindicatordb.url"));
-        dataSource.setUsername(environment.getProperty("healthindicatordb.username"));
-        dataSource.setPassword(environment.getProperty("healthindicatordb.password"));
+    @Bean(name = DATASOURCE)
+    public DataSource dataSource() {
+        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(environment.getProperty(CONFIG_PREFIX + "drivername"));
+        dataSource.setUrl(environment.getProperty(CONFIG_PREFIX + "url"));
+        dataSource.setUsername(environment.getProperty(CONFIG_PREFIX + "username"));
+        dataSource.setPassword(environment.getProperty(CONFIG_PREFIX + "password"));
 
         return dataSource;
     }
 
-    @Bean
-    public PlatformTransactionManager healthindicatorTransactionManager() {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(healthindicatorEntityManager().getObject());
+    @Bean(name = TRANSACTION_MANAGER)
+    public PlatformTransactionManager transactionManager(
+            @Qualifier(ENTITY_MANAGER_FACTORY) EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
+    }
 
-        return transactionManager;
+    @Bean(name = ENTITY_MANAGER_FACTORY_BUILDER)
+    public EntityManagerFactoryBuilder entityManagerFactoryBuilder() {
+        return new EntityManagerFactoryBuilder(new HibernateJpaVendorAdapter(),
+                new HashMap<>(), null);
+    }
+
+    private HashMap<String, Object> buildProperties() {
+        final HashMap<String, Object> properties = new HashMap<>();
+        properties.put(DIALECT, environment.getProperty(CONFIG_PREFIX + "hibernate.dialect"));
+        properties.put(HBM2DDL_AUTO, environment.getProperty(CONFIG_PREFIX + "hibernate.hbm2ddl.auto"));
+        properties.put(SHOW_SQL, environment.getProperty(CONFIG_PREFIX + "show-sql"));
+        return properties;
     }
 }

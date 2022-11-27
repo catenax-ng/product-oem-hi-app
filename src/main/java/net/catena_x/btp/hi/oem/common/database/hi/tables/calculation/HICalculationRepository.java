@@ -10,11 +10,13 @@ import java.util.List;
 
 public interface HICalculationRepository extends Repository<HICalculationDAO, String> {
     @Modifying void createNow(@Param("id") @NotNull final String id,
-                              @Param("calculation_sync_counter") @NotNull final long calculationSyncCounter,
+                              @Param("calculation_sync_counter_min") @NotNull final long calculationSyncCounterMin,
+                              @Param("calculation_sync_counter_max") @NotNull final long calculationSyncCounterMax,
                               @Param("status") @NotNull final String status);
     @Modifying void insert(@Param("id") @NotNull final String id,
                            @Param("calculation_timestamp") @NotNull final Instant calculationTimestamp,
-                           @Param("calculation_sync_counter") @NotNull final long calculationSyncCounter,
+                           @Param("calculation_sync_counter_min") @NotNull final long calculationSyncCounterMin,
+                           @Param("calculation_sync_counter_max") @NotNull final long calculationSyncCounterMax,
                            @Param("status") @NotNull final String status);
     @Modifying void updateStatus(@Param("id") @NotNull final String id, @Param("status") @NotNull final String status);
     @Modifying void setMessage(@Param("id") @NotNull final String id,
@@ -24,10 +26,11 @@ public interface HICalculationRepository extends Repository<HICalculationDAO, St
     @Modifying void deleteByStatus(@Param("status") @NotNull final String status);
     @Modifying void deleteCalculatedUntil(@Param("calculated_until") @NotNull final Instant calculatedUntil);
     @Modifying void deleteCalculationSyncCounterUntil(
-            @Param("calculation_sync_counter") @NotNull final long calculationSyncCounter);
+            @Param("calculation_sync_counter_until") @NotNull final long calculationSyncCounterUntil);
     List<HICalculationDAO> queryAll();
     HICalculationDAO queryById(@Param("id") @NotNull final String id);
     List<HICalculationDAO> queryByStatus(@Param("status") @NotNull final String status);
+    List<HICalculationDAO> queryByStatusOrderByCalculationSyncCounter(@Param("status") @NotNull final String status);
     List<HICalculationDAO> queryAllOrderByCalculationTimestamp();
     List<HICalculationDAO> queryAllOrderByCalculationSyncCounter();
     List<HICalculationDAO> queryByCalculationSince(

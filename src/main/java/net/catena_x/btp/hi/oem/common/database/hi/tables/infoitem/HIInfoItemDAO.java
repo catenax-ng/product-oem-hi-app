@@ -8,19 +8,19 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "info", uniqueConstraints={@UniqueConstraint(columnNames = {"key"})})
-@NamedNativeQuery(name = "InfoItemDAO.insert",
-        query = "INSERT INTO info (key, value) VALUES (:key, :value)")
-@NamedNativeQuery(name = "InfoItemDAO.update",
-        query = "UPDATE info SET value=:value WHERE key=:key")
-@NamedNativeQuery(name = "InfoItemDAO.deleteAll",
-        query = "DELETE FROM info")
-@NamedNativeQuery(name = "InfoItemDAO.delete",
-        query = "DELETE FROM info WHERE key=:key")
-@NamedNativeQuery(name = "InfoItemDAO.queryAll", resultClass = HIInfoItemDAO.class,
-        query = "SELECT key, value FROM info")
-@NamedNativeQuery(name = "InfoItemDAO.queryByKey", resultClass = HIInfoItemDAO.class,
-        query = "SELECT key, value FROM info WHERE key=:key")
+@Table(name = "hiinfo", uniqueConstraints={@UniqueConstraint(columnNames = {"key"})})
+@NamedNativeQuery(name = "HIInfoItemDAO.insert",
+        query = "INSERT INTO hi (key, value) VALUES (:key, :value)")
+@NamedNativeQuery(name = "HIInfoItemDAO.update",
+        query = "UPDATE hi SET value=:value WHERE key=:key")
+@NamedNativeQuery(name = "HIInfoItemDAO.deleteAll",
+        query = "DELETE FROM hi")
+@NamedNativeQuery(name = "HIInfoItemDAO.delete",
+        query = "DELETE FROM hi WHERE key=:key")
+@NamedNativeQuery(name = "HIInfoItemDAO.queryAll", resultClass = HIInfoItemDAO.class,
+        query = "SELECT key, value FROM hi")
+@NamedNativeQuery(name = "HIInfoItemDAO.queryByKey", resultClass = HIInfoItemDAO.class,
+        query = "SELECT key, value FROM hi WHERE key=:key")
 @Getter
 @Setter
 @NoArgsConstructor
