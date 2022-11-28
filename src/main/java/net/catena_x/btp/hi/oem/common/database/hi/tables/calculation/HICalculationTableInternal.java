@@ -1,8 +1,13 @@
 package net.catena_x.btp.hi.oem.common.database.hi.tables.calculation;
 
+import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionDefaultCreateNew;
+import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionDefaultUseExisting;
 import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableCreateNew;
 import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableUseExisting;
 import net.catena_x.btp.hi.oem.common.database.hi.base.HITableBase;
+import net.catena_x.btp.hi.oem.common.database.hi.tables.healthindicators.HIHealthIndicatorsTableInternal;
+import net.catena_x.btp.hi.oem.common.database.hi.tables.infoitem.HIInfoTableInternal;
+import net.catena_x.btp.hi.oem.common.database.hi.tables.vehicle.HIVehicleTableInternal;
 import net.catena_x.btp.hi.oem.common.model.enums.CalculationStatus;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +20,21 @@ import java.util.List;
 @Component
 public class HICalculationTableInternal extends HITableBase {
     @Autowired private HICalculationRepository hiCalculationRepository;
+    @Autowired private HIVehicleTableInternal hiVehicleTable;
+    @Autowired private HIHealthIndicatorsTableInternal hiHealthIndicatorsTable;
+    @Autowired private HIInfoTableInternal hiInfoTable;
+
+    @HITransactionSerializableUseExisting
+    public void resetDbExternalTransaction() throws OemHIException {
+        deleteAllExternalTransaction();
+        hiVehicleTable.deleteAllExternalTransaction();
+        hiHealthIndicatorsTable.deleteAllExternalTransaction();
+    }
+
+    @HITransactionSerializableCreateNew
+    public void resetDbNewTransaction() throws OemHIException {
+        resetDbExternalTransaction();
+    }
 
     @HITransactionSerializableUseExisting
     public void insertExternalTransaction(@NotNull final String id, @NotNull final Instant calculationTimestamp,
@@ -131,6 +151,20 @@ public class HICalculationTableInternal extends HITableBase {
     public void setMessageNewTransaction(@NotNull final String id, @NotNull final String message)
             throws OemHIException {
         setMessageExternalTransaction(id, message);
+    }
+
+    @HITransactionDefaultUseExisting
+    public void deleteAllExternalTransaction() throws OemHIException {
+        try {
+            hiCalculationRepository.deleteAll();
+        } catch (final Exception exception) {
+            throw failed("Deleting all calculations failed!", exception);
+        }
+    }
+
+    @HITransactionDefaultCreateNew
+    public void deleteAllNewTransaction() throws OemHIException {
+        deleteAllExternalTransaction();
     }
 
     @HITransactionSerializableUseExisting

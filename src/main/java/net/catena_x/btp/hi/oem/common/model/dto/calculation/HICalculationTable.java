@@ -15,6 +15,14 @@ public class HICalculationTable {
     @Autowired private HICalculationTableInternal internal;
     @Autowired private HICalculationConverter hiCalculationConverter;
 
+    public void resetDbExternalTransaction() throws OemHIException {
+        internal.resetDbExternalTransaction();
+    }
+
+    public void resetDbNewTransaction() throws OemHIException {
+        internal.resetDbExternalTransaction();
+    }
+
     public void insertNewTransaction(@NotNull final String id, @NotNull final Instant calculationTimestamp,
                                      @NotNull final long calculationSyncCounterMin,
                                      @NotNull final long calculationSyncCounterMax,

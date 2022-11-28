@@ -1,5 +1,6 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.controller;
 
+import net.catena_x.btp.hi.oem.backend.hi_service.controller.util.HIDbMaintainer;
 import net.catena_x.btp.hi.oem.backend.hi_service.controller.util.HIJobRunner;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HINotificationFromSupplierContent;
 import net.catena_x.btp.hi.oem.backend.hi_service.receiver.HIResultProcessor;
@@ -24,6 +25,7 @@ public class HIController {
     @Autowired private ApiHelper apiHelper;
     @Autowired private HIJobRunner jobRunner;
     @Autowired private HIResultProcessor resultProcessor;
+    @Autowired private HIDbMaintainer hiDbMaintainer;
 
     private final Logger logger = LoggerFactory.getLogger(HIController.class);
 
@@ -46,6 +48,11 @@ public class HIController {
     @GetMapping(COLLECTOR_API_BASEPATH + "/resetqueue")
     public ResponseEntity<ApiResult> resetQueue() {
         return jobRunner.resetQueue();
+    }
+
+    @PostMapping(RECEIVER_API_BASEPATH + "/resethidb")
+    public ResponseEntity<ApiResult> resetHiDb() {
+        return hiDbMaintainer.reset();
     }
 
     @PostMapping(RECEIVER_API_BASEPATH + "/notifyresult")
