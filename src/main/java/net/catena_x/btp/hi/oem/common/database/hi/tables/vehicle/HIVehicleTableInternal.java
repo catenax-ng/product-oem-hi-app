@@ -6,11 +6,11 @@ import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionDefau
 import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableCreateNew;
 import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableUseExisting;
 import net.catena_x.btp.hi.oem.common.database.hi.base.HITableBase;
+import net.catena_x.btp.hi.oem.common.database.hi.config.PersistenceHealthIndicatorConfiguration;
 import net.catena_x.btp.hi.oem.common.database.hi.tables.healthindicators.HIHealthIndicatorsDAO;
 import net.catena_x.btp.hi.oem.common.database.hi.tables.healthindicators.HIHealthIndicatorsTableInternal;
 import net.catena_x.btp.hi.oem.common.database.hi.util.VehicleComperator;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
-import net.catena_x.btp.libraries.oem.backend.database.rawdata.dao.config.PersistenceRawDataConfiguration;
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.Vehicle;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
@@ -27,7 +27,7 @@ import java.util.List;
 
 @Component
 public class HIVehicleTableInternal extends HITableBase {
-    @PersistenceContext(unitName = PersistenceRawDataConfiguration.UNIT_NAME) EntityManager entityManager;
+    @PersistenceContext(unitName = PersistenceHealthIndicatorConfiguration.UNIT_NAME) EntityManager entityManager;
 
     @Autowired private HIVehicleRepository hiVehicleRepository;
     @Autowired private HIHealthIndicatorsTableInternal healthindicatorsTable;
@@ -179,8 +179,8 @@ public class HIVehicleTableInternal extends HITableBase {
     }
 
     @HITransactionDefaultUseExisting
-    public HIVehicleWithHealthIndicatorsDAO getByIdWithHealthIndicatorsExternalTransaction(@NotNull final String vehicleId)
-            throws OemHIException {
+    public HIVehicleWithHealthIndicatorsDAO getByIdWithHealthIndicatorsExternalTransaction(
+            @NotNull final String vehicleId) throws OemHIException {
         try {
             final NativeQuery<Object[]> query = createJoinQueryVehicleHealthIndicators("v.vehicle_id=:vehicle_id")
                     .setParameter("vehicle_id", vehicleId);
@@ -293,7 +293,8 @@ public class HIVehicleTableInternal extends HITableBase {
     }
 
     @HITransactionDefaultUseExisting
-    public List<HIVehicleWithHealthIndicatorsDAO> getAllWithHealthIndicatorsExternalTransaction() throws OemHIException {
+    public List<HIVehicleWithHealthIndicatorsDAO> getAllWithHealthIndicatorsExternalTransaction()
+            throws OemHIException {
         try {
             final NativeQuery<Object[]> query = createJoinQueryVehicleHealthIndicators();
             return executeQueryVehicleHealthindicators(query);
@@ -406,8 +407,8 @@ public class HIVehicleTableInternal extends HITableBase {
 
     private NativeQuery<Object[]> createJoinQueryVehicleHealthIndicators(@Nullable final String where)
             throws OemHIException {
-        String query = "SELECT {v.*}, {h.*} FROM hivehicles v " +
-                "LEFT OUTER JOIN healthindicators h ON v.newest_healthindicators_id = h.id";
+        String query = "SELECT {v.*}, {t.*} FROM hivehicles v " +
+                "LEFT OUTER JOIN hihealthindicators t ON v.newest_healthindicators_id = t.id";
 
         if(where != null) {
             query += " WHERE " + where;

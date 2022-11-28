@@ -14,7 +14,10 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class,
 		DataSourceTransactionManagerAutoConfiguration.class,
 		HibernateJpaAutoConfiguration.class})
-@ComponentScan
+@ComponentScan(basePackages = {
+		"net.catena_x.btp.hi.oem.frontend",
+		"net.catena_x.btp.hi.oem.common",
+		"net.catena_x.btp.libraries.util"})
 @OpenAPIDefinition(info = @Info(title = "Health indicator frontend", version = "0.0.99"))
 public class OemHiFrontendApplication {
 	public static void main(String[] args) {
