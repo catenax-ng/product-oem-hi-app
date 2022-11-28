@@ -14,6 +14,7 @@ import net.catena_x.btp.libraries.oem.backend.model.dto.telematicsdata.Telematic
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.Vehicle;
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.VehicleTable;
 import net.catena_x.btp.libraries.oem.backend.model.enums.InfoKey;
+import net.catena_x.btp.libraries.util.json.ObjectMapperFactoryBtp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -64,10 +66,8 @@ class DataCollectorMockTest {
     @MockBean private S3Handler s3Handler;
     @MockBean private VehicleTable vehicleTable;
     @MockBean private InfoTable infoTable;
-
     @Autowired private HIDataCollector collector;
-
-    @Autowired private ObjectMapper objectMapper;
+    @Autowired @Qualifier(ObjectMapperFactoryBtp.EXTENDED_OBJECT_MAPPER) private ObjectMapper objectMapper;
 
     @BeforeEach
     void beforeEach() {

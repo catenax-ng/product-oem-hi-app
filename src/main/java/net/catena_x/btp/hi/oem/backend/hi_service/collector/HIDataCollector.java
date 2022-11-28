@@ -16,11 +16,13 @@ import net.catena_x.btp.libraries.notification.dto.Notification;
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.Vehicle;
 import net.catena_x.btp.libraries.util.datahelper.DataHelper;
 import net.catena_x.btp.libraries.util.exceptions.BtpException;
+import net.catena_x.btp.libraries.util.json.ObjectMapperFactoryBtp;
 import okhttp3.HttpUrl;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -46,7 +48,7 @@ public class HIDataCollector {
     @Autowired private HICalculationTable hiCalculationTable;
     @Autowired private HIVehicleRegistrator vehicleRegistrator;
     @Autowired private EdcApi edcApi;
-    @Autowired private ObjectMapper objectMapper;
+    @Autowired @Qualifier(ObjectMapperFactoryBtp.EXTENDED_OBJECT_MAPPER) private ObjectMapper objectMapper;
 
     @Value("${supplier.hiservice.inputAssetName}") private String inputAssetName;
     @Value("${supplier.hiservice.endpoint}") private URL supplierHiServiceEndpoint;
