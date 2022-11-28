@@ -9,7 +9,6 @@ import net.catena_x.btp.hi.oem.common.database.hi.base.HITableBase;
 import net.catena_x.btp.hi.oem.common.database.hi.tables.healthindicators.HIHealthIndicatorsDAO;
 import net.catena_x.btp.hi.oem.common.database.hi.tables.healthindicators.HIHealthIndicatorsTableInternal;
 import net.catena_x.btp.hi.oem.common.database.hi.util.VehicleComperator;
-import net.catena_x.btp.hi.oem.common.model.dto.vehicle.HIVehicle;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import net.catena_x.btp.libraries.oem.backend.database.rawdata.dao.config.PersistenceRawDataConfiguration;
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.Vehicle;

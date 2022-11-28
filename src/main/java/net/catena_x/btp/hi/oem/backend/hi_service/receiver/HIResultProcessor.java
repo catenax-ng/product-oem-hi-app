@@ -2,17 +2,29 @@ package net.catena_x.btp.hi.oem.backend.hi_service.receiver;
 
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HINotificationFromSupplierContent;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.HealthIndicatorOutput;
+import net.catena_x.btp.hi.oem.common.model.dto.calculation.HICalculation;
+import net.catena_x.btp.hi.oem.common.model.dto.calculation.HICalculationTable;
+import net.catena_x.btp.hi.oem.common.model.dto.healthindicators.HIHealthIndicatorsTable;
+import net.catena_x.btp.hi.oem.common.model.dto.vehicle.HIVehicleTable;
+import net.catena_x.btp.hi.oem.common.model.enums.CalculationStatus;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import net.catena_x.btp.libraries.notification.dto.Notification;
+import net.catena_x.btp.libraries.util.datahelper.DataHelper;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Component
 public class HIResultProcessor {
+    @Autowired HICalculationTable hiCalculationTable;
+    @Autowired HIHealthIndicatorsTable hiHealthIndicatorsTable;
+    @Autowired HIVehicleTable hiVehicleTable;
+
     private final Logger logger = LoggerFactory.getLogger(HIResultProcessor.class);
 
     public void process(@NotNull final Notification<HINotificationFromSupplierContent> result,
@@ -41,13 +53,36 @@ public class HIResultProcessor {
                                  @NotNull final String referenceId)
             throws OemHIException {
 
-        if(result.getHealthIndicatorOutputs().isEmpty()) {
-            throw new OemHIException("HI result for " + referenceId
-                    + " is empty (maybe a format or calculation error occurred)!");
-        }
+        final HICalculation calculation = getCalculationFromId(referenceId);
 
-        for (final HealthIndicatorOutput output: result.getHealthIndicatorOutputs()) {
-            processSingleOutput(output, referenceId);
+        checkOutputs(result.getHealthIndicatorOutputs(), referenceId);
+
+        hiCalculationTable.updateStatusNewTransaction(referenceId, CalculationStatus.CALCULATED);
+        processAllOutputs(result.getHealthIndicatorOutputs(), calculation);
+        hiCalculationTable.updateStatusNewTransaction(referenceId, CalculationStatus.READY);
+    }
+
+    private HICalculation getCalculationFromId(@NotNull final String referenceId) throws OemHIException {
+        final HICalculation calculation = hiCalculationTable.getByIdNewTransaction(referenceId);
+        if(calculation == null) {
+            throw new OemHIException("No pending calculation found for " + referenceId + "!");
+        }
+        return calculation;
+    }
+
+    private void checkOutputs(@Nullable final List<HealthIndicatorOutput> outputs,
+                              @NotNull final String referenceId) throws OemHIException {
+        if(DataHelper.isNullOrEmpty(outputs)) {
+            hiCalculationTable.updateStatusNewTransaction(referenceId, CalculationStatus.FAILED_EXTERNAL);
+            throw new OemHIException("HI result for " + referenceId
+                    + " is empty or not present (maybe a format or calculation error occurred)!");
+        }
+    }
+
+    private void processAllOutputs(@Nullable final List<HealthIndicatorOutput> outputs,
+                                   @NotNull final HICalculation calculation) throws OemHIException {
+        for (final HealthIndicatorOutput output: outputs) {
+            processSingleOutput(output, calculation);
         }
     }
 
@@ -86,10 +121,12 @@ public class HIResultProcessor {
     }
 
     private void processSingleOutput(@NotNull final HealthIndicatorOutput output,
-                                     @NotNull final String referenceId) throws OemHIException {
+                                     @NotNull final HICalculation calculation) throws OemHIException {
+        hiHealthIndicatorsTable.updateHealthIndicatorsGetIdNewTransaction(
+                output, hiVehicleTable.getByGearboxIdNewTransaction(output.getComponentId()).getVehicleId(),
+                calculation.getCalculationTimestamp(), calculation.getCalculationSyncCounterMax());
 
-        //TODO: Implement writing to hi database (and remove logging).
-
+        //TODO: Test above implementation for writing to hi database (and remove logging).
         final StringBuilder hiValues = new StringBuilder();
 
         if( output.getHealthIndicatorValues().length > 0) {
@@ -100,7 +137,7 @@ public class HIResultProcessor {
             }
         }
 
-        logger.info("  > " + referenceId + ": gearbox[" + output.getComponentId()
+        logger.info("  > " + calculation.getId() + ": gearbox[" + output.getComponentId()
                 + "]: HI={" + hiValues.toString() + "}" );
     }
 

@@ -1,7 +1,6 @@
 package net.catena_x.btp.hi.oem.common.database.hi.util;
 
 import net.catena_x.btp.hi.oem.common.database.hi.tables.vehicle.HIVehicleDAO;
-import net.catena_x.btp.hi.oem.common.model.dto.vehicle.HIVehicle;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.Vehicle;
 import org.springframework.stereotype.Component;
