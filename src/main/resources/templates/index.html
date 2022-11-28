@@ -26,27 +26,29 @@
                                  <div class="faq-answer collapse show" id="data_body_0" aria-labelledby="data_header_0" data-parent="#faq9">
                                     <div class="faq-answer-body" id="table-div">
                                        <table sytle="border-collapse: separate; border-spacing: 5px 0;">
+                                          <thead>
+                                             <tr>
+                                                <th>HI L</th>
+                                                <th>HI A</th>
+                                                <th>Vehicle ID</th>
+                                                <th>Gearbox ID</th>
+                                                <th>Vehicle Production Date</th>
+                                                <th>Calculation Date</th>
+                                             </tr>
+                                          </thead>
                                           <tbody>
-                                             <th>
-                                                <td>HI L</td>
-                                                <td>HI A</td>
-                                                <td>Vehicle ID</td>
-                                                <td>Gearbox ID</td>
-                                                <td>Vehicle Production Date</td>
-                                                <td>Calculation Date</td>
-                                             </th>
                                              <tr th:each="hiVehicle: ${hiVehicles}">
                                                 <td th:switch="${hiVehicle.healthStateLoadSpectra}">
-                                                   <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).CALCULATION_PENDING}" source="" alt="A greyed-out traffic light"/>
-                                                   <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).RED}" source="" alt="A red traffic light"/>
-                                                   <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).YELLOW}" source="" alt="A yellow traffic light"/>
-                                                   <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).GREEN}" source="" alt="A green traffic light"/>
+                                                   <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).CALCULATION_PENDING}" class="tlimage" src="/tlgrey.png" alt="A greyed-out traffic light"/>
+                                                   <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).RED}" class="tlimage" src="/tlred.png" alt="A red traffic light"/>
+                                                   <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).YELLOW}" class="tlimage" src="/tlyellow.png" alt="A yellow traffic light"/>
+                                                   <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).GREEN}" class="tlimage" src="/tlgreen.png" alt="A green traffic light"/>
                                                 </td>
                                                 <td th:switch="${hiVehicle.healthStateAdaptionValues}">
-                                                   <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).CALCULATION_PENDING}" source="" alt="A greyed-out traffic light"/>
-                                                   <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).RED}" source="" alt="A red traffic light"/>
-                                                   <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).YELLOW}" source="" alt="A yellow traffic light"/>
-                                                   <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).GREEN}" source="" alt="A green traffic light"/>
+                                                   <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).CALCULATION_PENDING}" class="tlimage" src="/tlgrey.png" alt="A greyed-out traffic light"/>
+                                                   <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).RED}" class="tlimage" src="/tlred.png" alt="A red traffic light"/>
+                                                   <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).YELLOW}" class="tlimage" src="/tlyellow.png" alt="A yellow traffic light"/>
+                                                   <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).GREEN}" class="tlimage" src="/tlgreen.png" alt="A green traffic light"/>
                                                 </td>
                                                 <td><span th:text="${hiVehicle.vehicleId}"></span></td>
                                                 <td><span th:text="${hiVehicle.gearboxId}"></span></td>
