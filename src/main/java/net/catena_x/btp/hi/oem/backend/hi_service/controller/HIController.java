@@ -61,7 +61,9 @@ public class HIController {
 
         final Runnable setJobFinishedAndStartQueued = () -> {
                     final ResponseEntity<ApiResult> nextJobResponse = jobRunner.setJobFinishedAndStartQueued();
-                    if(nextJobResponse.getStatusCode() != HttpStatus.OK) {
+                    if(nextJobResponse.getStatusCode() != HttpStatus.OK
+                                && nextJobResponse.getStatusCode() != HttpStatus.CREATED
+                                && nextJobResponse.getStatusCode() != HttpStatus.ACCEPTED) {
                         logger.error("Starting queued job failed: " + nextJobResponse.getBody().message());
                     }
                 };

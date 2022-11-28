@@ -171,7 +171,9 @@ public class HIDataCollector {
     private void processResult(@NotNull final String requestId, @NotNull final ResponseEntity<String> result)
             throws OemHIException {
 
-        if (result.getStatusCode() == HttpStatus.OK) {
+        if (result.getStatusCode() == HttpStatus.OK
+                    || result.getStatusCode() == HttpStatus.CREATED
+                    || result.getStatusCode() == HttpStatus.ACCEPTED) {
             logger.info("Request for Id " + requestId + " started.");
             setCalculationStatus(requestId, CalculationStatus.RUNNING);
         } else {
