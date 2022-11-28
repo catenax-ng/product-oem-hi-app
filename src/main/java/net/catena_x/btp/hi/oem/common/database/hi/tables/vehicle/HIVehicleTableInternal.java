@@ -68,7 +68,7 @@ public class HIVehicleTableInternal extends HITableBase {
 
     @HITransactionDefaultCreateNew
     public void insertIfNewNewTransaction(@NotNull Vehicle vehicle) throws OemHIException {
-        insertVehicleExternalTransaction(vehicle);
+        insertIfNewExternalTransaction(vehicle);
     }
 
     @HITransactionDefaultUseExisting

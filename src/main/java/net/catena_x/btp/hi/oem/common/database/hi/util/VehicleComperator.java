@@ -17,13 +17,13 @@ public class VehicleComperator {
             Assert.notNull(vehicle2, "Vehicle 2 is null!");
 
             Assert.notNull(vehicle1.getVehicleId(), "Id of vehicle 1 is null!");
-            Assert.isTrue(vehicle1.getVehicleId() == vehicle2.getVehicleId(), "Vehicle ids differ!");
+            Assert.isTrue(vehicle1.getVehicleId().equals(vehicle2.getVehicleId()), "Vehicle ids differ!");
 
             Assert.notNull(vehicle1.getVan(), "Van of vehicle 1 is null!");
-            Assert.isTrue(vehicle1.getVan() == vehicle2.getVan(), "Vehicle vans differ!");
+            Assert.isTrue(vehicle1.getVan().equals(vehicle2.getVan()), "Vehicle vans differ!");
 
             Assert.notNull(vehicle1.getGearboxId(), "Gearbox id of vehicle 1 is null!");
-            Assert.isTrue(vehicle1.getGearboxId() == vehicle2.getGearboxId(),
+            Assert.isTrue(vehicle1.getGearboxId().equals(vehicle2.getGearboxId()),
                     "Vehicle Gearbox ids differ!");
         } catch (final Exception exception) {
             throw new OemHIException(exception.getMessage());

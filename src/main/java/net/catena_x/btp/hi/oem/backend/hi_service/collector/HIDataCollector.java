@@ -26,12 +26,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -126,7 +128,7 @@ public class HIDataCollector {
     private void createNewCalculationInDatabase(@NotNull final String requestId,
                                                 @NotNull final long syncCounterMin,
                                                 @NotNull final long syncCounterMax) throws OemHIException {
-        hiCalculationTable.createNowExternalTransaction(requestId, syncCounterMin, syncCounterMax);
+        hiCalculationTable.createNowNewTransaction(requestId, syncCounterMin, syncCounterMax);
     }
 
     private Notification<DataToSupplierContent> prepareNotification(
@@ -227,10 +229,20 @@ public class HIDataCollector {
             @NotNull final BodyType messageBody, @NotNull Class<ResponseType> responseTypeClass) throws OemHIException {
 
         try {
-            return edcApi.post(HttpUrl.parse(endpoint), asset, responseTypeClass, messageBody, new HttpHeaders());
+
+            return edcApi.post(HttpUrl.parse(endpoint), asset, responseTypeClass,
+                    messageBody, generateDefaultHeaders());
         } catch (final EdcException exception) {
             setCalculationStatus(requestId, CalculationStatus.FAILED_EXTERNAL);
             throw new OemHIException(exception);
         }
+    }
+
+    protected HttpHeaders generateDefaultHeaders() {
+        final HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        return headers;
     }
 }
