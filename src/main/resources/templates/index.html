@@ -25,44 +25,86 @@
                            <ol class="list-unstyled">
                               <li class="faq-item">
                                  <div class="faq-answer collapse show" id="data_body_0" aria-labelledby="data_header_0" data-parent="#faq9">
-                                    <div id="plot.area" style="overflow: hidden;vertical-align: middle;display: table-cell;padding: 0;margin: 0;">
-                                       <div id="plot1" style="display: inline-block;width: 45%;height: auto;text-align: center;vertical-align: middle;">
-                                          <h4 style="left: 0px">Distribution of Health Indicator L</h4>
-                                          <div id="plot-hi-1" style="float:left"></div>
+                                 
+                                          <div id="plot-hi"></div>
                                           <script th:inline="javascript">
-                                            var data_hi = /*[[${hiVehicles}]]*/;
-                                            // map data_hi to only contain the list of first health indicators
-                                            // var x = data_hi.map(x => Math.random());
-                                            var x = [...new Array(500)].map(() => Math.random());
-                                            var trace = {
-                                              x: x,
-                                              type: 'histogram',
-                                            };
-                                          var data = [trace];
-                                          Plotly.newPlot('plot-hi-1', data);
+                                             var data_hi = /*[[${hiVehicles}]]*/ null;
+                                             // map data_hi to only contain the list of first health indicators
+                                             const elements = ["GREEN", "YELLOW", "RED", "CALCULATION_PENDING"];
+                                             var counts_l = [0, 0, 0, 0];
+                                             var counts_a = [0, 0, 0, 0];
+                                             const colors = ['rgba(52, 235, 98, 0.8)', 'rgba(235, 210, 52, 0.8)', 'rgba(235, 88, 52, 0.8)', 'rgba(204,204,204,1)'];
+                                             const names = ['Green', 'Yellow', 'Red', 'Calculation Pending'];
+                                             const text = ["Good Health (Green)", "Medium Health (Yellow)", "Poor Health (Red)", "Calculation Pending"];
+
+                                             for(const element of data_hi) {
+                                                if(element.healthStateLoadSpectra == "GREEN") counts_l[0] += 1;
+                                                else if(element.healthStateLoadSpectra == "YELLOW") counts_l[1] += 1;
+                                                else if(element.healthStateLoadSpectra == "RED") counts_l[2] += 1;
+                                                else counts_l[3] += 1;
+
+                                                if(element.healthStateAdaptionValues == "GREEN") counts_a[0] += 1;
+                                                else if(element.healthStateAdaptionValues == "YELLOW") counts_a[1] += 1;
+                                                else if(element.healthStateAdaptionValues == "RED") counts_a[2] += 1;
+                                                else counts_a[3] += 1;
+                                             }
+                                             var trace1 = {
+                                                x: names,
+                                                y: counts_l,
+                                                marker:{
+                                                  color: colors
+                                                },
+                                                type: 'bar',
+                                                hovertemplate: '<i>Health Indicator</i>: Load Spectra' +
+                                                               '<br><b>Status</b>: %{x}<br>' +
+                                                               '<extra></extra>',
+                                              };
+                                              var trace2 = {
+                                                x: names,
+                                                y: counts_a,
+                                                marker:{
+                                                  color: colors
+                                                },
+                                                type: 'bar',
+                                                xaxis: 'x2',
+                                                yaxis: 'y2',
+                                                hovertemplate: '<i>Health Indicator</i>: Adaption Values' +
+                                                               '<br><b>Status</b>: %{x}<br>'+
+                                                               '<extra></extra>',
+                                              };
+                                              var data = [trace1, trace2];
+                                              var layout = {
+                                                title: 'Distribution of Health States',
+                                                grid: {rows: 1, columns: 2, pattern: 'independent'},
+                                                showlegend: false,
+                                                xaxis: { 
+                                                   domain: [0,0.48]
+                                                 },
+                                                 xaxis2: {
+                                                   domain: [0.52, 1],
+                                                   anchor: "y2"
+                                                 },
+                                                 annotations: [
+                                                   {
+                                                      text: "Load Collectives",
+                                                      showarrow: false,
+                                                      x: 0,
+                                                      xref: "x domain",
+                                                      y: 1.1,
+                                                      yref: "y domain"
+                                                   },
+                                                   {
+                                                      text: "Adaption Values",
+                                                      showarrow: false,
+                                                      x: 0,
+                                                      xref: "x2 domain",
+                                                      y: 1.1,
+                                                      yref: "y2 domain"
+                                                   }
+                                                ]
+                                              };
+                                              Plotly.newPlot('plot-hi', data, layout);
                                           </script>
-                                       </div>
-
-                                       <div id="plot2" style="display: inline-block;width: 45%;height: auto;text-align: center;vertical-align: middle;">
-                                          <h4 style="left: 0px">Distribution of Health Indicator A</h4>
-                                          <div id="plot-hi-2" style="float: right;"></div>
-                                          <script th:inline="javascript">
-                                            var data_hi = /*[[${hiVehicles}]]*/;
-                                            // map data_hi to only contain the list of first health indicators
-                                            // var x = data_hi.map(x => Math.random());
-                                            var x = [...new Array(500)].map(() => Math.random());
-                                            var trace = {
-                                              x: x,
-                                              type: 'histogram',
-                                            };
-                                          var data = [trace];
-                                          Plotly.newPlot('plot-hi-2', data);
-                                          </script>
-                                       </div>
-
-                                    </div>
-
-
 
                                     <div class="faq-answer-body" id="table-div">
                                        <table sytle="border-collapse: separate; border-spacing: 5px 0;">
