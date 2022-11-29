@@ -44,7 +44,6 @@ public class HIDataCollector {
 
     @Autowired private HINotificationToSupplierContentConverter hiNotificationToSupplierContentConverter;
     @Autowired private HINotificationCreator hiNotificationCreator;
-    @Autowired private HICollectorOptionReader hiCollectorOptionReader;
     @Autowired private HIVehicleCollector hiVehicleCollector;
     @Autowired private HIInputDataBuilder hiInputDataBuilder;
     @Autowired private HICalculationTable hiCalculationTable;
@@ -61,15 +60,12 @@ public class HIDataCollector {
         doUpdate(new HIUpdateOptions());
     }
 
-    public void doUpdate(@Nullable final String option) throws OemHIException {
-        doUpdate(hiCollectorOptionReader.read(option));
-    }
-
     public synchronized void doUpdate(@NotNull final HIUpdateOptions options) throws OemHIException {
         final long syncCounterMin = getLastSyncCounterReady() + 1L;
 
         try {
-            final List<Vehicle> updatedVehicles = hiVehicleCollector.collect(syncCounterMin);
+            final List<Vehicle> updatedVehicles = hiVehicleCollector.collect(options.isRecalculateAllVehicles()?
+                                                                                                0L :  syncCounterMin);
             if (updatedVehicles == null) {
                 logger.info("No updated vehicles this time!");
                 return;
@@ -174,11 +170,12 @@ public class HIDataCollector {
         if (result.getStatusCode() == HttpStatus.OK
                     || result.getStatusCode() == HttpStatus.CREATED
                     || result.getStatusCode() == HttpStatus.ACCEPTED) {
-            logger.info("Request for Id " + requestId + " started.");
+            logger.info("External calculation service for Id " + requestId + " started.");
             setCalculationStatus(requestId, CalculationStatus.RUNNING);
         } else {
-            serviceCallFailed("Starting request for Id \" + requestId + \" failed: http code "
-                    + result.getStatusCode().toString() + ", response body: " + result.getBody().toString());
+            serviceCallFailed("Starting external calculation service for Id \" + requestId + \" failed: "
+                    + "http code " + result.getStatusCode().toString() + ", response body: "
+                    + result.getBody().toString());
         }
     }
 

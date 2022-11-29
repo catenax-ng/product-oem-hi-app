@@ -1,5 +1,7 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.controller;
 
+import net.catena_x.btp.hi.oem.backend.hi_service.collector.util.HICollectorOptionReader;
+import net.catena_x.btp.hi.oem.backend.hi_service.collector.util.HIUpdateOptions;
 import net.catena_x.btp.hi.oem.backend.hi_service.controller.util.HIDbMaintainer;
 import net.catena_x.btp.hi.oem.backend.hi_service.controller.util.HIJobRunner;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HINotificationFromSupplierContent;
@@ -26,6 +28,7 @@ public class HIController {
     @Autowired private HIJobRunner jobRunner;
     @Autowired private HIResultProcessor resultProcessor;
     @Autowired private HIDbMaintainer hiDbMaintainer;
+    @Autowired private HICollectorOptionReader hiCollectorOptionReader;
 
     private final Logger logger = LoggerFactory.getLogger(HIController.class);
 
@@ -36,7 +39,19 @@ public class HIController {
 
     @GetMapping(COLLECTOR_API_BASEPATH + "/runtest/{options}")
     public ResponseEntity<ApiResult> run(@PathVariable @NotNull final String options) {
-        return jobRunner.startJob(options);
+
+        HIUpdateOptions updateOptions = null;
+        try {
+            updateOptions = hiCollectorOptionReader.read(options);
+        } catch(final OemHIException exception) {
+            return apiHelper.failed(exception.getMessage());
+        }
+
+        if(updateOptions.isForceCalculationIgnoringQueue()) {
+            resetQueue();
+        }
+
+        return jobRunner.startJob(updateOptions);
     }
 
     @GetMapping(COLLECTOR_API_BASEPATH + "/setstate")

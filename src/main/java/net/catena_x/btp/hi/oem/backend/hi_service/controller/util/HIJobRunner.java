@@ -1,6 +1,8 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.controller.util;
 
 import net.catena_x.btp.hi.oem.backend.hi_service.collector.HIDataCollector;
+import net.catena_x.btp.hi.oem.backend.hi_service.collector.util.HICollectorOptionReader;
+import net.catena_x.btp.hi.oem.backend.hi_service.collector.util.HIUpdateOptions;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import net.catena_x.btp.libraries.oem.backend.datasource.model.api.ApiResult;
 import net.catena_x.btp.libraries.util.apihelper.ApiHelper;
@@ -16,6 +18,7 @@ public class HIJobRunner {
     @Autowired private HIDataCollector dataCollector;
     @Autowired private HIQueue queue;
     @Autowired private ApiHelper apiHelper;
+    @Autowired private HICollectorOptionReader hiCollectorOptionReader;
 
     public ResponseEntity<ApiResult> startJob() {
         try {
@@ -25,13 +28,13 @@ public class HIJobRunner {
         }
     }
 
-    public ResponseEntity<ApiResult> startJob(@Nullable final String options) {
+    public ResponseEntity<ApiResult> startJob(@Nullable final HIUpdateOptions options) {
         if(options == null) {
             return startJob();
         }
 
         try {
-            return startJobInternal(queue.addNewJobToQueue(options.toUpperCase()));
+            return startJobInternal(queue.addNewJobToQueue(options));
         } catch (final OemHIException exception) {
             return apiHelper.failed(exception.getMessage());
         }
@@ -82,7 +85,7 @@ public class HIJobRunner {
         }
     }
 
-    private void startJobInternal(@Nullable final String options) throws OemHIException {
+    private void startJobInternal(@Nullable final HIUpdateOptions options) throws OemHIException {
         try {
             dataCollector.doUpdate(options);
         } catch (final Exception exception) {

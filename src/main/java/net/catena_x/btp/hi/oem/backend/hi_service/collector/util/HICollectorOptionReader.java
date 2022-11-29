@@ -3,11 +3,15 @@ package net.catena_x.btp.hi.oem.backend.hi_service.collector.util;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.validation.constraints.NotNull;
 
 @Component
 public class HICollectorOptionReader {
+    private Pattern pattern = Pattern.compile("[A-Z]*");
+
     public HIUpdateOptions read(@Nullable final String options) throws OemHIException {
         if(options == null) {
             return new HIUpdateOptions();
@@ -21,23 +25,42 @@ public class HICollectorOptionReader {
     }
 
     private HIUpdateOptions readFromString(@NotNull final String options) {
-        HIUpdateOptions result = new HIUpdateOptions();
+        final HIUpdateOptions result = new HIUpdateOptions();
 
         if (options.length() == 0) {
             return result;
         }
 
-        setRenameLoadSpectra(result, options);
+        final Matcher matcher = pattern.matcher(options);
+        int lenConstants = 0;
+        if(matcher.find()) {
+            final String constants = matcher.group();
+            lenConstants = constants.length();
+
+            setRenameLoadSpectra(result, constants);
+            setForceCalculation(result, constants);
+            setRecalculateAllVehicles(result, constants);
+        }
 
         setLoadSpectraLimitation(result, result.isRenameLoadSpectrumToLoadCollective() ?
-                options.substring(1) : options);
+                                                    options.substring(lenConstants) : options);
 
         return result;
     }
 
     private void setRenameLoadSpectra(@NotNull final HIUpdateOptions updateOptionsInOut,
                                       @NotNull final String options) {
-        updateOptionsInOut.setRenameLoadSpectrumToLoadCollective(options.substring(0, 1).equals("R"));
+        updateOptionsInOut.setRenameLoadSpectrumToLoadCollective(options.contains("R"));
+    }
+
+    private void setForceCalculation(@NotNull final HIUpdateOptions updateOptionsInOut,
+                                     @NotNull final String options) {
+        updateOptionsInOut.setForceCalculationIgnoringQueue(options.contains("Q"));
+    }
+
+    private void setRecalculateAllVehicles(@NotNull final HIUpdateOptions updateOptionsInOut,
+                                           @NotNull final String options) {
+        updateOptionsInOut.setRecalculateAllVehicles(options.contains("A"));
     }
 
     private void setLoadSpectraLimitation(@NotNull final HIUpdateOptions updateOptionsInOut,

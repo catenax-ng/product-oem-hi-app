@@ -1,5 +1,6 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.controller.util;
 
+import net.catena_x.btp.hi.oem.backend.hi_service.collector.util.HIUpdateOptions;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class HIQueue {
     private HIQueueElement queue = new HIQueueElement(HIQueueState.NOT_RUNNING, null);
 
-    public synchronized HIQueueElement addNewJobToQueue(@Nullable final String options)
+    public synchronized HIQueueElement addNewJobToQueue(@Nullable final HIUpdateOptions options)
             throws OemHIException {
 
         switch(queue.queueState()) {
@@ -64,7 +65,7 @@ public class HIQueue {
         return queue;
     }
 
-    private void assertQueuedOptionsCompatible(@Nullable final String options) throws OemHIException {
+    private void assertQueuedOptionsCompatible(@Nullable final HIUpdateOptions options) throws OemHIException {
         if((options == null) != (queue.options() == null)) {
             throw new OemHIException("There is already a queued job with incompatible options!");
         }
