@@ -3,6 +3,7 @@
 <div th:replace="fragments/cx-header :: head"> Error!! </div>
 <div th:replace="fragments/cx-header :: header"> Error!! </div>
 <body data-page="1" data-layout="0" class="scrolling">
+      <script src="https://cdn.plot.ly/plotly-2.16.3.min.js"></script>
       <main id="content">
          <a id="query"></a>
          <section id="c9" class="frame frame-default frame-type-catena_faq frame-layout-0">
@@ -24,6 +25,45 @@
                            <ol class="list-unstyled">
                               <li class="faq-item">
                                  <div class="faq-answer collapse show" id="data_body_0" aria-labelledby="data_header_0" data-parent="#faq9">
+                                    <div id="plot.area" style="overflow: hidden;vertical-align: middle;display: table-cell;padding: 0;margin: 0;">
+                                       <div id="plot1" style="display: inline-block;width: 45%;height: auto;text-align: center;vertical-align: middle;">
+                                          <h4 style="left: 0px">Distribution of Health Indicator L</h4>
+                                          <div id="plot-hi-1" style="float:left"></div>
+                                          <script th:inline="javascript">
+                                            var data_hi = /*[[${hiVehicles}]]*/;
+                                            // map data_hi to only contain the list of first health indicators
+                                            // var x = data_hi.map(x => Math.random());
+                                            var x = [...new Array(500)].map(() => Math.random());
+                                            var trace = {
+                                              x: x,
+                                              type: 'histogram',
+                                            };
+                                          var data = [trace];
+                                          Plotly.newPlot('plot-hi-1', data);
+                                          </script>
+                                       </div>
+
+                                       <div id="plot2" style="display: inline-block;width: 45%;height: auto;text-align: center;vertical-align: middle;">
+                                          <h4 style="left: 0px">Distribution of Health Indicator A</h4>
+                                          <div id="plot-hi-2" style="float: right;"></div>
+                                          <script th:inline="javascript">
+                                            var data_hi = /*[[${hiVehicles}]]*/;
+                                            // map data_hi to only contain the list of first health indicators
+                                            // var x = data_hi.map(x => Math.random());
+                                            var x = [...new Array(500)].map(() => Math.random());
+                                            var trace = {
+                                              x: x,
+                                              type: 'histogram',
+                                            };
+                                          var data = [trace];
+                                          Plotly.newPlot('plot-hi-2', data);
+                                          </script>
+                                       </div>
+
+                                    </div>
+
+
+
                                     <div class="faq-answer-body" id="table-div">
                                        <table sytle="border-collapse: separate; border-spacing: 5px 0;">
                                           <thead>

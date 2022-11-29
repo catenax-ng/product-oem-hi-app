@@ -161,4 +161,40 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>hibackendservice</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<version>2.7.5</version>
+						<configuration>
+							<mainClass>net.catena_x.btp.hi.oem.backend.hi_service.OemHiBackendServiceApplication</mainClass>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>hifrontend</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<version>2.7.5</version>
+						<configuration>
+							<mainClass>net.catena_x.btp.hi.oem.frontend.OemHiFrontendApplication</mainClass>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
