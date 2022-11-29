@@ -156,7 +156,7 @@ class DataCollectorMockTest {
         AdaptionValues adaptionValueSet = new AdaptionValues();
         adaptionValueSet.setValues(new double[] {20.0, 40.0, 20.0, 40.0});
         BammStatus status = new BammStatus();
-        status.setRouteDescription("Default route");
+        // status.setRouteDescription("Default route");
         status.setMileage(76543L);
         status.setDate(Instant.parse("2022-10-12T08:17:18.734Z"));
         status.setOperatingTime("1282.0");
@@ -199,7 +199,7 @@ class DataCollectorMockTest {
         AdaptionValues adaptionValueSet = new AdaptionValues();
         adaptionValueSet.setValues(new double[] {20.0, 40.0, 20.0, 40.0});
         BammStatus status = new BammStatus();
-        status.setRouteDescription("Default route");
+        // status.setRouteDescription("Default route");
         status.setMileage(76543L);
         status.setDate(Instant.parse("2022-10-12T08:17:18.734Z"));
         status.setOperatingTime("1282.0");
