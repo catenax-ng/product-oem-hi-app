@@ -87,12 +87,6 @@ public class HIController {
         return apiHelper.ok("Processing results started.");
     }
 
-    @GetMapping(RECEIVER_API_BASEPATH + "/resetdatabase")
-    public ResponseEntity<ApiResult> resetDatabase() {
-        // TODO implement hi database reset.
-        return apiHelper.failed("Database reset is not implemented!");
-    }
-
     public ResponseEntity<ApiResult> setJobFinishedStartWaiting() throws OemHIException {
         return jobRunner.setJobFinishedAndStartQueued();
     }

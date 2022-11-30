@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -29,17 +30,58 @@ public class HIServiceControllerSupplierMock {
     @Autowired ApiHelper apiHelper;
     @Autowired private RestTemplate restTemplate;
 
+    final double GREEN = 0.0;
+    final double YELLOW = 0.95;
+    final double RED = 1.1;
+
+    final double[] GREEN_GREEN = {GREEN, GREEN};
+    final double[] GREEN_YELLOW = {GREEN, YELLOW};
+    final double[] GREEN_RED = {GREEN, RED};
+    final double[] YELLOW_GREEN = {YELLOW, GREEN};
+    final double[] YELLOW_YELLOW = {YELLOW, YELLOW};
+    final double[] YELLOW_RED = {YELLOW, RED};
+    final double[] RED_GREEN = {RED, GREEN};
+    final double[] RED_YELLOW = {RED, YELLOW};
+    final double[] RED_RED = {RED, RED};
+
+    final double[][] healthIndicatorValues1 = {
+            GREEN_GREEN, GREEN_GREEN, GREEN_GREEN, GREEN_GREEN, GREEN_GREEN,
+            RED_YELLOW, GREEN_GREEN, GREEN_YELLOW, GREEN_GREEN, GREEN_GREEN,
+            GREEN_GREEN, GREEN_GREEN, GREEN_GREEN, GREEN_YELLOW, GREEN_YELLOW,
+            GREEN_GREEN, GREEN_GREEN, GREEN_GREEN, GREEN_GREEN, GREEN_GREEN,
+            GREEN_GREEN, YELLOW_GREEN, GREEN_GREEN, YELLOW_GREEN, GREEN_GREEN,
+            GREEN_GREEN, GREEN_GREEN, GREEN_GREEN, GREEN_GREEN, GREEN_GREEN};
+
+    final double[][] healthIndicatorValues2 = {
+            GREEN_GREEN, YELLOW_GREEN, GREEN_GREEN, GREEN_GREEN, GREEN_GREEN,
+            RED_RED, GREEN_GREEN, GREEN_YELLOW, GREEN_GREEN, GREEN_GREEN,
+            GREEN_GREEN, GREEN_GREEN, GREEN_GREEN, GREEN_YELLOW, GREEN_YELLOW,
+            GREEN_GREEN, GREEN_GREEN, GREEN_GREEN, GREEN_YELLOW, GREEN_YELLOW,
+            GREEN_GREEN, YELLOW_GREEN, GREEN_GREEN, YELLOW_GREEN, GREEN_RED,
+            GREEN_GREEN, GREEN_GREEN, GREEN_GREEN, GREEN_GREEN, GREEN_GREEN};
+
+    private boolean useHiValues1 = true;
+    private synchronized boolean isHiValues1() {
+        useHiValues1 = !useHiValues1;
+        return !useHiValues1;
+    }
+
     @PostMapping("api/service/{assetid}/submodel")
     public ResponseEntity<ApiResult> runCalculationMock(
             @RequestBody @NotNull Notification<DataToSupplierContent> data,
             @PathVariable @NotNull final String assetid) {
 
-        final List<HealthIndicatorOutputDAO> outputs =
-                new ArrayList<>(data.getContent().getHealthIndicatorInputs().size());
+        final List<HealthIndicatorInput> healthIndicatorInputs = data.getContent().getHealthIndicatorInputs();
+        healthIndicatorInputs.sort(Comparator.comparing(HealthIndicatorInput::getComponentId));
 
-        for (final HealthIndicatorInput inputData : data.getContent().getHealthIndicatorInputs()) {
+        final int count = healthIndicatorInputs.size();
+        final List<HealthIndicatorOutputDAO> outputs = new ArrayList<>(count);
+        final double[][] healthIndicatorValues = isHiValues1()? healthIndicatorValues1 : healthIndicatorValues2;
+
+        for (int i = 0; i < count; i++) {
+            final HealthIndicatorInput inputData = healthIndicatorInputs.get(i);
             outputs.add(new HealthIndicatorOutputDAO("DV_0.0.99", inputData.getComponentId(),
-                    new double[]{ 0.4, 1.1 }));
+                    (i < healthIndicatorValues.length)? healthIndicatorValues[i] : GREEN_GREEN));
         }
 
         final Notification<HINotificationFromSupplierContentDAO> notification = new Notification<>();
@@ -53,7 +95,7 @@ public class HIServiceControllerSupplierMock {
         new Thread(() ->
         {
             try {
-                Thread.sleep(10000L);
+                Thread.sleep(2000L);
             } catch (InterruptedException exception) {
             }
 
