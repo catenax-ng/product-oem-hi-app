@@ -16,7 +16,7 @@ import java.time.Instant;
         query = "INSERT INTO hivehicles (vehicle_id, van, gearbox_id, production_date) " +
                 "VALUES (:vehicle_id, :van, :gearbox_id, :production_date)")
 @NamedNativeQuery(name = "HIVehicleDAO.updateNewestHealthindicatorsIdByVehicleId",
-        query = "UPDATE hivehicles SET newest_healthindicators_id=:healthindicators_id, " +
+        query = "UPDATE hivehicles SET newest_healthindicators_id=:newest_healthindicators_id, " +
                 "update_timestamp=CURRENT_TIMESTAMP WHERE vehicle_id=:vehicle_id")
 @NamedNativeQuery(name = "HIVehicleDAO.deleteAll",
         query = "DELETE FROM hivehicles")

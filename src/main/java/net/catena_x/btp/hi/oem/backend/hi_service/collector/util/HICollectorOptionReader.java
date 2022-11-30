@@ -3,10 +3,10 @@ package net.catena_x.btp.hi.oem.backend.hi_service.collector.util;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.validation.constraints.NotNull;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class HICollectorOptionReader {

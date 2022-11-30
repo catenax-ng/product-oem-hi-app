@@ -122,9 +122,10 @@ public class HIResultProcessor {
 
     private void processSingleOutput(@NotNull final HealthIndicatorOutput output,
                                      @NotNull final HICalculation calculation) throws OemHIException {
-        hiHealthIndicatorsTable.updateHealthIndicatorsGetIdNewTransaction(
-                output, hiVehicleTable.getByGearboxIdNewTransaction(output.getComponentId()).getVehicleId(),
-                calculation.getCalculationTimestamp(), calculation.getCalculationSyncCounterMax());
+
+        final String vehicleId = hiVehicleTable.getByGearboxIdNewTransaction(output.getComponentId()).getVehicleId();
+        hiVehicleTable.appendHealthindicatorsNewTransaction(vehicleId, output, calculation.getCalculationTimestamp(),
+                calculation.getCalculationSyncCounterMax());
 
         //TODO: Test above implementation for writing to hi database (and remove logging).
         final StringBuilder hiValues = new StringBuilder();

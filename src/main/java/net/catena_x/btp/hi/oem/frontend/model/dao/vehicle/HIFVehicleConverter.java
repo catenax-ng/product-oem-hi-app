@@ -10,11 +10,17 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.io.UncheckedIOException;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class HIFVehicleConverter extends DAOConverter<HIFVehicle, HIVehicle> {
     @Value("${hifrontend.adaptionsvalues.thresholds.greenYellow:0.8}") private double thresholdGreenYellow;
     @Value("${hifrontend.adaptionsvalues.thresholds.yellowRed:1.0}") private double thresholdYellowRed;
+
+    private DateTimeFormatter dateFormatter =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.from(ZoneOffset.UTC));
 
     protected HIVehicle toDTOSourceExists(@NotNull final HIFVehicle source) {
         throw new UncheckedIOException("Conversion is not allowed!", null);
@@ -22,8 +28,9 @@ public class HIFVehicleConverter extends DAOConverter<HIFVehicle, HIVehicle> {
 
     protected HIFVehicle toDAOSourceExists(@NotNull final HIVehicle source) {
         return new HIFVehicle(source.getVehicleId(), source.getVan(),
-                source.getGearboxId(), source.getProductionDate(),
-                source.getUpdateTimestamp(), getHealthState(source.getNewestHealthindicators(), 0),
+                source.getGearboxId(), dateFormatter.format(source.getProductionDate()),
+                dateFormatter.format(source.getUpdateTimestamp()),
+                getHealthState(source.getNewestHealthindicators(), 0),
                 getHealthState(source.getNewestHealthindicators(), 1));
     }
 

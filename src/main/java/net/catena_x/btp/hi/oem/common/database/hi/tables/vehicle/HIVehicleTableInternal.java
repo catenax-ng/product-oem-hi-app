@@ -15,6 +15,8 @@ import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.Vehicle;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +34,8 @@ public class HIVehicleTableInternal extends HITableBase {
     @Autowired private HIVehicleRepository hiVehicleRepository;
     @Autowired private HIHealthIndicatorsTableInternal healthindicatorsTable;
     @Autowired private VehicleComperator vehicleComperator;
+
+    private final Logger logger = LoggerFactory.getLogger(HIVehicleTableInternal.class);
 
     @HITransactionDefaultUseExisting
     public void insertVehicleExternalTransaction(@NotNull final Vehicle newVehicle) throws OemHIException {
@@ -120,6 +124,7 @@ public class HIVehicleTableInternal extends HITableBase {
                 hiVehicleRepository.updateNewestHealthindicatorsIdByVehicleId(vehicle.vehicle().getVehicleId(),
                                                                             newHealthIndicatorsId);
             } catch (final Exception exception) {
+                logger.error(exception.getMessage());
                 throw failed("Appending health indicators failed!", exception);
             }
         }
