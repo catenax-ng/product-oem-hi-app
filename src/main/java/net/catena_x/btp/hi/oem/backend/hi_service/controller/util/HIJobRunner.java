@@ -1,6 +1,7 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.controller.util;
 
 import net.catena_x.btp.hi.oem.backend.hi_service.collector.HIDataCollector;
+import net.catena_x.btp.hi.oem.backend.hi_service.collector.enums.UpdateInfo;
 import net.catena_x.btp.hi.oem.backend.hi_service.collector.util.HICollectorOptionReader;
 import net.catena_x.btp.hi.oem.backend.hi_service.collector.util.HIUpdateOptions;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
@@ -75,8 +76,20 @@ public class HIJobRunner {
             }
 
             case RUNNING: {
-                startJobInternal(currentQueueElement.options());
-                return apiHelper.ok("Started external hi calculation.");
+                switch (startJobInternal(currentQueueElement.options())) {
+                    case UPDATE_STARTED: {
+                        return apiHelper.ok("Started external hi calculation.");
+                    }
+
+                    case NOTHING_TO_UPDATE: {
+                        setJobFinishedAndStartQueued(); //TODO: Process result, if new job is started.
+                        return apiHelper.ok("No updated vehicles found. Nothing to calculate.");
+                    }
+
+                    default: {
+                        throw new OemHIException("Unknown update state!");
+                    }
+                }
             }
 
             default: {
@@ -85,9 +98,9 @@ public class HIJobRunner {
         }
     }
 
-    private void startJobInternal(@Nullable final HIUpdateOptions options) throws OemHIException {
+    private UpdateInfo startJobInternal(@Nullable final HIUpdateOptions options) throws OemHIException {
         try {
-            dataCollector.doUpdate(options);
+            return dataCollector.doUpdate(options);
         } catch (final Exception exception) {
             try {
                 setJobFinishedAndStartQueued();

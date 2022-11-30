@@ -34,7 +34,7 @@ public class HIController {
 
     @GetMapping(COLLECTOR_API_BASEPATH + "/run")
     public ResponseEntity<ApiResult> run() {
-        return jobRunner.startJob(null);
+        return jobRunner.startJob(new HIUpdateOptions());
     }
 
     @GetMapping(COLLECTOR_API_BASEPATH + "/runtest/{options}")
@@ -65,7 +65,7 @@ public class HIController {
         return jobRunner.resetQueue();
     }
 
-    @PostMapping(RECEIVER_API_BASEPATH + "/resethidb")
+    @GetMapping(RECEIVER_API_BASEPATH + "/resethidb")
     public ResponseEntity<ApiResult> resetHiDb() {
         return hiDbMaintainer.reset();
     }

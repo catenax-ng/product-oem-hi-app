@@ -42,8 +42,9 @@ public class HICollectorOptionReader {
             setRecalculateAllVehicles(result, constants);
         }
 
-        setLoadSpectraLimitation(result, result.isRenameLoadSpectrumToLoadCollective() ?
-                                                    options.substring(lenConstants) : options);
+        if(lenConstants < options.length()) {
+            setLoadSpectraLimitation(result, options.substring(lenConstants));
+        }
 
         return result;
     }

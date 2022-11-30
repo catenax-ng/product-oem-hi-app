@@ -30,7 +30,6 @@ public class HIVehicleCollector {
             final List<Vehicle> updatedVehicles = collectUpdatedVehicles(syncCounterMin);
 
             if(DataHelper.isNullOrEmpty(updatedVehicles)) {
-                logger.info("No updated vehicles this time!");
                 return null;
             }
 

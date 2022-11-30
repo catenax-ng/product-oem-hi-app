@@ -1,6 +1,8 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.collector;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.catena_x.btp.hi.oem.backend.hi_service.collector.enums.UpdateInfo;
 import net.catena_x.btp.hi.oem.backend.hi_service.collector.util.*;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.HINotificationToSupplierContentDAO;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.DataToSupplierContent;
@@ -18,7 +20,6 @@ import net.catena_x.btp.libraries.util.datahelper.DataHelper;
 import net.catena_x.btp.libraries.util.exceptions.BtpException;
 import net.catena_x.btp.libraries.util.json.ObjectMapperFactoryBtp;
 import okhttp3.HttpUrl;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ public class HIDataCollector {
         doUpdate(new HIUpdateOptions());
     }
 
-    public synchronized void doUpdate(@NotNull final HIUpdateOptions options) throws OemHIException {
+    public synchronized UpdateInfo doUpdate(@NotNull final HIUpdateOptions options) throws OemHIException {
         final long syncCounterMin = getLastSyncCounterReady() + 1L;
 
         try {
@@ -68,7 +69,7 @@ public class HIDataCollector {
                                                                                                 0L :  syncCounterMin);
             if (updatedVehicles == null) {
                 logger.info("No updated vehicles this time!");
-                return;
+                return UpdateInfo.NOTHING_TO_UPDATE;
             }
 
             logger.info("Found " + updatedVehicles.size() + " updated vehicles!");
@@ -76,6 +77,8 @@ public class HIDataCollector {
             registerNewVehicles(updatedVehicles);
 
             buildHIServiceInputsAndDispatch(updatedVehicles, syncCounterMin, options);
+
+            return UpdateInfo.UPDATE_STARTED;
         } catch (final Exception exception) {
             throw new OemHIException(exception);
         }
@@ -164,7 +167,7 @@ public class HIDataCollector {
                 : callService(requestId, notification));
     }
 
-    private void processResult(@NotNull final String requestId, @NotNull final ResponseEntity<String> result)
+    private void processResult(@NotNull final String requestId, @NotNull final ResponseEntity<JsonNode> result)
             throws OemHIException {
 
         if (result.getStatusCode() == HttpStatus.OK
@@ -179,7 +182,7 @@ public class HIDataCollector {
         }
     }
 
-    private ResponseEntity<String> renameAndCallService(
+    private ResponseEntity<JsonNode> renameAndCallService(
             @NotNull final String requestId, @NotNull final Notification<DataToSupplierContent> notification)
             throws OemHIException {
 
@@ -188,18 +191,18 @@ public class HIDataCollector {
                                                                 .replace("Spectrum", "Collective");
 
             return startAsyncRequest(requestId, supplierHiServiceEndpoint.toString(),
-                    inputAssetName, notificationAsString, String.class);
+                    inputAssetName, notificationAsString, JsonNode.class);
         } catch(final IOException exception) {
             setCalculationStatus(requestId, CalculationStatus.FAILED_EXTERNAL);
             throw new OemHIException("Error while converting inputs to json!", exception);
         }
     }
 
-    private ResponseEntity<String> callService(
+    private ResponseEntity<JsonNode> callService(
             @NotNull final String requestId, @NotNull final Notification<DataToSupplierContent> notification)
             throws OemHIException {
         return startAsyncRequest(requestId, supplierHiServiceEndpoint.toString(), inputAssetName,
-                notification, String.class);
+                notification, JsonNode.class);
     }
 
     private void serviceCallFailed(@NotNull final String errorText) throws OemHIException {

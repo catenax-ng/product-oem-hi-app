@@ -12,6 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = {
 		"net.catena_x.btp.hi.oem.backend.hi_service",
 		"net.catena_x.btp.hi.oem.common",
+		"net.catena_x.btp.hi.supplier",
 		"net.catena_x.btp.libraries.notification",
 		"net.catena_x.btp.libraries.oem.backend.model.dto",
 		"net.catena_x.btp.libraries.oem.backend.cloud",
