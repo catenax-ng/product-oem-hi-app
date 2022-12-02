@@ -8,8 +8,8 @@ import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhise
 import net.catena_x.btp.hi.oem.backend.hi_service.receiver.HIResultProcessor;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import net.catena_x.btp.libraries.notification.dto.Notification;
-import net.catena_x.btp.libraries.oem.backend.datasource.model.api.ApiResult;
 import net.catena_x.btp.libraries.util.apihelper.ApiHelper;
+import net.catena_x.btp.libraries.util.apihelper.model.DefaultApiResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +33,12 @@ public class HIController {
     private final Logger logger = LoggerFactory.getLogger(HIController.class);
 
     @GetMapping(COLLECTOR_API_BASEPATH + "/run")
-    public ResponseEntity<ApiResult> run() {
+    public ResponseEntity<DefaultApiResult> run() {
         return jobRunner.startJob(new HIUpdateOptions());
     }
 
     @GetMapping(COLLECTOR_API_BASEPATH + "/runtest/{options}")
-    public ResponseEntity<ApiResult> run(@PathVariable @NotNull final String options) {
+    public ResponseEntity<DefaultApiResult> run(@PathVariable @NotNull final String options) {
 
         HIUpdateOptions updateOptions = null;
         try {
@@ -51,35 +51,39 @@ public class HIController {
             resetQueue();
         }
 
+        if(updateOptions.isResetHiDatabase()) {
+            resetHiDb();
+        }
+
         return jobRunner.startJob(updateOptions);
     }
 
     @GetMapping(COLLECTOR_API_BASEPATH + "/setstate")
-    public ResponseEntity<ApiResult> pauseResume() {
+    public ResponseEntity<DefaultApiResult> pauseResume() {
         // TODO read parameter and set execution state
         return apiHelper.failed("Setting state is not implemented!");
     }
 
     @GetMapping(COLLECTOR_API_BASEPATH + "/resetqueue")
-    public ResponseEntity<ApiResult> resetQueue() {
+    public ResponseEntity<DefaultApiResult> resetQueue() {
         return jobRunner.resetQueue();
     }
 
     @GetMapping(RECEIVER_API_BASEPATH + "/resethidb")
-    public ResponseEntity<ApiResult> resetHiDb() {
+    public ResponseEntity<DefaultApiResult> resetHiDb() {
         return hiDbMaintainer.reset();
     }
 
     @PostMapping(RECEIVER_API_BASEPATH + "/notifyresult")
-    public ResponseEntity<ApiResult> notifyResult(
+    public ResponseEntity<DefaultApiResult> notifyResult(
             @RequestBody @NotNull Notification<HINotificationFromSupplierContent> result) {
 
         final Runnable setJobFinishedAndStartQueued = () -> {
-                    final ResponseEntity<ApiResult> nextJobResponse = jobRunner.setJobFinishedAndStartQueued();
+                    final ResponseEntity<DefaultApiResult> nextJobResponse = jobRunner.setJobFinishedAndStartQueued();
                     if(nextJobResponse.getStatusCode() != HttpStatus.OK
                                 && nextJobResponse.getStatusCode() != HttpStatus.CREATED
                                 && nextJobResponse.getStatusCode() != HttpStatus.ACCEPTED) {
-                        logger.error("Starting queued job failed: " + nextJobResponse.getBody().message());
+                        logger.error("Starting queued job failed: " + nextJobResponse.getBody().getMessage());
                     }
                 };
 
@@ -87,11 +91,11 @@ public class HIController {
         return apiHelper.ok("Processing results started.");
     }
 
-    public ResponseEntity<ApiResult> setJobFinishedStartWaiting() throws OemHIException {
+    public ResponseEntity<DefaultApiResult> setJobFinishedStartWaiting() throws OemHIException {
         return jobRunner.setJobFinishedAndStartQueued();
     }
 
-    private ResponseEntity<ApiResult> waiting() {
+    private ResponseEntity<DefaultApiResult> waiting() {
         return apiHelper.ok("External hi calculation will be started after current running job.");
     }
 }

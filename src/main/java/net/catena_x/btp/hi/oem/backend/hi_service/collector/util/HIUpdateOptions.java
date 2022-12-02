@@ -16,10 +16,11 @@ public class HIUpdateOptions {
     private int maxVehicleTwins = -1;
     private boolean recalculateAllVehicles = false;
     private boolean forceCalculationIgnoringQueue = false;
+    private boolean resetHiDatabase = false;
 
     public boolean appliesChanges() {
         return renameLoadSpectrumToLoadCollective || limitVehicleTwinCount
-                || recalculateAllVehicles || forceCalculationIgnoringQueue;
+                || recalculateAllVehicles || forceCalculationIgnoringQueue || resetHiDatabase;
     }
 
     public boolean equals(@Nullable final HIUpdateOptions other) {
@@ -28,6 +29,7 @@ public class HIUpdateOptions {
         if(this.maxVehicleTwins != other.maxVehicleTwins){ return false;}
         if(this.recalculateAllVehicles != other.recalculateAllVehicles){ return false;}
         if(this.forceCalculationIgnoringQueue != other.forceCalculationIgnoringQueue){ return false;}
+        if(this.resetHiDatabase != other.resetHiDatabase){ return false;}
 
         return true;
     }

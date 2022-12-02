@@ -231,7 +231,6 @@ public class HIDataCollector {
             @NotNull final BodyType messageBody, @NotNull Class<ResponseType> responseTypeClass) throws OemHIException {
 
         try {
-
             return edcApi.post(HttpUrl.parse(endpoint), asset, responseTypeClass,
                     messageBody, generateDefaultHeaders());
         } catch (final EdcException exception) {

@@ -40,6 +40,7 @@ public class HICollectorOptionReader {
             setRenameLoadSpectra(result, constants);
             setForceCalculation(result, constants);
             setRecalculateAllVehicles(result, constants);
+            setResetHiDatabase(result, constants);
         }
 
         if(lenConstants < options.length()) {
@@ -62,6 +63,11 @@ public class HICollectorOptionReader {
     private void setRecalculateAllVehicles(@NotNull final HIUpdateOptions updateOptionsInOut,
                                            @NotNull final String options) {
         updateOptionsInOut.setRecalculateAllVehicles(options.contains("A"));
+    }
+
+    private void setResetHiDatabase(@NotNull final HIUpdateOptions updateOptionsInOut,
+                                    @NotNull final String options) {
+        updateOptionsInOut.setResetHiDatabase(options.contains("D"));
     }
 
     private void setLoadSpectraLimitation(@NotNull final HIUpdateOptions updateOptionsInOut,

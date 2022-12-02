@@ -115,7 +115,8 @@ public class HIVehicleTableInternal extends HITableBase {
                                         @NotNull final long calculationSyncCounter)
             throws OemHIException {
 
-        if(firstIsNewer(calculationSyncCounter, vehicle.healthIndicators())) {
+        //if(firstIsNewer(calculationSyncCounter, vehicle.healthIndicators())) //FA: TODO:
+        {
             final String newHealthIndicatorsId = healthindicatorsTable.updateHealthIndicatorsGetIdExternalTransaction(
                     newHealthIndicators, vehicle.vehicle().getVehicleId(),
                     calculationTimestamp, calculationSyncCounter);

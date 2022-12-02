@@ -88,7 +88,7 @@
                                                  },
                                                  annotations: [
                                                    {
-                                                      text: "Load Collectives",
+                                                      text: "Load Spectra",
                                                       showarrow: false,
                                                       x: 0,
                                                       xref: "x domain",
@@ -134,7 +134,7 @@
                                                    <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).YELLOW}" class="tlimage" src="/tlyellow.png" alt="A yellow traffic light"/>
                                                    <img th:case="${T(net.catena_x.btp.hi.oem.frontend.model.enums.HIFHealthState).GREEN}" class="tlimage" src="/tlgreen.png" alt="A green traffic light"/>
                                                 </td>
-                                                <td><span th:text="${hiVehicle.vehicleId}"></span></td>
+                                                <td><a th:href="@{/vehicle.html(id=${hiVehicle.vehicleId})}">[[${hiVehicle.vehicleId}]]</a></td>
                                                 <td><span th:text="${hiVehicle.gearboxId}"></span></td>
                                                 <td><span th:text="${hiVehicle.productionDate}"></span></td>
                                                 <td><span th:text="${hiVehicle.updateTimestamp}"></span></td>

@@ -5,8 +5,8 @@ import net.catena_x.btp.hi.oem.backend.hi_service.collector.enums.UpdateInfo;
 import net.catena_x.btp.hi.oem.backend.hi_service.collector.util.HICollectorOptionReader;
 import net.catena_x.btp.hi.oem.backend.hi_service.collector.util.HIUpdateOptions;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
-import net.catena_x.btp.libraries.oem.backend.datasource.model.api.ApiResult;
 import net.catena_x.btp.libraries.util.apihelper.ApiHelper;
+import net.catena_x.btp.libraries.util.apihelper.model.DefaultApiResult;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class HIJobRunner {
     @Autowired private ApiHelper apiHelper;
     @Autowired private HICollectorOptionReader hiCollectorOptionReader;
 
-    public ResponseEntity<ApiResult> startJob() {
+    public ResponseEntity<DefaultApiResult> startJob() {
         try {
             return startJobInternal(queue.addNewJobToQueue(null));
         } catch (final OemHIException exception) {
@@ -29,7 +29,7 @@ public class HIJobRunner {
         }
     }
 
-    public ResponseEntity<ApiResult> startJob(@Nullable final HIUpdateOptions options) {
+    public ResponseEntity<DefaultApiResult> startJob(@Nullable final HIUpdateOptions options) {
         if(options == null) {
             return startJob();
         }
@@ -41,7 +41,7 @@ public class HIJobRunner {
         }
     }
 
-    public ResponseEntity<ApiResult> setJobFinishedAndStartQueued() {
+    public ResponseEntity<DefaultApiResult> setJobFinishedAndStartQueued() {
         try {
             return startJobInternal(queue.removeJobFromQueueReturnNextQueuedElement());
         } catch (final OemHIException exception) {
@@ -49,7 +49,7 @@ public class HIJobRunner {
         }
     }
 
-    public ResponseEntity<ApiResult> resetQueue() {
+    public ResponseEntity<DefaultApiResult> resetQueue() {
         try {
             //Removing queued and running element (if existing).
             queue.removeJobFromQueueReturnNextQueuedElement();
@@ -60,7 +60,7 @@ public class HIJobRunner {
         }
     }
 
-    private ResponseEntity<ApiResult> startJobInternal(@NotNull final HIQueueElement currentQueueElement)
+    private ResponseEntity<DefaultApiResult> startJobInternal(@NotNull final HIQueueElement currentQueueElement)
             throws OemHIException {
 
         switch(currentQueueElement.queueState()) {
