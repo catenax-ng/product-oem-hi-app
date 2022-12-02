@@ -22,11 +22,15 @@ public class HIInputDataBuilder {
     @Autowired HIAdaptionValueInputConverter hiAdaptionValueInputConverter;
 
     public DataToSupplierContent build(@NotNull final String requestId,
-                                       @NotNull final List<Vehicle> updatedVehicles) throws BtpException {
+                                       @NotNull final List<Vehicle> updatedVehicles) throws OemHIException {
         final List<HealthIndicatorInput> healthIndicatorInputs = new ArrayList<>();
 
-        for(var vehicle: updatedVehicles) {
-            healthIndicatorInputs.add(convert(vehicle.getNewestTelematicsData(), vehicle.getGearboxId()));
+        try {
+            for (var vehicle : updatedVehicles) {
+                healthIndicatorInputs.add(convert(vehicle.getNewestTelematicsData(), vehicle.getGearboxId()));
+            }
+        } catch (final BtpException exception) {
+            throw new OemHIException(exception);
         }
 
         return new DataToSupplierContent(requestId, healthIndicatorInputs);
