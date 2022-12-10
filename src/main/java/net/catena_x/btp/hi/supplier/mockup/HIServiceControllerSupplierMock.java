@@ -67,7 +67,7 @@ public class HIServiceControllerSupplierMock {
         return !useHiValues1;
     }
 
-    @PostMapping("api/service/{assetid}/submodel")
+    @PostMapping(value = "api/service/{assetid}/submodel", produces = "application/json")
     public ResponseEntity<DefaultApiResult> runCalculationMock(
             @RequestBody @NotNull Notification<DataToSupplierContent> data,
             @PathVariable @NotNull final String assetid) {
