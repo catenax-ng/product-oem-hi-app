@@ -18,6 +18,7 @@ public class HIBackendCollectorControllerResetQueue {
     @GetMapping(value = "/resetqueue", produces = "application/json")
     @io.swagger.v3.oas.annotations.Operation(
             summary = CollectorResetQueueDoc.SUMMARY, description = CollectorResetQueueDoc.DESCRIPTION,
+            tags = {"Development"},
             responses = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",
