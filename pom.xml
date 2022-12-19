@@ -165,6 +165,7 @@
 						<version>2.7.5</version>
 						<configuration>
 							<mainClass>net.catena_x.btp.hi.oem.backend.hi_service.OemHiBackendServiceApplication</mainClass>
+							<fork>false</fork>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -180,6 +181,7 @@
 						<version>2.7.5</version>
 						<configuration>
 							<mainClass>net.catena_x.btp.hi.oem.frontend.OemHiFrontendApplication</mainClass>
+							<fork>false</fork>
 						</configuration>
 					</plugin>
 				</plugins>
