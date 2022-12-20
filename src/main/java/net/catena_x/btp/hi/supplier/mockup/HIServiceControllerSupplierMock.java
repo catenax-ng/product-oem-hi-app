@@ -1,9 +1,11 @@
 package net.catena_x.btp.hi.supplier.mockup;
 
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.HINotificationFromSupplierContentDAO;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.items.HealthIndicatorOutputDAO;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.DataToSupplierContent;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.HealthIndicatorInput;
+import net.catena_x.btp.hi.supplier.mockup.swagger.SupplierMockUpDoc;
 import net.catena_x.btp.libraries.notification.dto.Notification;
 import net.catena_x.btp.libraries.notification.dto.items.NotificationHeader;
 import net.catena_x.btp.libraries.util.apihelper.ApiHelper;
@@ -68,6 +70,60 @@ public class HIServiceControllerSupplierMock {
     }
 
     @PostMapping(value = "api/service/{assetid}/submodel", produces = "application/json")
+    @io.swagger.v3.oas.annotations.Operation(
+            summary = SupplierMockUpDoc.SUMMARY, description = SupplierMockUpDoc.DESCRIPTION,
+            tags = {"MockUp"},
+            parameters = @io.swagger.v3.oas.annotations.Parameter(
+                    in = ParameterIn.PATH, name = SupplierMockUpDoc.ASSETID_NAME,
+                    description = SupplierMockUpDoc.ASSETID_DESCRIPTION, required = true,
+                    examples = {
+                            @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                    name = SupplierMockUpDoc.ASSETID_EXAMPLE_1_NAME,
+                                    description = SupplierMockUpDoc.ASSETID_EXAMPLE_1_DESCRIPTION,
+                                    value = SupplierMockUpDoc.ASSETID_EXAMPLE_1_VALUE
+                            )
+                    }
+            ),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = SupplierMockUpDoc.BODY_DESCRIPTION, required = true,
+                    content =  @io.swagger.v3.oas.annotations.media.Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = {
+                                    @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                            name = SupplierMockUpDoc.BODY_EXAMPLE_1_NAME,
+                                            description = SupplierMockUpDoc.BODY_EXAMPLE_1_DESCRIPTION,
+                                            value = SupplierMockUpDoc.BODY_EXAMPLE_1_VALUE
+                                    )
+                            }
+                    )
+            ),
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "202",
+                            description = SupplierMockUpDoc.RESPONSE_OK_DESCRIPTION,
+                            content = @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    examples = {
+                                            @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                                    value = SupplierMockUpDoc.RESPONSE_OK_VALUE
+                                            )},
+                                    schema = @io.swagger.v3.oas.annotations.media.Schema(
+                                            implementation = DefaultApiResult.class)
+                            )),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "500",
+                            description = SupplierMockUpDoc.RESPONSE_ERROR_DESCRIPTION,
+                            content = @io.swagger.v3.oas.annotations.media.Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    examples = {
+                                            @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                                    value = SupplierMockUpDoc.RESPONSE_ERROR_VALUE
+                                            )},
+                                    schema = @io.swagger.v3.oas.annotations.media.Schema(
+                                            implementation = DefaultApiResult.class)
+                            ))
+            }
+    )
     public ResponseEntity<DefaultApiResult> runCalculationMock(
             @RequestBody @NotNull Notification<DataToSupplierContent> data,
             @PathVariable @NotNull final String assetid) {
