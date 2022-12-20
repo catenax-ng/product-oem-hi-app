@@ -18,6 +18,7 @@ public class HIBackendCollectorControllerSetState {
     @GetMapping(value = "/setstate", produces = "application/json")
     @io.swagger.v3.oas.annotations.Operation(
             summary = CollectorSetStateDoc.SUMMARY, description = CollectorSetStateDoc.DESCRIPTION,
+            tags = {"Productive"},
             responses = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",

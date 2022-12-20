@@ -19,6 +19,7 @@ public class HIBackendCollectorControllerRun {
     @GetMapping(value = "/run", produces = "application/json")
     @io.swagger.v3.oas.annotations.Operation(
             summary = CollectorRunDoc.SUMMARY, description = CollectorRunDoc.DESCRIPTION,
+            tags = {"Productive"},
             responses = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",

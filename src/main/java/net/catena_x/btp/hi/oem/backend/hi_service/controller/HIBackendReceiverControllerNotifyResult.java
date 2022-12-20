@@ -32,6 +32,7 @@ public class HIBackendReceiverControllerNotifyResult {
     @PostMapping(value = "/notifyresult", produces = "application/json")
     @io.swagger.v3.oas.annotations.Operation(
             summary = ReceiverNotifyResultDoc.SUMMARY, description = ReceiverNotifyResultDoc.DESCRIPTION,
+            tags = {"Productive"},
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = ReceiverNotifyResultDoc.BODY_DESCRIPTION, required = true,
                     content =  @io.swagger.v3.oas.annotations.media.Content(

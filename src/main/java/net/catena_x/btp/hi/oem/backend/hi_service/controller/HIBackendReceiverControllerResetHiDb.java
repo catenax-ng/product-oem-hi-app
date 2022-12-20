@@ -19,6 +19,7 @@ public class HIBackendReceiverControllerResetHiDb {
     @GetMapping(value = "/resethidb", produces = "application/json")
     @io.swagger.v3.oas.annotations.Operation(
             summary = ReceiverResetHiDbDoc.SUMMARY, description = ReceiverResetHiDbDoc.DESCRIPTION,
+            tags = {"Development"},
             responses = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",

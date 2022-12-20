@@ -16,7 +16,7 @@ public class HIDbMaintainer {
     public ResponseEntity<DefaultApiResult> reset() {
         try {
             return resetDb();
-        } catch (final OemHIException exception) {
+        } catch (final Exception exception) {
             return apiHelper.failed(exception.getMessage());
         }
     }

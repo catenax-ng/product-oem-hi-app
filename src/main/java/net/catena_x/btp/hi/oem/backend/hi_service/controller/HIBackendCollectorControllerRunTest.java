@@ -30,8 +30,9 @@ public class HIBackendCollectorControllerRunTest {
     @GetMapping(value = "/runtest/{options}", produces = "application/json")
     @io.swagger.v3.oas.annotations.Operation(
             summary = CollectorRunTestDoc.SUMMARY, description = CollectorRunTestDoc.DESCRIPTION,
+            tags = {"Development"},
             parameters = @io.swagger.v3.oas.annotations.Parameter(
-                    ref = "options", in = ParameterIn.PATH, name = CollectorRunTestDoc.OPTIONS_NAME,
+                    in = ParameterIn.PATH, name = CollectorRunTestDoc.OPTIONS_NAME,
                     description = CollectorRunTestDoc.OPTIONS_DESCRIPTION, required = true,
                         examples = {
                                 @io.swagger.v3.oas.annotations.media.ExampleObject(

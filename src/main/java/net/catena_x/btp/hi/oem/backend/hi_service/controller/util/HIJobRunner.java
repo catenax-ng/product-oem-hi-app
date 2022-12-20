@@ -54,7 +54,7 @@ public class HIJobRunner {
             //Removing queued and running element (if existing).
             queue.removeJobFromQueueReturnNextQueuedElement();
             queue.removeJobFromQueueReturnNextQueuedElement();
-            return apiHelper.ok("Queue is reset!");
+            return apiHelper.ok("Queue is reset.");
         } catch (final OemHIException exception) {
             return apiHelper.failed(exception.getMessage());
         }

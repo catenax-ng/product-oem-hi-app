@@ -188,7 +188,7 @@ public class HIDataCollector {
 
         try {
             final String notificationAsString = objectMapper.writeValueAsString(notification)
-                                                                .replace("Spectrum", "Collective");
+                                                               ;// .replace("Spectrum", "Collective");
 
             return startAsyncRequest(requestId, supplierHiServiceEndpoint.toString(),
                     inputAssetName, notificationAsString, JsonNode.class);
