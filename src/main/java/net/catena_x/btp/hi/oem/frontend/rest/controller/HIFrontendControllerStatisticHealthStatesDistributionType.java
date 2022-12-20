@@ -1,5 +1,6 @@
 package net.catena_x.btp.hi.oem.frontend.rest.controller;
 
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import net.catena_x.btp.hi.oem.backend.hi_service.receiver.HIResultProcessor;
 import net.catena_x.btp.hi.oem.common.model.dto.vehicle.HIVehicleTable;
 import net.catena_x.btp.hi.oem.frontend.model.dao.vehicle.HIFVehicle;
@@ -38,7 +39,24 @@ public class HIFrontendControllerStatisticHealthStatesDistributionType {
     @GetMapping(value = "/statistic/healthstates/distribution/{type}", produces = "application/json")
     @io.swagger.v3.oas.annotations.Operation(
             summary = StatisticHealthStatesDistributionTypeDoc.SUMMARY,
+            tags = {"Productive"},
             description = StatisticHealthStatesDistributionTypeDoc.DESCRIPTION,
+            parameters = @io.swagger.v3.oas.annotations.Parameter(
+                    in = ParameterIn.PATH, name = StatisticHealthStatesDistributionTypeDoc.TYPE_NAME,
+                    description = StatisticHealthStatesDistributionTypeDoc.TYPE_DESCRIPTION, required = true,
+                    examples = {
+                            @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                    name = StatisticHealthStatesDistributionTypeDoc.TYPE_EXAMPLE_1_NAME,
+                                    description = StatisticHealthStatesDistributionTypeDoc.TYPE_EXAMPLE_1_DESCRIPTION,
+                                    value = StatisticHealthStatesDistributionTypeDoc.TYPE_EXAMPLE_1_VALUE
+                            ),
+                            @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                    name = StatisticHealthStatesDistributionTypeDoc.TYPE_EXAMPLE_2_NAME,
+                                    description = StatisticHealthStatesDistributionTypeDoc.TYPE_EXAMPLE_2_DESCRIPTION,
+                                    value = StatisticHealthStatesDistributionTypeDoc.TYPE_EXAMPLE_2_VALUE
+                            )
+                    }
+            ),
             responses = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",
@@ -77,8 +95,8 @@ public class HIFrontendControllerStatisticHealthStatesDistributionType {
                         case "adaptionvalues" ->
                                 hiHistogramGenerator.generateHistogramHealthStatesAdaptionValues(vehicles);
                         default -> throw new OemHIException("Invalid type " + type);
-                    }
-            ));
+                    }),
+                    HIFHistogram.class);
         } catch (final OemHIException exception) {
             logger.error(exception.getMessage());
             return apiHelper.failedAsString(exception.getMessage());

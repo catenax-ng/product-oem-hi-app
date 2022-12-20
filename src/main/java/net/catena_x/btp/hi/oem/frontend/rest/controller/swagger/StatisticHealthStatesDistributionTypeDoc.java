@@ -1,26 +1,42 @@
 package net.catena_x.btp.hi.oem.frontend.rest.controller.swagger;
 
 public final class StatisticHealthStatesDistributionTypeDoc {
-    public static final String SUMMARY = "TODO: SUMMARY.";
+    public static final String SUMMARY = "Requests the distribution for a specific health indicator type.";
     public static final String DESCRIPTION = """
-TODO: DESCRIPTION. 
+Requests the distribution for a specific health indicator type.
 """;
 
-    public static final String RESPONSE_OK_DESCRIPTION = "TODO: DESCRIPTION.";
+    public static final String TYPE_NAME = "type";
+    public static final String TYPE_DESCRIPTION = """
+Health indicator type. Allowed values:
+ * loadspectra
+ * adaptionvalues
+""";
+
+    public static final String TYPE_EXAMPLE_1_NAME = "load spectra";
+    public static final String TYPE_EXAMPLE_1_DESCRIPTION = "Sample asset id (ignored).";
+    public static final String TYPE_EXAMPLE_1_VALUE = "loadspectra";
+
+    public static final String TYPE_EXAMPLE_2_NAME = "adaption values";
+    public static final String TYPE_EXAMPLE_2_DESCRIPTION = "Sample asset id (ignored).";
+    public static final String TYPE_EXAMPLE_2_VALUE = "adaptionvalues";
+
+    public static final String RESPONSE_OK_DESCRIPTION = "OK: Histogram successfully requested.";
     public static final String RESPONSE_OK_VALUE = """
 {
-  "timestamp": "2022-12-09T17:18:01.434285Z",
-  "result": "Ok",
-  "message": ""
+  "countGreen": 3,
+  "countYellow": 0,
+  "countRed": 0,
+  "countUnknown": 497
 }
 """;
 
-    public static final String RESPONSE_ERROR_DESCRIPTION = "TODO: DESCRIPTION.";
+    public static final String RESPONSE_ERROR_DESCRIPTION = "ERROR: Request failed.";
     public static final String RESPONSE_ERROR_VALUE = """
 {
-  "timestamp": "2022-12-09T16:24:52.741984700Z",
+  "timestamp": "2022-12-20T13:49:04.755721300Z",
   "result": "Error",
-  "message": ""
+  "message": "Invalid type abc"
 }
 """;
 }

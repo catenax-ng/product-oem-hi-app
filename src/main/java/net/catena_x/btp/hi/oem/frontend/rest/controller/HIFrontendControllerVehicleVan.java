@@ -1,9 +1,11 @@
 package net.catena_x.btp.hi.oem.frontend.rest.controller;
 
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import net.catena_x.btp.hi.oem.backend.hi_service.receiver.HIResultProcessor;
 import net.catena_x.btp.hi.oem.common.model.dto.vehicle.HIVehicleTable;
 import net.catena_x.btp.hi.oem.frontend.model.dao.vehicle.HIFVehicle;
 import net.catena_x.btp.hi.oem.frontend.model.dao.vehicle.HIFVehicleConverter;
+import net.catena_x.btp.hi.oem.frontend.rest.controller.base.HIFrontendControllerVehicleBase;
 import net.catena_x.btp.hi.oem.frontend.rest.controller.swagger.VehicleVanDoc;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import net.catena_x.btp.libraries.util.apihelper.ApiHelper;
@@ -22,7 +24,7 @@ import javax.validation.constraints.NotNull;
 
 @RestController
 @RequestMapping(HIFrontendApiConfig.API_PATH_BASE)
-public class HIFrontendControllerVehicleVan {
+public class HIFrontendControllerVehicleVan extends HIFrontendControllerVehicleBase {
     @Autowired ApiHelper apiHelper;
     @Autowired HIFVehicleConverter hifVehicleConverter;
     @Autowired HIVehicleTable hiVehicleTable;
@@ -32,6 +34,18 @@ public class HIFrontendControllerVehicleVan {
     @GetMapping(value = "/vehicle/van/{van}", produces = "application/json")
     @io.swagger.v3.oas.annotations.Operation(
             summary = VehicleVanDoc.SUMMARY, description = VehicleVanDoc.DESCRIPTION,
+            tags = {"Productive"},
+            parameters = @io.swagger.v3.oas.annotations.Parameter(
+                    in = ParameterIn.PATH, name = VehicleVanDoc.VAN_NAME,
+                    description = VehicleVanDoc.VAN_DESCRIPTION, required = true,
+                    examples = {
+                            @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                    name = VehicleVanDoc.VAN_EXAMPLE_1_NAME,
+                                    description = VehicleVanDoc.VAN_EXAMPLE_1_DESCRIPTION,
+                                    value = VehicleVanDoc.VAN_EXAMPLE_1_VALUE
+                            )
+                    }
+            ),
             responses = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",
@@ -61,8 +75,8 @@ public class HIFrontendControllerVehicleVan {
     )
     public ResponseEntity<String> getVehicleByVan(@PathVariable @NotNull final String van) {
         try {
-            return apiHelper.okAsString(hifVehicleConverter.toDAO(
-                    hiVehicleTable.getByVanWithHealthIndicatorsNewTransaction(van)));
+            return checkVehicle(hifVehicleConverter.toDAO(
+                    hiVehicleTable.getByVanWithHealthIndicatorsNewTransaction(van)), apiHelper);
         } catch (final OemHIException exception) {
             logger.error(exception.getMessage());
             return apiHelper.failedAsString(exception.getMessage());

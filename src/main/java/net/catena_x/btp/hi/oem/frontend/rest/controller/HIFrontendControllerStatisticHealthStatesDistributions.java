@@ -37,6 +37,7 @@ public class HIFrontendControllerStatisticHealthStatesDistributions {
     @GetMapping(value = "/statistic/healthstates/distributions", produces = "application/json")
     @io.swagger.v3.oas.annotations.Operation(
             summary = StatisticHealthStatesDistributionsDoc.SUMMARY,
+            tags = {"Productive"},
             description = StatisticHealthStatesDistributionsDoc.DESCRIPTION,
             responses = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -69,13 +70,13 @@ public class HIFrontendControllerStatisticHealthStatesDistributions {
         try {
             final List<HIFVehicle> vehicles = hifVehicleConverter.toDAO(
                     hiVehicleTable.getAllWithHealthIndicatorsNewTransaction());
-
             final HIHealthIndicatorDistributions distributions = new HIHealthIndicatorDistributions();
             distributions.setHistogramLoadSpectra(
                     hiHistogramGenerator.generateHistogramHealthStatesLoadSpectra(vehicles));
-            distributions.setHistogramLoadSpectra(
+            distributions.setHistogramAdaptionValues(
                     hiHistogramGenerator.generateHistogramHealthStatesAdaptionValues(vehicles));
-            return apiHelper.okAsString(hifHealthIndicatorDistributionsConverter.toDAO(distributions));
+            return apiHelper.okAsString(hifHealthIndicatorDistributionsConverter.toDAO(distributions),
+                    HIFHealthIndicatorDistributions.class);
         } catch (final OemHIException exception) {
             logger.error(exception.getMessage());
             return apiHelper.failedAsString(exception.getMessage());
