@@ -10,21 +10,20 @@ import javax.validation.constraints.NotNull;
 
 @Component
 public class HINotificationToSupplierContentConverter
-        extends DAOConverter<HINotificationToSupplierContentDAO, DataToSupplierContent> {
+        extends DAOConverter<HINotificationToSupplierContentDAO, HIDataToSupplierContent> {
 
-    @Autowired
-    HealthIndicatorInputConverter healthIndicatorInputConverter;
+    @Autowired private HealthIndicatorInputConverter healthIndicatorInputConverter;
 
-    protected DataToSupplierContent toDTOSourceExists(
+    protected HIDataToSupplierContent toDTOSourceExists(
             @NotNull final HINotificationToSupplierContentDAO source) {
 
-        return new DataToSupplierContent(
+        return new HIDataToSupplierContent(
                 source.getRequestRefId(),
                 healthIndicatorInputConverter.toDTO(source.getHealthIndicatorInputs()));
     }
 
     protected HINotificationToSupplierContentDAO toDAOSourceExists(
-            @NotNull final DataToSupplierContent source) {
+            @NotNull final HIDataToSupplierContent source) {
 
         return new HINotificationToSupplierContentDAO(
                 source.getRequestRefId(),

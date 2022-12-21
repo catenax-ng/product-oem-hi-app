@@ -1,7 +1,7 @@
 package net.catena_x.btp.hi.oem.common.model.dto.calculation;
 
 import net.catena_x.btp.hi.oem.common.database.hi.tables.calculation.HICalculationDAO;
-import net.catena_x.btp.hi.oem.common.model.enums.CalculationStatus;
+import net.catena_x.btp.hi.oem.common.model.enums.HICalculationStatus;
 import net.catena_x.btp.libraries.util.database.converter.DAOConverter;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ public final class HICalculationConverter extends DAOConverter<HICalculationDAO,
     protected HICalculation toDTOSourceExists(@NotNull final HICalculationDAO source) {
         return new HICalculation(source.getId(), source.getCalculationTimestamp(),
                 source.getCalculationSyncCounterMin(), source.getCalculationSyncCounterMax(),
-                CalculationStatus.valueOf(source.getStatus()), source.getMessage());
+                HICalculationStatus.valueOf(source.getStatus()), source.getMessage());
     }
 
     protected HICalculationDAO toDAOSourceExists(@NotNull final HICalculation source) {

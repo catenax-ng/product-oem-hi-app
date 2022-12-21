@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DataToSupplierContent {
+public class HIDataToSupplierContent {
     private String requestRefId;
     private List<HealthIndicatorInput> healthIndicatorInputs;
 }

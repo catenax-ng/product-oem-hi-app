@@ -1,7 +1,7 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.collector;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.DataToSupplierContent;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HIDataToSupplierContent;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.HealthIndicatorInput;
 import net.catena_x.btp.hi.oem.backend.hi_service.receiver.HIResultProcessor;
 import net.catena_x.btp.hi.oem.backend.hi_service.util.S3EDCInitiatorImpl;
@@ -91,7 +91,7 @@ class DataCollectorMockTest {
         // load expected result
         String expectedJson = objectMapper.writeValueAsString(
                 objectMapper.readValue(readFromResourceFile("/update-expected-s3-1.json"),
-                DataToSupplierContent.class));
+                HIDataToSupplierContent.class));
 
         // mock UUID class to always return the same UUID
         try (MockedStatic<UUID> mocked = Mockito.mockStatic(UUID.class)) {

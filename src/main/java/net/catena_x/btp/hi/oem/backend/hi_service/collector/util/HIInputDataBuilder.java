@@ -1,6 +1,6 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.collector.util;
 
-import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.DataToSupplierContent;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HIDataToSupplierContent;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.AdaptionValuesList;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.HealthIndicatorInput;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
@@ -19,10 +19,10 @@ import java.util.List;
 
 @Component
 public class HIInputDataBuilder {
-    @Autowired HIAdaptionValueInputConverter hiAdaptionValueInputConverter;
+    @Autowired private HIAdaptionValueInputConverter hiAdaptionValueInputConverter;
 
-    public DataToSupplierContent build(@NotNull final String requestId,
-                                       @NotNull final List<Vehicle> updatedVehicles) throws OemHIException {
+    public HIDataToSupplierContent build(@NotNull final String requestId,
+                                         @NotNull final List<Vehicle> updatedVehicles) throws OemHIException {
         final List<HealthIndicatorInput> healthIndicatorInputs = new ArrayList<>();
 
         try {
@@ -33,7 +33,7 @@ public class HIInputDataBuilder {
             throw new OemHIException(exception);
         }
 
-        return new DataToSupplierContent(requestId, healthIndicatorInputs);
+        return new HIDataToSupplierContent(requestId, healthIndicatorInputs);
     }
 
     private HealthIndicatorInput convert(@NotNull final TelematicsData telematicsData,

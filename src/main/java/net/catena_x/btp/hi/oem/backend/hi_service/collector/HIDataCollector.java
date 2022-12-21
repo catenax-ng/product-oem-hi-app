@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.catena_x.btp.hi.oem.backend.hi_service.collector.enums.UpdateInfo;
 import net.catena_x.btp.hi.oem.backend.hi_service.collector.util.*;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.HINotificationToSupplierContentDAO;
-import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.DataToSupplierContent;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HIDataToSupplierContent;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HINotificationToSupplierContentConverter;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.HealthIndicatorInput;
 import net.catena_x.btp.hi.oem.common.model.dto.calculation.HICalculation;
 import net.catena_x.btp.hi.oem.common.model.dto.calculation.HICalculationTable;
-import net.catena_x.btp.hi.oem.common.model.enums.CalculationStatus;
+import net.catena_x.btp.hi.oem.common.model.enums.HICalculationStatus;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import net.catena_x.btp.libraries.edc.EdcApi;
 import net.catena_x.btp.libraries.edc.util.exceptions.EdcException;
@@ -92,9 +92,9 @@ public class HIDataCollector {
                                                  @NotNull final long syncCounterMin,
                                                  @NotNull final HIUpdateOptions options) throws BtpException {
         final String requestId = generateRequestId();
-        final DataToSupplierContent dataToSupplierContent = hiInputDataBuilder.build(requestId, updatedVehicles);
+        final HIDataToSupplierContent HIDataToSupplierContent = hiInputDataBuilder.build(requestId, updatedVehicles);
         createNewCalculationInDatabase(requestId, syncCounterMin, getSyncCounterMax(updatedVehicles));
-        dispatchRequestWithHttp(requestId, dataToSupplierContent, options);
+        dispatchRequestWithHttp(requestId, HIDataToSupplierContent, options);
     }
 
     private long getSyncCounterMax(@NotNull final List<Vehicle> updatedVehicles) {
@@ -115,7 +115,7 @@ public class HIDataCollector {
 
     private long getLastSyncCounterReady() throws OemHIException {
         List<HICalculation> calculations = hiCalculationTable.getByStatusOrderByCalculationSyncCounterNewTransaction(
-                CalculationStatus.READY);
+                HICalculationStatus.READY);
 
         if(DataHelper.isNullOrEmpty(calculations)) {
             return 0;
@@ -130,16 +130,16 @@ public class HIDataCollector {
         hiCalculationTable.createNowNewTransaction(requestId, syncCounterMin, syncCounterMax);
     }
 
-    private Notification<DataToSupplierContent> prepareNotification(
-            @NotNull final String requestId, @NotNull final DataToSupplierContent dataToSupplierContent,
+    private Notification<HIDataToSupplierContent> prepareNotification(
+            @NotNull final String requestId, @NotNull final HIDataToSupplierContent HIDataToSupplierContent,
             @NotNull final HIUpdateOptions options) throws OemHIException {
 
         try {
             final HINotificationToSupplierContentDAO healthIndicatorServiceInputDAO =
-                    hiNotificationToSupplierContentConverter.toDAO(dataToSupplierContent);
+                    hiNotificationToSupplierContentConverter.toDAO(HIDataToSupplierContent);
 
-            Notification<DataToSupplierContent> notification =
-                    hiNotificationCreator.createForHttp(requestId, dataToSupplierContent);
+            Notification<HIDataToSupplierContent> notification =
+                    hiNotificationCreator.createForHttp(requestId, HIDataToSupplierContent);
 
             if (options.isLimitVehicleTwinCount()) {
                 limitVehicles(notification, options.getMaxVehicleTwins());
@@ -147,16 +147,16 @@ public class HIDataCollector {
 
             return notification;
         } catch (final Exception exception) {
-            setCalculationStatus(requestId, CalculationStatus.FAILED_INTERNAL_BUILD_REQUEST);
+            setCalculationStatus(requestId, HICalculationStatus.FAILED_INTERNAL_BUILD_REQUEST);
             throw new OemHIException(exception);
         }
     }
 
     private void dispatchRequestWithHttp(@NotNull final String requestId,
-                                         @NotNull final DataToSupplierContent dataToSupplierContent,
+                                         @NotNull final HIDataToSupplierContent HIDataToSupplierContent,
                                          @NotNull final HIUpdateOptions options) throws OemHIException {
-        final Notification<DataToSupplierContent> notification = prepareNotification(
-                requestId, dataToSupplierContent, options);
+        final Notification<HIDataToSupplierContent> notification = prepareNotification(
+                requestId, HIDataToSupplierContent, options);
 
         logger.info("Request for Id " + requestId + " (" + notification.getContent().getHealthIndicatorInputs().size()
                 + " vehicles) prepared.");
@@ -174,7 +174,7 @@ public class HIDataCollector {
                     || result.getStatusCode() == HttpStatus.CREATED
                     || result.getStatusCode() == HttpStatus.ACCEPTED) {
             logger.info("External calculation service for Id " + requestId + " started.");
-            setCalculationStatus(requestId, CalculationStatus.RUNNING);
+            setCalculationStatus(requestId, HICalculationStatus.RUNNING);
         } else {
             serviceCallFailed("Starting external calculation service for Id \" + requestId + \" failed: "
                     + "http code " + result.getStatusCode().toString() + ", response body: "
@@ -183,7 +183,7 @@ public class HIDataCollector {
     }
 
     private ResponseEntity<JsonNode> renameAndCallService(
-            @NotNull final String requestId, @NotNull final Notification<DataToSupplierContent> notification)
+            @NotNull final String requestId, @NotNull final Notification<HIDataToSupplierContent> notification)
             throws OemHIException {
 
         try {
@@ -193,13 +193,13 @@ public class HIDataCollector {
             return startAsyncRequest(requestId, supplierHiServiceEndpoint.toString(),
                     inputAssetName, notificationAsString, JsonNode.class);
         } catch(final IOException exception) {
-            setCalculationStatus(requestId, CalculationStatus.FAILED_EXTERNAL);
+            setCalculationStatus(requestId, HICalculationStatus.FAILED_EXTERNAL);
             throw new OemHIException("Error while converting inputs to json!", exception);
         }
     }
 
     private ResponseEntity<JsonNode> callService(
-            @NotNull final String requestId, @NotNull final Notification<DataToSupplierContent> notification)
+            @NotNull final String requestId, @NotNull final Notification<HIDataToSupplierContent> notification)
             throws OemHIException {
         return startAsyncRequest(requestId, supplierHiServiceEndpoint.toString(), inputAssetName,
                 notification, JsonNode.class);
@@ -210,7 +210,7 @@ public class HIDataCollector {
         throw new OemHIException(errorText);
     }
 
-    private void limitVehicles(@NotNull final Notification<DataToSupplierContent> notificationInOut,
+    private void limitVehicles(@NotNull final Notification<HIDataToSupplierContent> notificationInOut,
                                @NotNull final int maxVehicleTwins) {
         if(maxVehicleTwins < notificationInOut.getContent().getHealthIndicatorInputs().size()) {
 
@@ -221,7 +221,7 @@ public class HIDataCollector {
         }
     }
 
-    private void setCalculationStatus(@NotNull final String requestId, @NotNull final CalculationStatus newStatus)
+    private void setCalculationStatus(@NotNull final String requestId, @NotNull final HICalculationStatus newStatus)
             throws OemHIException {
         hiCalculationTable.updateStatusNewTransaction(requestId, newStatus);
     }
@@ -234,7 +234,7 @@ public class HIDataCollector {
             return edcApi.post(HttpUrl.parse(endpoint), asset, responseTypeClass,
                     messageBody, generateDefaultHeaders());
         } catch (final EdcException exception) {
-            setCalculationStatus(requestId, CalculationStatus.FAILED_EXTERNAL);
+            setCalculationStatus(requestId, HICalculationStatus.FAILED_EXTERNAL);
             throw new OemHIException(exception);
         }
     }

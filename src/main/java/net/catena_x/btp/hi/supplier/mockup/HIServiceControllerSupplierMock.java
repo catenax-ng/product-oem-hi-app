@@ -3,7 +3,7 @@ package net.catena_x.btp.hi.supplier.mockup;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.HINotificationFromSupplierContentDAO;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.items.HealthIndicatorOutputDAO;
-import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.DataToSupplierContent;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HIDataToSupplierContent;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.HealthIndicatorInput;
 import net.catena_x.btp.hi.supplier.mockup.swagger.SupplierMockUpDoc;
 import net.catena_x.btp.libraries.notification.dto.Notification;
@@ -30,7 +30,7 @@ import java.util.List;
 
 @RestController
 public class HIServiceControllerSupplierMock {
-    @Autowired ApiHelper apiHelper;
+    @Autowired private ApiHelper apiHelper;
     @Autowired private RestTemplate restTemplate;
 
     final double GREEN = 0.0;
@@ -125,7 +125,7 @@ public class HIServiceControllerSupplierMock {
             }
     )
     public ResponseEntity<DefaultApiResult> runCalculationMock(
-            @RequestBody @NotNull Notification<DataToSupplierContent> data,
+            @RequestBody @NotNull Notification<HIDataToSupplierContent> data,
             @PathVariable @NotNull final String assetid) {
 
         final List<HealthIndicatorInput> healthIndicatorInputs = data.getContent().getHealthIndicatorInputs();

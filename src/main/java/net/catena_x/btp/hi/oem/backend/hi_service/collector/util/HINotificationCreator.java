@@ -1,6 +1,6 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.collector.util;
 
-import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.DataToSupplierContent;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HIDataToSupplierContent;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.enums.NotificationClassification;
 import net.catena_x.btp.libraries.notification.dto.Notification;
 import net.catena_x.btp.libraries.notification.dto.items.NotificationHeader;
@@ -21,13 +21,13 @@ public class HINotificationCreator {
     @Value("${edc.bpn}") private String edcBpn;
     @Value("${edc.endpoint}") private URL edcEndpoint;
 
-    public Notification<DataToSupplierContent> createForHttp(
+    public Notification<HIDataToSupplierContent> createForHttp(
             @NotNull final String requestId,
-            @NotNull final DataToSupplierContent dataToSupplierContent) {
+            @NotNull final HIDataToSupplierContent HIDataToSupplierContent) {
 
-        final Notification<DataToSupplierContent> notification = new Notification<>();
+        final Notification<HIDataToSupplierContent> notification = new Notification<>();
         notification.setHeader(createHeader(requestId));
-        notification.setContent(dataToSupplierContent);
+        notification.setContent(HIDataToSupplierContent);
         return notification;
     }
 

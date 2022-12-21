@@ -6,9 +6,8 @@ import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSeria
 import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableUseExisting;
 import net.catena_x.btp.hi.oem.common.database.hi.base.HITableBase;
 import net.catena_x.btp.hi.oem.common.database.hi.tables.healthindicators.HIHealthIndicatorsTableInternal;
-import net.catena_x.btp.hi.oem.common.database.hi.tables.infoitem.HIInfoTableInternal;
 import net.catena_x.btp.hi.oem.common.database.hi.tables.vehicle.HIVehicleTableInternal;
-import net.catena_x.btp.hi.oem.common.model.enums.CalculationStatus;
+import net.catena_x.btp.hi.oem.common.model.enums.HICalculationStatus;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,7 +21,6 @@ public class HICalculationTableInternal extends HITableBase {
     @Autowired private HICalculationRepository hiCalculationRepository;
     @Autowired private HIVehicleTableInternal hiVehicleTable;
     @Autowired private HIHealthIndicatorsTableInternal hiHealthIndicatorsTable;
-    @Autowired private HIInfoTableInternal hiInfoTable;
 
     @HITransactionSerializableUseExisting
     public void resetDbExternalTransaction() throws OemHIException {
@@ -40,7 +38,7 @@ public class HICalculationTableInternal extends HITableBase {
     public void insertExternalTransaction(@NotNull final String id, @NotNull final Instant calculationTimestamp,
                                           @NotNull final long calculationSyncCounterMin,
                                           @NotNull final long calculationSyncCounterMax,
-                                          @NotNull final CalculationStatus status) throws OemHIException {
+                                          @NotNull final HICalculationStatus status) throws OemHIException {
         try {
             hiCalculationRepository.insert(id, calculationTimestamp, calculationSyncCounterMin,
                     calculationSyncCounterMax, status.toString());
@@ -53,7 +51,7 @@ public class HICalculationTableInternal extends HITableBase {
     public void insertNewTransaction(@NotNull final String id, @NotNull final Instant calculationTimestamp,
                                      @NotNull final long calculationSyncCounterMin,
                                      @NotNull final long calculationSyncCounterMax,
-                                     @NotNull final CalculationStatus status) throws OemHIException {
+                                     @NotNull final HICalculationStatus status) throws OemHIException {
         insertExternalTransaction(id, calculationTimestamp, calculationSyncCounterMin,
                 calculationSyncCounterMax, status);
     }
@@ -62,7 +60,7 @@ public class HICalculationTableInternal extends HITableBase {
     public String insertGetIdExternalTransaction(@NotNull final Instant calculationTimestamp,
                                                  @NotNull final long calculationSyncCounterMin,
                                                  @NotNull final long calculationSyncCounterMax,
-                                                 @NotNull final CalculationStatus status) throws OemHIException {
+                                                 @NotNull final HICalculationStatus status) throws OemHIException {
         try {
             final String id = generateNewId();
             hiCalculationRepository.insert(id, calculationTimestamp, calculationSyncCounterMin,
@@ -77,7 +75,7 @@ public class HICalculationTableInternal extends HITableBase {
     public String insertGetIdNewTransaction(@NotNull final Instant calculationTimestamp,
                                             @NotNull final long calculationSyncCounterMin,
                                             @NotNull final long calculationSyncCounterMax,
-                                            @NotNull final CalculationStatus status) throws OemHIException {
+                                            @NotNull final HICalculationStatus status) throws OemHIException {
         return insertGetIdExternalTransaction(calculationTimestamp, calculationSyncCounterMin,
                 calculationSyncCounterMax, status);
     }
@@ -86,8 +84,8 @@ public class HICalculationTableInternal extends HITableBase {
     public void createNowExternalTransaction(@NotNull final String id, @NotNull final long calculationSyncCounterMin,
                                              @NotNull final long calculationSyncCounterMax) throws OemHIException {
         try {
-            hiCalculationRepository.createNow(id, calculationSyncCounterMin,calculationSyncCounterMax,
-                    CalculationStatus.CREATED.toString());
+            hiCalculationRepository.createNow(id, calculationSyncCounterMin, calculationSyncCounterMax,
+                    HICalculationStatus.CREATED.toString());
         } catch (final Exception exception) {
             throw failed("Inserting calculation failed!", exception);
         }
@@ -95,8 +93,7 @@ public class HICalculationTableInternal extends HITableBase {
 
     @HITransactionSerializableCreateNew
     public void createNowNewTransaction(@NotNull final String id, @NotNull final long calculationSyncCounterMin,
-                                        @NotNull final long calculationSyncCounterMax)
-            throws OemHIException {
+                                        @NotNull final long calculationSyncCounterMax) throws OemHIException {
         createNowExternalTransaction(id, calculationSyncCounterMin, calculationSyncCounterMax);
     }
 
@@ -107,7 +104,7 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             final String id = generateNewId();
             hiCalculationRepository.createNow(id, calculationSyncCounterMin, calculationSyncCounterMax,
-                    CalculationStatus.CREATED.toString());
+                    HICalculationStatus.CREATED.toString());
             return id;
         } catch (final Exception exception) {
             throw failed("Inserting calculation failed!", exception);
@@ -122,7 +119,7 @@ public class HICalculationTableInternal extends HITableBase {
     }
 
     @HITransactionSerializableUseExisting
-    public void updateStatusExternalTransaction(@NotNull final String id, @NotNull final CalculationStatus newStatus)
+    public void updateStatusExternalTransaction(@NotNull final String id, @NotNull final HICalculationStatus newStatus)
             throws OemHIException {
         try {
             hiCalculationRepository.updateStatus(id, newStatus.toString());
@@ -132,7 +129,7 @@ public class HICalculationTableInternal extends HITableBase {
     }
 
     @HITransactionSerializableCreateNew
-    public void updateStatusNewTransaction(@NotNull final String id, @NotNull final CalculationStatus newStatus)
+    public void updateStatusNewTransaction(@NotNull final String id, @NotNull final HICalculationStatus newStatus)
             throws OemHIException {
         updateStatusExternalTransaction(id, newStatus);
     }
@@ -182,7 +179,7 @@ public class HICalculationTableInternal extends HITableBase {
     }
 
     @HITransactionSerializableUseExisting
-    public void deleteByStatusExternalTransaction(@NotNull final CalculationStatus status)
+    public void deleteByStatusExternalTransaction(@NotNull final HICalculationStatus status)
             throws OemHIException {
         try {
             hiCalculationRepository.deleteByStatus(status.toString());
@@ -192,7 +189,7 @@ public class HICalculationTableInternal extends HITableBase {
     }
 
     @HITransactionSerializableCreateNew
-    public void deleteByStatusNewTransaction(@NotNull final CalculationStatus status) throws OemHIException {
+    public void deleteByStatusNewTransaction(@NotNull final HICalculationStatus status) throws OemHIException {
         deleteByStatusExternalTransaction(status);
     }
 
@@ -256,7 +253,7 @@ public class HICalculationTableInternal extends HITableBase {
     }
 
     @HITransactionSerializableUseExisting
-    public List<HICalculationDAO> getByStatusExternalTransaction(@NotNull final CalculationStatus status)
+    public List<HICalculationDAO> getByStatusExternalTransaction(@NotNull final HICalculationStatus status)
             throws OemHIException {
         try {
             return hiCalculationRepository.queryByStatus(status.toString());
@@ -266,14 +263,14 @@ public class HICalculationTableInternal extends HITableBase {
     }
 
     @HITransactionSerializableCreateNew
-    public List<HICalculationDAO> getByStatusNewTransaction(@NotNull final CalculationStatus status)
+    public List<HICalculationDAO> getByStatusNewTransaction(@NotNull final HICalculationStatus status)
             throws OemHIException {
         return getByStatusExternalTransaction(status);
     }
 
     @HITransactionSerializableUseExisting
     public List<HICalculationDAO> getByStatusOrderByCalculationSyncCounterExternalTransaction(
-            @NotNull final CalculationStatus status) throws OemHIException {
+            @NotNull final HICalculationStatus status) throws OemHIException {
         try {
             return hiCalculationRepository.queryByStatusOrderByCalculationSyncCounter(status.toString());
         } catch (final Exception exception) {
@@ -283,7 +280,7 @@ public class HICalculationTableInternal extends HITableBase {
 
     @HITransactionSerializableCreateNew
     public List<HICalculationDAO> getByStatusOrderByCalculationSyncCounterNewTransaction(
-            @NotNull final CalculationStatus status) throws OemHIException {
+            @NotNull final HICalculationStatus status) throws OemHIException {
         return getByStatusOrderByCalculationSyncCounterExternalTransaction(status);
     }
 

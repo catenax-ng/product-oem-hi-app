@@ -19,8 +19,8 @@ import java.util.List;
 
 @Controller
 public class HIFrontendWebinterfaceController {
-    @Autowired HIFVehicleConverter hifVehicleConverter;
-    @Autowired HIVehicleTable hiVehicleTable;
+    @Autowired private HIFVehicleConverter hifVehicleConverter;
+    @Autowired private HIVehicleTable hiVehicleTable;
 
     private final Logger logger = LoggerFactory.getLogger(HIResultProcessor.class);
 

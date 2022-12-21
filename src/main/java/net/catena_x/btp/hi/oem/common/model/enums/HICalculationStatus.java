@@ -1,6 +1,6 @@
 package net.catena_x.btp.hi.oem.common.model.enums;
 
-public enum CalculationStatus {
+public enum HICalculationStatus {
     CREATED,
     RUNNING,
     FAILED_INTERNAL_BUILD_REQUEST,

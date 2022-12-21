@@ -12,10 +12,11 @@ If there are no new telematics data, the result is ok and no calculation is star
     public static final String OPTIONS_DESCRIPTION = """
 Options for the calculation preparation. There are four basic options:
  * R: Rename load spectra to load collectives (to be compatible to old bamm models).
- * A: Recalculate all telematics data (nicl. already calculated).
+ * A: Recalculate all telematics data (incl. already calculated).
  * D: Reset HI database.
  * Q: Reset calculation queue.
-and the limit option at the end: Limit the count of components that are calculated.
+
+And the limit option at the end: Limit the count of components that are calculated.
 """;
 
     public static final String OPTIONS_EXAMPLE_1_NAME = "Limit components";

@@ -4,9 +4,8 @@ import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhise
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.HealthIndicatorOutput;
 import net.catena_x.btp.hi.oem.common.model.dto.calculation.HICalculation;
 import net.catena_x.btp.hi.oem.common.model.dto.calculation.HICalculationTable;
-import net.catena_x.btp.hi.oem.common.model.dto.healthindicators.HIHealthIndicatorsTable;
 import net.catena_x.btp.hi.oem.common.model.dto.vehicle.HIVehicleTable;
-import net.catena_x.btp.hi.oem.common.model.enums.CalculationStatus;
+import net.catena_x.btp.hi.oem.common.model.enums.HICalculationStatus;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import net.catena_x.btp.libraries.notification.dto.Notification;
 import net.catena_x.btp.libraries.util.datahelper.DataHelper;
@@ -21,9 +20,8 @@ import java.util.List;
 
 @Component
 public class HIResultProcessor {
-    @Autowired HICalculationTable hiCalculationTable;
-    @Autowired HIHealthIndicatorsTable hiHealthIndicatorsTable;
-    @Autowired HIVehicleTable hiVehicleTable;
+    @Autowired private HICalculationTable hiCalculationTable;
+    @Autowired private HIVehicleTable hiVehicleTable;
 
     private final Logger logger = LoggerFactory.getLogger(HIResultProcessor.class);
 
@@ -57,9 +55,9 @@ public class HIResultProcessor {
 
         checkOutputs(result.getHealthIndicatorOutputs(), referenceId);
 
-        hiCalculationTable.updateStatusNewTransaction(referenceId, CalculationStatus.CALCULATED);
+        hiCalculationTable.updateStatusNewTransaction(referenceId, HICalculationStatus.CALCULATED);
         processAllOutputs(result.getHealthIndicatorOutputs(), calculation);
-        hiCalculationTable.updateStatusNewTransaction(referenceId, CalculationStatus.READY);
+        hiCalculationTable.updateStatusNewTransaction(referenceId, HICalculationStatus.READY);
     }
 
     private HICalculation getCalculationFromId(@NotNull final String referenceId) throws OemHIException {
@@ -73,7 +71,7 @@ public class HIResultProcessor {
     private void checkOutputs(@Nullable final List<HealthIndicatorOutput> outputs,
                               @NotNull final String referenceId) throws OemHIException {
         if(DataHelper.isNullOrEmpty(outputs)) {
-            hiCalculationTable.updateStatusNewTransaction(referenceId, CalculationStatus.FAILED_EXTERNAL);
+            hiCalculationTable.updateStatusNewTransaction(referenceId, HICalculationStatus.FAILED_EXTERNAL);
             throw new OemHIException("HI result for " + referenceId
                     + " is empty or not present (maybe a format or calculation error occurred)!");
         }

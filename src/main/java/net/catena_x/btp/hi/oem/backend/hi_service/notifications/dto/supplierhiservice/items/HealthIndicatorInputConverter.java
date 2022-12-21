@@ -10,8 +10,7 @@ import javax.validation.constraints.NotNull;
 @Component
 public class HealthIndicatorInputConverter
         extends DAOConverter<HealthIndicatorInputDAO, HealthIndicatorInput> {
-    @Autowired
-    AdaptionValuesListConverter adaptionValuesListConverter;
+    @Autowired AdaptionValuesListConverter adaptionValuesListConverter;
 
     protected HealthIndicatorInput toDTOSourceExists(
             @NotNull final HealthIndicatorInputDAO source) {

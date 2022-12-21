@@ -1,7 +1,7 @@
 package net.catena_x.btp.hi.oem.common.model.dto.calculation;
 
 import net.catena_x.btp.hi.oem.common.database.hi.tables.calculation.HICalculationTableInternal;
-import net.catena_x.btp.hi.oem.common.model.enums.CalculationStatus;
+import net.catena_x.btp.hi.oem.common.model.enums.HICalculationStatus;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,7 +26,7 @@ public class HICalculationTable {
     public void insertNewTransaction(@NotNull final String id, @NotNull final Instant calculationTimestamp,
                                      @NotNull final long calculationSyncCounterMin,
                                      @NotNull final long calculationSyncCounterMax,
-                                     @NotNull final CalculationStatus status) throws OemHIException {
+                                     @NotNull final HICalculationStatus status) throws OemHIException {
         internal.insertNewTransaction(id, calculationTimestamp, calculationSyncCounterMin,
                 calculationSyncCounterMax, status);
     }
@@ -34,7 +34,7 @@ public class HICalculationTable {
     public void insertExternalTransaction(@NotNull final String id, @NotNull final Instant calculationTimestamp,
                                           @NotNull final long calculationSyncCounterMin,
                                           @NotNull final long calculationSyncCounterMax,
-                                          @NotNull final CalculationStatus status) throws OemHIException {
+                                          @NotNull final HICalculationStatus status) throws OemHIException {
         internal.insertExternalTransaction(id, calculationTimestamp, calculationSyncCounterMin,
                 calculationSyncCounterMax, status);
     }
@@ -42,7 +42,7 @@ public class HICalculationTable {
     public String insertGetIdNewTransaction(@NotNull final Instant calculationTimestamp,
                                             @NotNull final long calculationSyncCounterMin,
                                             @NotNull final long calculationSyncCounterMax,
-                                            @NotNull final CalculationStatus status) throws OemHIException {
+                                            @NotNull final HICalculationStatus status) throws OemHIException {
         return internal.insertGetIdNewTransaction(calculationTimestamp, calculationSyncCounterMin,
                 calculationSyncCounterMax, status);
     }
@@ -50,7 +50,7 @@ public class HICalculationTable {
     public String insertGetIdExternalTransaction(@NotNull final Instant calculationTimestamp,
                                                  @NotNull final long calculationSyncCounterMin,
                                                  @NotNull final long calculationSyncCounterMax,
-                                                 @NotNull final CalculationStatus status) throws OemHIException {
+                                                 @NotNull final HICalculationStatus status) throws OemHIException {
         return internal.insertGetIdExternalTransaction(calculationTimestamp, calculationSyncCounterMin,
                 calculationSyncCounterMax, status);
     }
@@ -62,8 +62,7 @@ public class HICalculationTable {
     }
 
     public void createNowExternalTransaction(@NotNull final String id, @NotNull final long calculationSyncCounterMin,
-                                             @NotNull final long calculationSyncCounterMax)
-            throws OemHIException {
+                                             @NotNull final long calculationSyncCounterMax) throws OemHIException {
         internal.createNowExternalTransaction(id, calculationSyncCounterMin, calculationSyncCounterMax);
     }
 
@@ -79,12 +78,12 @@ public class HICalculationTable {
         return internal.createNowGetIdExternalTransaction(calculationSyncCounterMin, calculationSyncCounterMax);
     }
 
-    public void updateStatusNewTransaction(@NotNull final String id, @NotNull final CalculationStatus newStatus)
+    public void updateStatusNewTransaction(@NotNull final String id, @NotNull final HICalculationStatus newStatus)
             throws OemHIException {
         internal.updateStatusNewTransaction(id, newStatus);
     }
 
-    public void updateStatusExternalTransaction(@NotNull final String id, @NotNull final CalculationStatus newStatus)
+    public void updateStatusExternalTransaction(@NotNull final String id, @NotNull final HICalculationStatus newStatus)
             throws OemHIException {
         internal.updateStatusExternalTransaction(id, newStatus);
     }
@@ -107,11 +106,11 @@ public class HICalculationTable {
         internal.deleteByIdExternalTransaction(id);
     }
 
-    public void deleteByStatusNewTransaction(@NotNull final CalculationStatus status) throws OemHIException {
+    public void deleteByStatusNewTransaction(@NotNull final HICalculationStatus status) throws OemHIException {
         internal.deleteByStatusNewTransaction(status);
     }
 
-    public void deleteByStatusExternalTransaction(@NotNull final CalculationStatus status) throws OemHIException {
+    public void deleteByStatusExternalTransaction(@NotNull final HICalculationStatus status) throws OemHIException {
         internal.deleteByStatusExternalTransaction(status);
     }
 
@@ -143,23 +142,23 @@ public class HICalculationTable {
         return hiCalculationConverter.toDTO(internal.getAllExternalTransaction());
     }
 
-    public List<HICalculation> getByStatusNewTransaction(@NotNull final CalculationStatus status)
+    public List<HICalculation> getByStatusNewTransaction(@NotNull final HICalculationStatus status)
             throws OemHIException {
         return hiCalculationConverter.toDTO(internal.getByStatusNewTransaction(status));
     }
 
-    public List<HICalculation> getByStatusExternalTransaction(@NotNull final CalculationStatus status)
+    public List<HICalculation> getByStatusExternalTransaction(@NotNull final HICalculationStatus status)
             throws OemHIException {
         return hiCalculationConverter.toDTO(internal.getByStatusExternalTransaction(status));
     }
 
     public List<HICalculation> getByStatusOrderByCalculationSyncCounterNewTransaction(
-            @NotNull final CalculationStatus status) throws OemHIException {
+            @NotNull final HICalculationStatus status) throws OemHIException {
         return hiCalculationConverter.toDTO(internal.getByStatusOrderByCalculationSyncCounterNewTransaction(status));
     }
 
     public List<HICalculation> getByStatusOrderByCalculationSyncCounterExternalTransaction(
-            @NotNull final CalculationStatus status) throws OemHIException {
+            @NotNull final HICalculationStatus status) throws OemHIException {
         return hiCalculationConverter.toDTO(internal.getByStatusOrderByCalculationSyncCounterExternalTransaction(
                 status));
     }

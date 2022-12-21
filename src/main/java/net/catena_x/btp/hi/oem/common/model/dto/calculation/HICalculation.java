@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.catena_x.btp.hi.oem.common.model.enums.CalculationStatus;
+import net.catena_x.btp.hi.oem.common.model.enums.HICalculationStatus;
 
 import java.time.Instant;
 
@@ -17,6 +17,6 @@ public class HICalculation {
     private Instant calculationTimestamp;
     private long calculationSyncCounterMin;
     private long calculationSyncCounterMax;
-    private CalculationStatus status;
+    private HICalculationStatus status;
     private String message;
 }

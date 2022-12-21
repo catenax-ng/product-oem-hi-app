@@ -11,7 +11,7 @@ import java.util.List;
 
 @Component
 public class HIVehicleRegistrator {
-    @Autowired HIVehicleTable hiVehicleTable;
+    @Autowired private HIVehicleTable hiVehicleTable;
 
     public void registerNewVehicles(@NotNull final List<Vehicle> vehicles) throws OemHIException {
         for (final Vehicle vehicle : vehicles) {
