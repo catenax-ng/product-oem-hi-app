@@ -31,8 +31,8 @@ public class HIBackendCollectorControllerRunTest {
     @io.swagger.v3.oas.annotations.Operation(
             summary = CollectorRunTestDoc.SUMMARY, description = CollectorRunTestDoc.DESCRIPTION,
             tags = {"Development"},
-            parameters = @io.swagger.v3.oas.annotations.Parameter(
-                    in = ParameterIn.PATH, name = CollectorRunTestDoc.OPTIONS_NAME,
+            parameters = {@io.swagger.v3.oas.annotations.Parameter(
+                    in = ParameterIn.PATH, name = "options",
                     description = CollectorRunTestDoc.OPTIONS_DESCRIPTION, required = true,
                         examples = {
                                 @io.swagger.v3.oas.annotations.media.ExampleObject(
@@ -51,7 +51,7 @@ public class HIBackendCollectorControllerRunTest {
                                         value = CollectorRunTestDoc.OPTIONS_EXAMPLE_3_VALUE
                                 )
                         }
-            ),
+            )},
             responses = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",

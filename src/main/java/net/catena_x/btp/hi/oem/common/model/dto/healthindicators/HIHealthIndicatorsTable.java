@@ -9,11 +9,20 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.List;
+import java.util.function.Supplier;
 
 @Component
 public class HIHealthIndicatorsTable {
     @Autowired private HIHealthIndicatorsTableInternal internal;
     @Autowired private HIHealthIndicatorsConverter healthIndicatorsConverter;
+
+    public Exception runSerializableNewTransaction(@NotNull final Supplier<Exception> function) {
+        return internal.runSerializableNewTransaction(function);
+    }
+
+    public Exception runSerializableExternalTransaction(@NotNull final Supplier<Exception> function) {
+        return internal.runSerializableExternalTransaction(function);
+    }
 
     public String updateHealthIndicatorsGetIdNewTransaction(
             @NotNull final HealthIndicatorOutput newHealthIndicators, @NotNull final String vehicleId,

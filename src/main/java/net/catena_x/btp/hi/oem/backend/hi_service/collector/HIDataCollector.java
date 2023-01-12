@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.catena_x.btp.hi.oem.backend.hi_service.collector.enums.UpdateInfo;
 import net.catena_x.btp.hi.oem.backend.hi_service.collector.util.*;
-import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.HINotificationToSupplierContentDAO;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HIDataToSupplierContent;
-import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HINotificationToSupplierContentConverter;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HINotificationToSupplierConverter;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.HealthIndicatorInput;
 import net.catena_x.btp.hi.oem.common.model.dto.calculation.HICalculation;
 import net.catena_x.btp.hi.oem.common.model.dto.calculation.HICalculationTable;
@@ -20,6 +19,7 @@ import net.catena_x.btp.libraries.util.datahelper.DataHelper;
 import net.catena_x.btp.libraries.util.exceptions.BtpException;
 import net.catena_x.btp.libraries.util.json.ObjectMapperFactoryBtp;
 import okhttp3.HttpUrl;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ import java.util.UUID;
 public class HIDataCollector {
     public final static String DATA_VERSION = "DV_0.0.99";
 
-    @Autowired private HINotificationToSupplierContentConverter hiNotificationToSupplierContentConverter;
+    @Autowired private HINotificationToSupplierConverter hiNotificationToSupplierConverter;
     @Autowired private HINotificationCreator hiNotificationCreator;
     @Autowired private HIVehicleCollector hiVehicleCollector;
     @Autowired private HIInputDataBuilder hiInputDataBuilder;
@@ -66,8 +66,11 @@ public class HIDataCollector {
 
         try {
             final List<Vehicle> updatedVehicles = hiVehicleCollector.collect(options.isRecalculateAllVehicles()?
-                                                                                                0L :  syncCounterMin);
-            if (updatedVehicles == null) {
+                                                                                            0L :  syncCounterMin);
+
+            removeVehiclesWithMissingTelematicsData(updatedVehicles);
+
+            if (DataHelper.isNullOrEmpty(updatedVehicles)) {
                 logger.info("No updated vehicles this time!");
                 return UpdateInfo.NOTHING_TO_UPDATE;
             }
@@ -84,6 +87,12 @@ public class HIDataCollector {
         }
     }
 
+    private void removeVehiclesWithMissingTelematicsData(@Nullable final List<Vehicle> updatedVehicles) {
+        if(updatedVehicles != null) {
+            updatedVehicles.removeIf(vehicle -> (vehicle.getNewestTelematicsData() == null));
+        }
+    }
+
     private void registerNewVehicles(@NotNull final List<Vehicle> updatedVehicles) throws BtpException {
         vehicleRegistrator.registerNewVehicles(updatedVehicles);
     }
@@ -92,9 +101,9 @@ public class HIDataCollector {
                                                  @NotNull final long syncCounterMin,
                                                  @NotNull final HIUpdateOptions options) throws BtpException {
         final String requestId = generateRequestId();
-        final HIDataToSupplierContent HIDataToSupplierContent = hiInputDataBuilder.build(requestId, updatedVehicles);
+        final HIDataToSupplierContent dataToSupplierContent = hiInputDataBuilder.build(requestId, updatedVehicles);
         createNewCalculationInDatabase(requestId, syncCounterMin, getSyncCounterMax(updatedVehicles));
-        dispatchRequestWithHttp(requestId, HIDataToSupplierContent, options);
+        dispatchRequestWithHttp(requestId, dataToSupplierContent, options);
     }
 
     private long getSyncCounterMax(@NotNull final List<Vehicle> updatedVehicles) {
@@ -131,15 +140,12 @@ public class HIDataCollector {
     }
 
     private Notification<HIDataToSupplierContent> prepareNotification(
-            @NotNull final String requestId, @NotNull final HIDataToSupplierContent HIDataToSupplierContent,
+            @NotNull final String requestId, @NotNull final HIDataToSupplierContent hiDataToSupplierContent,
             @NotNull final HIUpdateOptions options) throws OemHIException {
 
         try {
-            final HINotificationToSupplierContentDAO healthIndicatorServiceInputDAO =
-                    hiNotificationToSupplierContentConverter.toDAO(HIDataToSupplierContent);
-
             Notification<HIDataToSupplierContent> notification =
-                    hiNotificationCreator.createForHttp(requestId, HIDataToSupplierContent);
+                    hiNotificationCreator.createForHttp(requestId, hiDataToSupplierContent);
 
             if (options.isLimitVehicleTwinCount()) {
                 limitVehicles(notification, options.getMaxVehicleTwins());
@@ -153,12 +159,12 @@ public class HIDataCollector {
     }
 
     private void dispatchRequestWithHttp(@NotNull final String requestId,
-                                         @NotNull final HIDataToSupplierContent HIDataToSupplierContent,
+                                         @NotNull final HIDataToSupplierContent hiDataToSupplierContent,
                                          @NotNull final HIUpdateOptions options) throws OemHIException {
         final Notification<HIDataToSupplierContent> notification = prepareNotification(
-                requestId, HIDataToSupplierContent, options);
+                requestId, hiDataToSupplierContent, options);
 
-        logger.info("Request for Id " + requestId + " (" + notification.getContent().getHealthIndicatorInputs().size()
+        logger.info("Request for id " + requestId + " (" + notification.getContent().getHealthIndicatorInputs().size()
                 + " vehicles) prepared.");
 
         processResult(requestId,
@@ -173,10 +179,10 @@ public class HIDataCollector {
         if (result.getStatusCode() == HttpStatus.OK
                     || result.getStatusCode() == HttpStatus.CREATED
                     || result.getStatusCode() == HttpStatus.ACCEPTED) {
-            logger.info("External calculation service for Id " + requestId + " started.");
+            logger.info("External calculation service for id " + requestId + " started.");
             setCalculationStatus(requestId, HICalculationStatus.RUNNING);
         } else {
-            serviceCallFailed("Starting external calculation service for Id \" + requestId + \" failed: "
+            serviceCallFailed("Starting external calculation service for id \" + requestId + \" failed: "
                     + "http code " + result.getStatusCode().toString() + ", response body: "
                     + result.getBody().toString());
         }
@@ -187,8 +193,9 @@ public class HIDataCollector {
             throws OemHIException {
 
         try {
-            final String notificationAsString = objectMapper.writeValueAsString(notification)
-                                                               ;// .replace("Spectrum", "Collective");
+            final String notificationAsString = objectMapper.writeValueAsString(
+                    hiNotificationToSupplierConverter.toDAO(notification))
+                    .replace("Spectrum", "Collective");
 
             return startAsyncRequest(requestId, supplierHiServiceEndpoint.toString(),
                     inputAssetName, notificationAsString, JsonNode.class);
@@ -202,7 +209,7 @@ public class HIDataCollector {
             @NotNull final String requestId, @NotNull final Notification<HIDataToSupplierContent> notification)
             throws OemHIException {
         return startAsyncRequest(requestId, supplierHiServiceEndpoint.toString(), inputAssetName,
-                notification, JsonNode.class);
+                hiNotificationToSupplierConverter.toDAO(notification), JsonNode.class);
     }
 
     private void serviceCallFailed(@NotNull final String errorText) throws OemHIException {
@@ -241,7 +248,6 @@ public class HIDataCollector {
 
     protected HttpHeaders generateDefaultHeaders() {
         final HttpHeaders headers = new HttpHeaders();
-
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         return headers;

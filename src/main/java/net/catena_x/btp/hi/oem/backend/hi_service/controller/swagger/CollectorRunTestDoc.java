@@ -8,7 +8,6 @@ The results are received by the notifyresult endpoint.
 If there are no new telematics data, the result is ok and no calculation is started.
 """;
 
-    public static final String OPTIONS_NAME = "options";
     public static final String OPTIONS_DESCRIPTION = """
 Options for the calculation preparation. There are four basic options:
  * R: Rename load spectra to load collectives (to be compatible to old bamm models).

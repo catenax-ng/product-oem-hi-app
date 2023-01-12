@@ -2,24 +2,23 @@ package net.catena_x.btp.hi.supplier.mockup;
 
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.HINotificationFromSupplierContentDAO;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.HINotificationToSupplierContentDAO;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.items.HealthIndicatorInputDAO;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.items.HealthIndicatorOutputDAO;
-import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HIDataToSupplierContent;
-import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.HealthIndicatorInput;
 import net.catena_x.btp.hi.supplier.mockup.swagger.SupplierMockUpDoc;
+import net.catena_x.btp.libraries.notification.dao.NotificationDAO;
 import net.catena_x.btp.libraries.notification.dto.Notification;
 import net.catena_x.btp.libraries.notification.dto.items.NotificationHeader;
 import net.catena_x.btp.libraries.util.apihelper.ApiHelper;
 import net.catena_x.btp.libraries.util.apihelper.model.DefaultApiResult;
 import okhttp3.HttpUrl;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.constraints.NotNull;
@@ -69,21 +68,34 @@ public class HIServiceControllerSupplierMock {
         return !useHiValues1;
     }
 
-    @PostMapping(value = "api/service/{assetid}/submodel", produces = "application/json")
+    @PostMapping(value = "api/service/{assetId}/submodel", produces = "application/json")
     @io.swagger.v3.oas.annotations.Operation(
             summary = SupplierMockUpDoc.SUMMARY, description = SupplierMockUpDoc.DESCRIPTION,
             tags = {"MockUp"},
-            parameters = @io.swagger.v3.oas.annotations.Parameter(
-                    in = ParameterIn.PATH, name = SupplierMockUpDoc.ASSETID_NAME,
-                    description = SupplierMockUpDoc.ASSETID_DESCRIPTION, required = true,
-                    examples = {
-                            @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                    name = SupplierMockUpDoc.ASSETID_EXAMPLE_1_NAME,
-                                    description = SupplierMockUpDoc.ASSETID_EXAMPLE_1_DESCRIPTION,
-                                    value = SupplierMockUpDoc.ASSETID_EXAMPLE_1_VALUE
-                            )
-                    }
-            ),
+            parameters = {
+                    @io.swagger.v3.oas.annotations.Parameter(
+                            in = ParameterIn.PATH, name = "assetId",
+                            description = SupplierMockUpDoc.ASSETID_DESCRIPTION, required = true,
+                            examples = {
+                                    @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                            name = SupplierMockUpDoc.ASSETID_EXAMPLE_1_NAME,
+                                            description = SupplierMockUpDoc.ASSETID_EXAMPLE_1_DESCRIPTION,
+                                            value = SupplierMockUpDoc.ASSETID_EXAMPLE_1_VALUE
+                                    )
+                            }
+                    ),
+                    @io.swagger.v3.oas.annotations.Parameter(
+                            in = ParameterIn.QUERY, name = "provider-connector-url",
+                            description = SupplierMockUpDoc.PROVIDERCONNECTORURL_DESCRIPTION, required = true,
+                            examples = {
+                                    @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                            name = SupplierMockUpDoc.PROVIDERCONNECTORURL_EXAMPLE_1_NAME,
+                                            description = SupplierMockUpDoc.PROVIDERCONNECTORURL_EXAMPLE_1_DESCRIPTION,
+                                            value = SupplierMockUpDoc.PROVIDERCONNECTORURL_EXAMPLE_1_VALUE
+                                    )
+                            }
+                    )
+            },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = SupplierMockUpDoc.BODY_DESCRIPTION, required = true,
                     content =  @io.swagger.v3.oas.annotations.media.Content(
@@ -124,19 +136,20 @@ public class HIServiceControllerSupplierMock {
                             ))
             }
     )
-    public ResponseEntity<DefaultApiResult> runCalculationMock(
-            @RequestBody @NotNull Notification<HIDataToSupplierContent> data,
-            @PathVariable @NotNull final String assetid) {
+    public ResponseEntity<DefaultApiResult> runHICalculationMock(
+            @RequestBody @NotNull NotificationDAO<HINotificationToSupplierContentDAO> data,
+            @PathVariable @NotNull final String assetId,
+            @RequestParam(required = true, name="provider-connector-url") @Nullable String providerConnectorUrl) {
 
-        final List<HealthIndicatorInput> healthIndicatorInputs = data.getContent().getHealthIndicatorInputs();
-        healthIndicatorInputs.sort(Comparator.comparing(HealthIndicatorInput::getComponentId));
+        final List<HealthIndicatorInputDAO> healthIndicatorInputs = data.getContent().getHealthIndicatorInputs();
+        healthIndicatorInputs.sort(Comparator.comparing(HealthIndicatorInputDAO::getComponentId));
 
         final int count = healthIndicatorInputs.size();
         final List<HealthIndicatorOutputDAO> outputs = new ArrayList<>(count);
         final double[][] healthIndicatorValues = isHiValues1()? healthIndicatorValues1 : healthIndicatorValues2;
 
         for (int i = 0; i < count; i++) {
-            final HealthIndicatorInput inputData = healthIndicatorInputs.get(i);
+            final HealthIndicatorInputDAO inputData = healthIndicatorInputs.get(i);
             outputs.add(new HealthIndicatorOutputDAO("DV_0.0.99", inputData.getComponentId(),
                     (i < healthIndicatorValues.length)? healthIndicatorValues[i] : GREEN_GREEN));
         }
@@ -168,7 +181,7 @@ public class HIServiceControllerSupplierMock {
                     requestUrl.toString(), request, DefaultApiResult.class);
         }).start();
 
-        return apiHelper.accepted("Accepted!");
+        return apiHelper.accepted("Accepted.");
     }
 
     protected HttpHeaders generateDefaultHeaders() {

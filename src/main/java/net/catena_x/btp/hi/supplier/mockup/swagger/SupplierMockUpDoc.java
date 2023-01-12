@@ -6,14 +6,21 @@ public class SupplierMockUpDoc {
 This endpoint is for local tests. It is called from the run endpoint and calls the notifyresult endpoint. 
 """;
 
-    public static final String ASSETID_NAME = "assetid";
     public static final String ASSETID_DESCRIPTION = """
-Asset id (not used in the mouck up).
+Asset id (not used in the mock up).
 """;
 
     public static final String ASSETID_EXAMPLE_1_NAME = "Sample id";
     public static final String ASSETID_EXAMPLE_1_DESCRIPTION = "Sample asset id (ignored).";
     public static final String ASSETID_EXAMPLE_1_VALUE = "04654678-b4aa-4aaf-ab36-6211da401ab";
+
+    public static final String PROVIDERCONNECTORURL_DESCRIPTION = """
+Url of the provider connector (not used in the mock up).
+""";
+
+    public static final String PROVIDERCONNECTORURL_EXAMPLE_1_NAME = "Sample address";
+    public static final String PROVIDERCONNECTORURL_EXAMPLE_1_DESCRIPTION = "Sample provider connector url (ignored).";
+    public static final String PROVIDERCONNECTORURL_EXAMPLE_1_VALUE = "http://edc.supplier.com/endpoint";
 
     public static final String BODY_DESCRIPTION = "Calculation input data.";
 
@@ -185,7 +192,7 @@ Asset id (not used in the mouck up).
 {
   "timestamp": "2022-12-20T12:21:56.523230300Z",
   "result": "Ok",
-  "message": "Accepted!"
+  "message": "Accepted."
 }
 """;
 

@@ -41,8 +41,8 @@ public class HIFrontendControllerStatisticHealthStatesDistributionType {
             summary = StatisticHealthStatesDistributionTypeDoc.SUMMARY,
             tags = {"Productive"},
             description = StatisticHealthStatesDistributionTypeDoc.DESCRIPTION,
-            parameters = @io.swagger.v3.oas.annotations.Parameter(
-                    in = ParameterIn.PATH, name = StatisticHealthStatesDistributionTypeDoc.TYPE_NAME,
+            parameters = {@io.swagger.v3.oas.annotations.Parameter(
+                    in = ParameterIn.PATH, name = "type",
                     description = StatisticHealthStatesDistributionTypeDoc.TYPE_DESCRIPTION, required = true,
                     examples = {
                             @io.swagger.v3.oas.annotations.media.ExampleObject(
@@ -56,7 +56,7 @@ public class HIFrontendControllerStatisticHealthStatesDistributionType {
                                     value = StatisticHealthStatesDistributionTypeDoc.TYPE_EXAMPLE_2_VALUE
                             )
                     }
-            ),
+            )},
             responses = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",

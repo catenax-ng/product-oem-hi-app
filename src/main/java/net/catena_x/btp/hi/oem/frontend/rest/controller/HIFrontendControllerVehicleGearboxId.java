@@ -35,8 +35,8 @@ public class HIFrontendControllerVehicleGearboxId extends HIFrontendControllerVe
     @io.swagger.v3.oas.annotations.Operation(
             summary = VehicleGearboxIdDoc.SUMMARY, description = VehicleGearboxIdDoc.DESCRIPTION,
             tags = {"Productive"},
-            parameters = @io.swagger.v3.oas.annotations.Parameter(
-                    in = ParameterIn.PATH, name = VehicleGearboxIdDoc.GEARBOXID_NAME,
+            parameters = {@io.swagger.v3.oas.annotations.Parameter(
+                    in = ParameterIn.PATH, name = "gearboxId",
                     description = VehicleGearboxIdDoc.GEARBOXID_DESCRIPTION, required = true,
                     examples = {
                             @io.swagger.v3.oas.annotations.media.ExampleObject(
@@ -45,7 +45,7 @@ public class HIFrontendControllerVehicleGearboxId extends HIFrontendControllerVe
                                     value = VehicleGearboxIdDoc.GEARBOXID_EXAMPLE_1_VALUE
                             )
                     }
-            ),
+            )},
             responses = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",

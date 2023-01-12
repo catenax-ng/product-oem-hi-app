@@ -65,7 +65,7 @@ The results are mapped to the related calculation.
 }
 """;
 
-    public static final String RESPONSE_ERROR_DESCRIPTION = "OK: Mapping results failed.";
+    public static final String RESPONSE_ERROR_DESCRIPTION = "ERROR: Mapping results failed.";
     public static final String RESPONSE_ERROR_VALUE = """
 {
   "timestamp": "2022-12-09T16:24:52.741984700Z",

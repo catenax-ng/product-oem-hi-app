@@ -8,11 +8,20 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.function.Supplier;
 
 @Component
 public class HIInfoTable {
     @Autowired private HIInfoTableInternal internal;
     @Autowired private HIInfoItemConverter hiInfoItemconverter;
+
+    public Exception runSerializableNewTransaction(@NotNull final Supplier<Exception> function) {
+        return internal.runSerializableNewTransaction(function);
+    }
+
+    public Exception runSerializableExternalTransaction(@NotNull final Supplier<Exception> function) {
+        return internal.runSerializableExternalTransaction(function);
+    }
 
     public void setInfoItemNewTransaction(@NotNull final HIInfoKey key, @NotNull final String value)
             throws OemHIException {

@@ -2,8 +2,11 @@ package net.catena_x.btp.hi.oem.backend.hi_service.controller;
 
 import net.catena_x.btp.hi.oem.backend.hi_service.controller.swagger.ReceiverNotifyResultDoc;
 import net.catena_x.btp.hi.oem.backend.hi_service.controller.util.HIJobRunner;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.HINotificationFromSupplierContentDAO;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HINotificationFromSupplierContent;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HINotificationFromSupplierConverter;
 import net.catena_x.btp.hi.oem.backend.hi_service.receiver.HIResultProcessor;
+import net.catena_x.btp.libraries.notification.dao.NotificationDAO;
 import net.catena_x.btp.libraries.notification.dto.Notification;
 import net.catena_x.btp.libraries.util.apihelper.ApiHelper;
 import net.catena_x.btp.libraries.util.apihelper.model.DefaultApiResult;
@@ -26,6 +29,7 @@ public class HIBackendReceiverControllerNotifyResult {
     @Autowired private ApiHelper apiHelper;
     @Autowired private HIJobRunner jobRunner;
     @Autowired private HIResultProcessor resultProcessor;
+    @Autowired private HINotificationFromSupplierConverter hiNotificationFromSupplierConverter;
 
     private final Logger logger = LoggerFactory.getLogger(HIBackendReceiverControllerNotifyResult.class);
 
@@ -74,18 +78,29 @@ public class HIBackendReceiverControllerNotifyResult {
             }
     )
     public ResponseEntity<DefaultApiResult> notifyResult(
-            @RequestBody @NotNull Notification<HINotificationFromSupplierContent> result) {
+            @RequestBody @NotNull NotificationDAO<HINotificationFromSupplierContentDAO> result) {
 
-        final Runnable setJobFinishedAndStartQueued = () -> {
+        resultProcessor.process(convertResult(result), getFunctionAtJobFinished());
+        return apiHelper.ok("Processing results started.");
+    }
+
+    private Runnable getFunctionAtJobFinished() {
+        return () -> {
             final ResponseEntity<DefaultApiResult> nextJobResponse = jobRunner.setJobFinishedAndStartQueued();
-            if(nextJobResponse.getStatusCode() != HttpStatus.OK
-                    && nextJobResponse.getStatusCode() != HttpStatus.CREATED
-                    && nextJobResponse.getStatusCode() != HttpStatus.ACCEPTED) {
+            if(isHttpStatusValid(nextJobResponse)) {
                 logger.error("Starting queued job failed: " + nextJobResponse.getBody().getMessage());
             }
         };
+    }
 
-        resultProcessor.process(result, setJobFinishedAndStartQueued);
-        return apiHelper.ok("Processing results started.");
+    private boolean isHttpStatusValid(@NotNull final ResponseEntity<DefaultApiResult> response) {
+        return response.getStatusCode() != HttpStatus.OK
+                && response.getStatusCode() != HttpStatus.CREATED
+                && response.getStatusCode() != HttpStatus.ACCEPTED;
+    }
+
+    private Notification<HINotificationFromSupplierContent> convertResult(
+            @NotNull final NotificationDAO<HINotificationFromSupplierContentDAO> result) {
+        return hiNotificationFromSupplierConverter.toDTO(result);
     }
 }

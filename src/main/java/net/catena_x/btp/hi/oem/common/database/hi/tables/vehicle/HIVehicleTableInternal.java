@@ -26,6 +26,7 @@ import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 @Component
 public class HIVehicleTableInternal extends HITableBase {
@@ -36,6 +37,16 @@ public class HIVehicleTableInternal extends HITableBase {
     @Autowired private VehicleComperator vehicleComperator;
 
     private final Logger logger = LoggerFactory.getLogger(HIVehicleTableInternal.class);
+
+    @HITransactionSerializableUseExisting
+    public Exception runSerializableExternalTransaction(@NotNull final Supplier<Exception> function) {
+        return function.get();
+    }
+
+    @HITransactionSerializableCreateNew
+    public Exception runSerializableNewTransaction(@NotNull final Supplier<Exception> function) {
+        return runSerializableExternalTransaction(function);
+    }
 
     @HITransactionDefaultUseExisting
     public void insertVehicleExternalTransaction(@NotNull final Vehicle newVehicle) throws OemHIException {
@@ -48,12 +59,12 @@ public class HIVehicleTableInternal extends HITableBase {
         }
     }
 
-    @HITransactionSerializableCreateNew
+    @HITransactionDefaultCreateNew
     public void insertVehicleNewTransaction(@NotNull Vehicle newVehicle) throws OemHIException {
         insertVehicleExternalTransaction(newVehicle);
     }
 
-    @HITransactionSerializableUseExisting
+    @HITransactionDefaultUseExisting
     public void insertIfNewExternalTransaction(@NotNull final Vehicle vehicle) throws OemHIException {
         try {
             final HIVehicleDAO existingVehicle = getByIdExternalTransaction(vehicle.getVehicleId());

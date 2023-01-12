@@ -23,11 +23,11 @@ public class HINotificationCreator {
 
     public Notification<HIDataToSupplierContent> createForHttp(
             @NotNull final String requestId,
-            @NotNull final HIDataToSupplierContent HIDataToSupplierContent) {
+            @NotNull final HIDataToSupplierContent hiDataToSupplierContent) {
 
         final Notification<HIDataToSupplierContent> notification = new Notification<>();
         notification.setHeader(createHeader(requestId));
-        notification.setContent(HIDataToSupplierContent);
+        notification.setContent(hiDataToSupplierContent);
         return notification;
     }
 

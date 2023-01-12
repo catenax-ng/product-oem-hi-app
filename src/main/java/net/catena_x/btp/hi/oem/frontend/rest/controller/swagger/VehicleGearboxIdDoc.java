@@ -6,7 +6,6 @@ public final class VehicleGearboxIdDoc {
 Requests a vehicle by its gearbox id.
 """;
 
-    public static final String GEARBOXID_NAME = "gearboxId";
     public static final String GEARBOXID_DESCRIPTION = """
 Gearbox id of the requested vehicle.
 """;

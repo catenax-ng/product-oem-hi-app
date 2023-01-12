@@ -6,7 +6,6 @@ public final class StatisticHealthStatesDistributionTypeDoc {
 Requests the distribution for a specific health indicator type.
 """;
 
-    public static final String TYPE_NAME = "type";
     public static final String TYPE_DESCRIPTION = """
 Health indicator type. Allowed values:
  * loadspectra

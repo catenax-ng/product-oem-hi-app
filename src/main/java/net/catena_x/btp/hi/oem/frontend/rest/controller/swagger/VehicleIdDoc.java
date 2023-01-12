@@ -6,7 +6,6 @@ public final class VehicleIdDoc {
 Requests a vehicle by its id. 
 """;
 
-    public static final String VEHICLEID_NAME = "vehicleId";
     public static final String VEHICLEID_DESCRIPTION = """
 Id of the requested vehicle.
 """;

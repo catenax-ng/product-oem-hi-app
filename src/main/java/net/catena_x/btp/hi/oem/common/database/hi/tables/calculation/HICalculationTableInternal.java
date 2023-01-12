@@ -15,12 +15,23 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.List;
+import java.util.function.Supplier;
 
 @Component
 public class HICalculationTableInternal extends HITableBase {
     @Autowired private HICalculationRepository hiCalculationRepository;
     @Autowired private HIVehicleTableInternal hiVehicleTable;
     @Autowired private HIHealthIndicatorsTableInternal hiHealthIndicatorsTable;
+
+    @HITransactionSerializableUseExisting
+    public Exception runSerializableExternalTransaction(@NotNull final Supplier<Exception> function) {
+        return function.get();
+    }
+
+    @HITransactionSerializableCreateNew
+    public Exception runSerializableNewTransaction(@NotNull final Supplier<Exception> function) {
+        return runSerializableExternalTransaction(function);
+    }
 
     @HITransactionSerializableUseExisting
     public void resetDbExternalTransaction() throws OemHIException {

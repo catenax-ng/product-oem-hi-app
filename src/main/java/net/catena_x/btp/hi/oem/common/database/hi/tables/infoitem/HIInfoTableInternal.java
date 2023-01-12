@@ -2,6 +2,8 @@ package net.catena_x.btp.hi.oem.common.database.hi.tables.infoitem;
 
 import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionDefaultCreateNew;
 import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionDefaultUseExisting;
+import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableCreateNew;
+import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableUseExisting;
 import net.catena_x.btp.hi.oem.common.database.hi.base.HITableBase;
 import net.catena_x.btp.hi.oem.common.model.enums.HIInfoKey;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
@@ -10,10 +12,21 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.function.Supplier;
 
 @Component
 public class HIInfoTableInternal extends HITableBase {
     @Autowired private HIInfoItemRepository hiInfoItemRepository;
+
+    @HITransactionSerializableUseExisting
+    public Exception runSerializableExternalTransaction(@NotNull final Supplier<Exception> function) {
+        return function.get();
+    }
+
+    @HITransactionSerializableCreateNew
+    public Exception runSerializableNewTransaction(@NotNull final Supplier<Exception> function) {
+        return runSerializableExternalTransaction(function);
+    }
 
     @HITransactionDefaultUseExisting
     public void setInfoItemExternalTransaction(@NotNull final HIInfoKey key, @NotNull final String value)

@@ -6,7 +6,6 @@ public final class VehicleVanDoc {
 Requests a vehicle by its VAN.
 """;
 
-    public static final String VAN_NAME = "van";
     public static final String VAN_DESCRIPTION = """
 VAN of the requested vehicle.
 """;

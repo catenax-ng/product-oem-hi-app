@@ -35,8 +35,8 @@ public class HIFrontendControllerVehicleVan extends HIFrontendControllerVehicleB
     @io.swagger.v3.oas.annotations.Operation(
             summary = VehicleVanDoc.SUMMARY, description = VehicleVanDoc.DESCRIPTION,
             tags = {"Productive"},
-            parameters = @io.swagger.v3.oas.annotations.Parameter(
-                    in = ParameterIn.PATH, name = VehicleVanDoc.VAN_NAME,
+            parameters = {@io.swagger.v3.oas.annotations.Parameter(
+                    in = ParameterIn.PATH, name = "van",
                     description = VehicleVanDoc.VAN_DESCRIPTION, required = true,
                     examples = {
                             @io.swagger.v3.oas.annotations.media.ExampleObject(
@@ -45,7 +45,7 @@ public class HIFrontendControllerVehicleVan extends HIFrontendControllerVehicleB
                                     value = VehicleVanDoc.VAN_EXAMPLE_1_VALUE
                             )
                     }
-            ),
+            )},
             responses = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",

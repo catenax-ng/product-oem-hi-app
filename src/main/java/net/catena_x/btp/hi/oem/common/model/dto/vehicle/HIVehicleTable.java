@@ -10,11 +10,20 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.List;
+import java.util.function.Supplier;
 
 @Component
 public class HIVehicleTable {
     @Autowired private HIVehicleTableInternal internal;
     @Autowired private HIVehicleConverter hiVehicleConverter;
+
+    public Exception runSerializableNewTransaction(@NotNull final Supplier<Exception> function) {
+        return internal.runSerializableNewTransaction(function);
+    }
+
+    public Exception runSerializableExternalTransaction(@NotNull final Supplier<Exception> function) {
+        return internal.runSerializableExternalTransaction(function);
+    }
 
     public void insertVehicleNewTransaction(@NotNull final Vehicle newVehicle) throws OemHIException {
         internal.insertVehicleNewTransaction(newVehicle);
