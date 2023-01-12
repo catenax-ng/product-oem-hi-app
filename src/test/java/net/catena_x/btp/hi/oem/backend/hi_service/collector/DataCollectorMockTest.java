@@ -8,7 +8,7 @@ import net.catena_x.btp.hi.oem.backend.hi_service.util.S3EDCInitiatorImpl;
 import net.catena_x.btp.libraries.bamm.common.BammStatus;
 import net.catena_x.btp.libraries.bamm.custom.adaptionvalues.AdaptionValues;
 import net.catena_x.btp.libraries.bamm.custom.classifiedloadspectrum.ClassifiedLoadSpectrum;
-import net.catena_x.btp.libraries.oem.backend.cloud.S3Handler;
+import net.catena_x.btp.libraries.oem.backend.cloud.S3Uploader;
 import net.catena_x.btp.libraries.oem.backend.model.dto.infoitem.InfoTable;
 import net.catena_x.btp.libraries.oem.backend.model.dto.telematicsdata.TelematicsData;
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.Vehicle;
@@ -63,7 +63,7 @@ class DataCollectorMockTest {
 
     @MockBean private HIResultProcessor resultHandler;
     @MockBean private S3EDCInitiatorImpl edcHandler;
-    @MockBean private S3Handler s3Handler;
+    @MockBean private S3Uploader s3Uploader;
     @MockBean private VehicleTable vehicleTable;
     @MockBean private InfoTable infoTable;
     @Autowired private HIDataCollector collector;
@@ -101,7 +101,7 @@ class DataCollectorMockTest {
         }
 
         // setup assertion to test correct call of S3Handler
-        Mockito.verify(s3Handler, Mockito.times(1)).uploadFileToS3(
+        Mockito.verify(s3Uploader, Mockito.times(1)).uploadFileToS3(
                 Mockito.argThat(
                         resultJson -> {
                             Assertions.assertEquals(expectedJson, resultJson);
@@ -132,7 +132,7 @@ class DataCollectorMockTest {
         }
 
         // setup assertion to test correct call of S3Handler
-        Mockito.verify(s3Handler, Mockito.never()).uploadFileToS3(
+        Mockito.verify(s3Uploader, Mockito.never()).uploadFileToS3(
                 Mockito.anyString(),
                 Mockito.anyString()
         );
