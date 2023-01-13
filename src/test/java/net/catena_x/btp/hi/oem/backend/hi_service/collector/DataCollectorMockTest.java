@@ -102,9 +102,9 @@ class DataCollectorMockTest {
 
         // setup assertion to test correct call of S3Handler
         Mockito.verify(s3Uploader, Mockito.times(1)).uploadFileToS3(
-                Mockito.argThat(
+                (String) Mockito.argThat(
                         resultJson -> {
-                            Assertions.assertEquals(expectedJson, resultJson);
+                            assertEquals(expectedJson, resultJson);
                             return true;
                         }
                 ),
