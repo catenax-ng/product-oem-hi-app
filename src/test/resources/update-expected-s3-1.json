@@ -11,7 +11,7 @@
           "routeDescription" : "logged",
           "status" : {
             "date" : "2022-08-11",
-            "operatingTime" : "3213.9",
+            "operatingHours" : 3213.9,
             "mileage" : 65432
           }
         },

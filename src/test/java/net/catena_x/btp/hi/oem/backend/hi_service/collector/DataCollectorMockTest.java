@@ -159,7 +159,7 @@ class DataCollectorMockTest {
         // status.setRouteDescription("Default route");
         status.setMileage(76543L);
         status.setDate(Instant.parse("2022-10-12T08:17:18.734Z"));
-        status.setOperatingTime("1282.0");
+        status.setOperatingHours(1282.0f);
         adaptionValueSet.setStatus(status);
         adaptionValues.add(adaptionValueSet);
 
@@ -202,7 +202,7 @@ class DataCollectorMockTest {
         // status.setRouteDescription("Default route");
         status.setMileage(76543L);
         status.setDate(Instant.parse("2022-10-12T08:17:18.734Z"));
-        status.setOperatingTime("1282.0");
+        status.setOperatingHours(1282.0f);
         adaptionValueSet.setStatus(status);
         adaptionValues.add(adaptionValueSet);
 

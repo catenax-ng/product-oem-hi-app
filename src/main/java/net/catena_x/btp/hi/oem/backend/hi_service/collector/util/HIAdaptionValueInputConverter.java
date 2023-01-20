@@ -10,9 +10,11 @@ import javax.validation.constraints.NotNull;
 @Component
 public class HIAdaptionValueInputConverter {
     public AdaptionValuesList convert(@NotNull final AdaptionValues adaptionValues) {
+        float operationHours = (adaptionValues.getStatus().getOperatingTime() == null) ?
+                                        adaptionValues.getStatus().getOperatingHours() :
+                                        Float.parseFloat(adaptionValues.getStatus().getOperatingTime());
+
         return new AdaptionValuesList(HIDataCollector.DATA_VERSION, adaptionValues.getStatus().getDate(),
-                adaptionValues.getStatus().getMileage(),
-                (long) (Float.parseFloat(adaptionValues.getStatus().getOperatingTime()) * 3600.0f),
-                adaptionValues.getValues());
+                adaptionValues.getStatus().getMileage(), (long)(operationHours * 3600.0f), adaptionValues.getValues());
     }
 }

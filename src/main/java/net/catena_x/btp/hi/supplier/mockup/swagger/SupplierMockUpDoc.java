@@ -53,7 +53,7 @@ Url of the provider connector (not used in the mock up).
             "routeDescription": "logged",
             "status": {
               "date": "2022-08-21T00:00:00Z",
-              "operatingTime": "1281.9",
+              "operatingHours": 1281.9,
               "mileage": 76543
             }
           },
@@ -104,7 +104,7 @@ Url of the provider connector (not used in the mock up).
             "routeDescription": "logged",
             "status": {
               "date": "2022-03-15T00:00:00Z",
-              "operatingTime": "262.6",
+              "operatingHours": 262.6,
               "mileage": 23456
             }
           },
@@ -154,7 +154,7 @@ Url of the provider connector (not used in the mock up).
             "routeDescription": "logged",
             "status": {
               "date": "2022-08-11T00:00:00Z",
-              "operatingTime": "3213.9",
+              "operatingHours": 3213.9,
               "mileage": 65432
             }
           },
