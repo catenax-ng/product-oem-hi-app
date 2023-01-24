@@ -14,6 +14,7 @@ Options for the calculation preparation. There are four basic options:
  * A: Recalculate all telematics data (incl. already calculated).
  * D: Reset HI database.
  * Q: Reset calculation queue.
+ * P: Use predefined alternating results for the mockup service instead of calculated ones.
 
 And the limit option at the end: Limit the count of components that are calculated.
 """;
