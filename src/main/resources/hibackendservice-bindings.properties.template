@@ -14,11 +14,10 @@ edc.apiwrapper.password=pass
 
 supplier.rulservice.endpoint=http://edc.supplier.com/endpoint
 supplier.bpn=BPN0000SUPPLIER
-supplier.rulservice.inputAssetName=urn:example:id
+supplier.rulservice.inputAssetName=example
 
 edc.bpn=BPN0000OEM
 edc.endpoint=https://oem.com/edc
 
 security.api.username=${RULBACKENDSERVICE_API_USER}
 security.api.password=${RULBACKENDSERVICE_API_PASS}
-security.api.role=USER
