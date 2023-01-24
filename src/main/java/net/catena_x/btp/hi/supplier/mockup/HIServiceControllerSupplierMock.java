@@ -1,11 +1,15 @@
 package net.catena_x.btp.hi.supplier.mockup;
 
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import net.catena_x.btp.hi.oem.backend.hi_service.collector.HIDataCollector;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.HINotificationFromSupplierContentDAO;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.HINotificationToSupplierContentDAO;
+import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.items.AdaptionValuesListDAO;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.items.HealthIndicatorInputDAO;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.items.HealthIndicatorOutputDAO;
 import net.catena_x.btp.hi.supplier.mockup.swagger.SupplierMockUpDoc;
+import net.catena_x.btp.libraries.bamm.custom.adaptionvalues.AdaptionValues;
+import net.catena_x.btp.libraries.bamm.custom.classifiedloadspectrum.ClassifiedLoadSpectrum;
 import net.catena_x.btp.libraries.notification.dao.NotificationDAO;
 import net.catena_x.btp.libraries.notification.dto.Notification;
 import net.catena_x.btp.libraries.notification.dto.items.NotificationHeader;
@@ -27,10 +31,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static java.lang.Math.abs;
+
 @RestController
 public class HIServiceControllerSupplierMock {
     @Autowired private ApiHelper apiHelper;
     @Autowired private RestTemplate restTemplate;
+
+    final double[] ADAPTION_VALUES_LIMITS = {100, 255, 100, 255};
+    final double GREEN_YELLOW_TRESHOLD = 0.8;
+    final double YELLOW_RED_TRESHOLD = 0.95;
 
     final double GREEN = 0.0;
     final double YELLOW = 0.95;
@@ -136,6 +146,7 @@ public class HIServiceControllerSupplierMock {
                             ))
             }
     )
+
     public ResponseEntity<DefaultApiResult> runHICalculationMock(
             @RequestBody @NotNull NotificationDAO<HINotificationToSupplierContentDAO> data,
             @PathVariable @NotNull final String assetId,
@@ -144,22 +155,81 @@ public class HIServiceControllerSupplierMock {
         final List<HealthIndicatorInputDAO> healthIndicatorInputs = data.getContent().getHealthIndicatorInputs();
         healthIndicatorInputs.sort(Comparator.comparing(HealthIndicatorInputDAO::getComponentId));
 
+        if(assetId.equals(HIDataCollector.INPUT_ASSET_NAME_TEST_PREDEFINED)) {
+            return processPredefinedAlternating(data.getContent().getRequestRefId(), healthIndicatorInputs);
+        } else {
+            return processByInputs(data.getContent().getRequestRefId(), healthIndicatorInputs);
+        }
+    }
+
+    private ResponseEntity<DefaultApiResult> processPredefinedAlternating(
+            @NotNull final String refId, @NotNull final List<HealthIndicatorInputDAO> healthIndicatorInputs) {
         final int count = healthIndicatorInputs.size();
         final List<HealthIndicatorOutputDAO> outputs = new ArrayList<>(count);
-        final double[][] healthIndicatorValues = isHiValues1()? healthIndicatorValues1 : healthIndicatorValues2;
+        final double[][] healthIndicatorValues = isHiValues1() ? healthIndicatorValues1 : healthIndicatorValues2;
 
         for (int i = 0; i < count; i++) {
             final HealthIndicatorInputDAO inputData = healthIndicatorInputs.get(i);
             outputs.add(new HealthIndicatorOutputDAO("DV_0.0.99", inputData.getComponentId(),
-                    (i < healthIndicatorValues.length)? healthIndicatorValues[i] : GREEN_GREEN));
+                    (i < healthIndicatorValues.length) ? healthIndicatorValues[i] : GREEN_GREEN));
         }
 
+        return buildAndSendNotification(refId, outputs);
+    }
+
+    private ResponseEntity<DefaultApiResult> processByInputs(
+            @NotNull final String refId, @NotNull final List<HealthIndicatorInputDAO> healthIndicatorInputs) {
+        final int count = healthIndicatorInputs.size();
+        final List<HealthIndicatorOutputDAO> outputs = new ArrayList<>(count);
+        final double[][] healthIndicatorValues = isHiValues1() ? healthIndicatorValues1 : healthIndicatorValues2;
+
+        for (int i = 0; i < count; i++) {
+            final HealthIndicatorInputDAO inputData = healthIndicatorInputs.get(i);
+            outputs.add(new HealthIndicatorOutputDAO("DV_0.0.99", inputData.getComponentId(),
+                    new double[]{calculateLoadSpectrumIndicator(inputData.getClassifiedLoadSpectrum()),
+                                 calculateAdaptionValuesIndicator(inputData.getAdaptionValuesList())}));
+        }
+
+        return buildAndSendNotification(refId, outputs);
+    }
+
+    private double calculateLoadSpectrumIndicator(@NotNull final ClassifiedLoadSpectrum loadSpectrum) {
+        final double refValue = loadSpectrum.getBody().getCounts().getCountsList()[0];
+
+        if(refValue < 1500) {
+            return GREEN;
+        } else if(refValue < 6000) {
+            return YELLOW;
+        } else {
+            return RED;
+        }
+    }
+
+    private double calculateAdaptionValuesIndicator(@NotNull final AdaptionValuesListDAO adaptionValuesList) {
+        assert(adaptionValuesList.getValues().length == ADAPTION_VALUES_LIMITS.length);
+
+        boolean yellow = false;
+        for (int i = 0; i < ADAPTION_VALUES_LIMITS.length; i++) {
+            double rel = abs(adaptionValuesList.getValues()[i]) / ADAPTION_VALUES_LIMITS[i];
+            if(rel > YELLOW_RED_TRESHOLD) {
+                return RED;
+            } else if(rel > GREEN_YELLOW_TRESHOLD) {
+                yellow = true;
+            }
+        }
+
+        return yellow? YELLOW : GREEN;
+    }
+
+    private ResponseEntity<DefaultApiResult> buildAndSendNotification(@NotNull final String refId,
+                                                                      @NotNull final List<HealthIndicatorOutputDAO> outputs)
+    {
         final Notification<HINotificationFromSupplierContentDAO> notification = new Notification<>();
         notification.setHeader(new NotificationHeader());
-        notification.getHeader().setReferencedNotificationID(data.getContent().getRequestRefId());
+        notification.getHeader().setReferencedNotificationID(refId);
 
         notification.setContent(new HINotificationFromSupplierContentDAO());
-        notification.getContent().setRequestRefId(data.getContent().getRequestRefId());
+        notification.getContent().setRequestRefId(refId);
         notification.getContent().setHealthIndicatorOutputs(outputs);
 
         new Thread(() ->
@@ -184,7 +254,7 @@ public class HIServiceControllerSupplierMock {
         return apiHelper.accepted("Accepted.");
     }
 
-    protected HttpHeaders generateDefaultHeaders() {
+    private HttpHeaders generateDefaultHeaders() {
         final HttpHeaders headers = new HttpHeaders();
 
         headers.setContentType(MediaType.APPLICATION_JSON);

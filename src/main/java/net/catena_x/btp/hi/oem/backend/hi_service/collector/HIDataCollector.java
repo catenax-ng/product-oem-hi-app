@@ -42,6 +42,7 @@ import java.util.UUID;
 @Component
 public class HIDataCollector {
     public final static String DATA_VERSION = "DV_0.0.99";
+    public final static String INPUT_ASSET_NAME_TEST_PREDEFINED = "predefined";
 
     @Autowired private HINotificationToSupplierConverter hiNotificationToSupplierConverter;
     @Autowired private HINotificationCreator hiNotificationCreator;
@@ -169,8 +170,8 @@ public class HIDataCollector {
 
         processResult(requestId,
                 options.isRenameLoadSpectrumToLoadCollective()
-                ? renameAndCallService(requestId, notification)
-                : callService(requestId, notification));
+                ? renameAndCallService(requestId, notification, options)
+                : callService(requestId, notification, options));
     }
 
     private void processResult(@NotNull final String requestId, @NotNull final ResponseEntity<JsonNode> result)
@@ -189,8 +190,8 @@ public class HIDataCollector {
     }
 
     private ResponseEntity<JsonNode> renameAndCallService(
-            @NotNull final String requestId, @NotNull final Notification<HIDataToSupplierContent> notification)
-            throws OemHIException {
+            @NotNull final String requestId, @NotNull final Notification<HIDataToSupplierContent> notification,
+            @NotNull final HIUpdateOptions options) throws OemHIException {
 
         try {
             final String notificationAsString = objectMapper.writeValueAsString(
@@ -198,7 +199,8 @@ public class HIDataCollector {
                     .replace("Spectrum", "Collective");
 
             return startAsyncRequest(requestId, supplierHiServiceEndpoint.toString(),
-                    inputAssetName, notificationAsString, JsonNode.class);
+                    options.isUsePredefinedResults()? INPUT_ASSET_NAME_TEST_PREDEFINED : inputAssetName,
+                    notificationAsString, JsonNode.class);
         } catch(final IOException exception) {
             setCalculationStatus(requestId, HICalculationStatus.FAILED_EXTERNAL);
             throw new OemHIException("Error while converting inputs to json!", exception);
@@ -206,9 +208,10 @@ public class HIDataCollector {
     }
 
     private ResponseEntity<JsonNode> callService(
-            @NotNull final String requestId, @NotNull final Notification<HIDataToSupplierContent> notification)
-            throws OemHIException {
-        return startAsyncRequest(requestId, supplierHiServiceEndpoint.toString(), inputAssetName,
+            @NotNull final String requestId, @NotNull final Notification<HIDataToSupplierContent> notification,
+            @NotNull final HIUpdateOptions options) throws OemHIException {
+        return startAsyncRequest(requestId, supplierHiServiceEndpoint.toString(),
+                options.isUsePredefinedResults()? INPUT_ASSET_NAME_TEST_PREDEFINED : inputAssetName,
                 hiNotificationToSupplierConverter.toDAO(notification), JsonNode.class);
     }
 

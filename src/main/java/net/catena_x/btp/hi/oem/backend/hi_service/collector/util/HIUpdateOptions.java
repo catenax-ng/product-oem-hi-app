@@ -17,6 +17,7 @@ public class HIUpdateOptions {
     private boolean recalculateAllVehicles = false;
     private boolean forceCalculationIgnoringQueue = false;
     private boolean resetHiDatabase = false;
+    private boolean usePredefinedResults = false;
 
     public boolean appliesChanges() {
         return renameLoadSpectrumToLoadCollective || limitVehicleTwinCount
@@ -30,6 +31,7 @@ public class HIUpdateOptions {
         if(this.recalculateAllVehicles != other.recalculateAllVehicles){ return false;}
         if(this.forceCalculationIgnoringQueue != other.forceCalculationIgnoringQueue){ return false;}
         if(this.resetHiDatabase != other.resetHiDatabase){ return false;}
+        if(this.usePredefinedResults != other.usePredefinedResults){ return false;}
 
         return true;
     }
