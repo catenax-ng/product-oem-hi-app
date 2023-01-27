@@ -6,7 +6,10 @@ import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionDefau
 import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableCreateNew;
 import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableUseExisting;
 import net.catena_x.btp.hi.oem.common.database.hi.base.HITableBase;
+import net.catena_x.btp.hi.oem.common.database.hi.tables.calculation.HICalculationTableInternal;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +21,8 @@ import java.util.function.Supplier;
 @Component
 public class HIHealthIndicatorsTableInternal extends HITableBase {
     @Autowired private HIHealthIndicatorsRepository hiHealthIndicatorsRepository;
+
+    private final Logger logger = LoggerFactory.getLogger(HIHealthIndicatorsTableInternal.class);
 
     @HITransactionSerializableUseExisting
     public Exception runSerializableExternalTransaction(@NotNull final Supplier<Exception> function) {
@@ -44,7 +49,9 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
             return newId;
         }
         catch(final Exception exception) {
-            throw failed("Upload health indicators failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Upload health indicators failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -64,7 +71,9 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
         try {
             hiHealthIndicatorsRepository.deleteAll();
         } catch(final Exception exception) {
-            throw failed("Deleting all health indicators failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Deleting all health indicators failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -78,7 +87,9 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
         try {
             hiHealthIndicatorsRepository.deleteById(id);
         } catch(final Exception exception) {
-            throw failed("Deleting health indicators by id failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Deleting health indicators by id failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -92,7 +103,9 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
         try {
             hiHealthIndicatorsRepository.deleteByVehicleId(vehicleId);
         } catch(final Exception exception) {
-            throw failed("Deleting health indicators by vehicle is failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Deleting health indicators by vehicle is failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -106,7 +119,9 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
         try {
             hiHealthIndicatorsRepository.deleteByGearboxId(gearboxId);
         } catch(final Exception exception) {
-            throw failed("Deleting health indicators by gearbox is failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Deleting health indicators by gearbox is failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -120,7 +135,9 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
         try {
             hiHealthIndicatorsRepository.deleteCalculatedUntil(calculatedUntil);
         } catch(final Exception exception) {
-            throw failed("Deleting health indicators by calculation timestamp is failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Deleting health indicators by calculation timestamp is failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -135,7 +152,9 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
         try {
             hiHealthIndicatorsRepository.deleteCalculationSyncCounterUntil(calculationSyncCounter);
         } catch(final Exception exception) {
-            throw failed("Deleting health indicators by calculation sync counter is failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Deleting health indicators by calculation sync counter is failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -151,7 +170,9 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
             return hiHealthIndicatorsRepository.queryById(id);
         }
         catch(final Exception exception) {
-            throw failed("Querying database for health indicators by id failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying database for health indicators by id failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -167,7 +188,9 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
             return hiHealthIndicatorsRepository.queryByVehicleId(vehicleId);
         }
         catch(final Exception exception) {
-            throw failed("Querying database for health indicators by vehicle id failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying database for health indicators by vehicle id failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -184,7 +207,9 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
             return hiHealthIndicatorsRepository.queryByGearboxId(gearboxId);
         }
         catch(final Exception exception) {
-            throw failed("Querying database for health indicators by gearbox id failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying database for health indicators by gearbox id failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -201,7 +226,9 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
             return hiHealthIndicatorsRepository.queryByVehicleIdOrderByCalculationSyncCounter(vehicleId);
         }
         catch(final Exception exception) {
-            throw failed("Querying database for health indicators by vehicle id failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying database for health indicators by vehicle id failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -218,7 +245,9 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
             return hiHealthIndicatorsRepository.queryByGearboxIdOrderByCalculationSyncCounter(gearboxId);
         }
         catch(final Exception exception) {
-            throw failed("Querying database for health indicators by vehicle id failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying database for health indicators by vehicle id failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -235,7 +264,9 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
             return hiHealthIndicatorsRepository.queryByCalculationSince(timestamp);
         }
         catch(final Exception exception) {
-            throw failed("Querying database for health indicators by calculation timestamp failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying database for health indicators by calculation timestamp failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -252,7 +283,7 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
             return hiHealthIndicatorsRepository.queryByCalculationUntil(timestamp);
         }
         catch(final Exception exception) {
-            throw failed("Querying database for health indicators by calculation timestamp failed!", exception);
+            throw failed("Querying database for health indicators by calculation timestamp failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -269,7 +300,7 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
             return hiHealthIndicatorsRepository.queryByCalculationSyncCounterSince(calculationSyncCounterSince);
         }
         catch(final Exception exception) {
-            throw failed("Querying database for health indicators by calculation timestamp failed!", exception);
+            throw failed("Querying database for health indicators by calculation timestamp failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -286,7 +317,7 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
             return hiHealthIndicatorsRepository.queryByCalculationSyncCounterUntil(calculationSyncCounterUntil);
         }
         catch(final Exception exception) {
-            throw failed("Querying database for health indicators by calculation timestamp failed!", exception);
+            throw failed("Querying database for health indicators by calculation timestamp failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -302,7 +333,7 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
             return hiHealthIndicatorsRepository.queryAll();
         }
         catch(final Exception exception) {
-            throw failed("Querying database for all health indicators failed!", exception);
+            throw failed("Querying database for all health indicators failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -317,7 +348,7 @@ public class HIHealthIndicatorsTableInternal extends HITableBase {
             return hiHealthIndicatorsRepository.queryAllOrderByCalculationTimestamp();
         }
         catch(final Exception exception) {
-            throw failed("Querying database for all health indicators failed!", exception);
+            throw failed("Querying database for all health indicators failed! " + exception.getMessage(), exception);
         }
     }
 

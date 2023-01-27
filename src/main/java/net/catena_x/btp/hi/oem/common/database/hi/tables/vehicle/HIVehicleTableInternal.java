@@ -55,7 +55,9 @@ public class HIVehicleTableInternal extends HITableBase {
                     newVehicle.getGearboxId(), newVehicle.getProductionDate());
         }
         catch(final Exception exception) {
-            throw failed("Failed to insert vehicle!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Failed to insert vehicle! " + exception.getMessage(), exception);
         }
     }
 
@@ -77,7 +79,9 @@ public class HIVehicleTableInternal extends HITableBase {
             insertVehicleExternalTransaction(vehicle);
         }
         catch(final Exception exception) {
-            throw failed("Failed to insert vehicle!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Failed to insert vehicle! " + exception.getMessage(), exception);
         }
     }
 
@@ -91,7 +95,9 @@ public class HIVehicleTableInternal extends HITableBase {
         try {
             hiVehicleRepository.deleteAll();
         } catch (final Exception exception) {
-            throw failed("Deleting all vehicles failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Deleting all vehicles failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -137,7 +143,8 @@ public class HIVehicleTableInternal extends HITableBase {
                                                                             newHealthIndicatorsId);
             } catch (final Exception exception) {
                 logger.error(exception.getMessage());
-                throw failed("Appending health indicators failed!", exception);
+                exception.printStackTrace();
+                throw failed("Appending health indicators failed! " + exception.getMessage(), exception);
             }
         }
     }
@@ -157,7 +164,9 @@ public class HIVehicleTableInternal extends HITableBase {
             hiVehicleRepository.deleteByVehilceId(id);
         }
         catch(final Exception exception) {
-            throw failed("Deleting vehicle by id failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Deleting vehicle by id failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -172,7 +181,9 @@ public class HIVehicleTableInternal extends HITableBase {
             hiVehicleRepository.deleteByVan(van);
         }
         catch(final Exception exception) {
-            throw failed("Deleting vehicle by van failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Deleting vehicle by van failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -186,7 +197,9 @@ public class HIVehicleTableInternal extends HITableBase {
         try {
             return hiVehicleRepository.queryByVehicleId(vehicleId);
         } catch (final Exception exception) {
-            throw failed("Querying vehicle by id failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying vehicle by id failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -203,7 +216,9 @@ public class HIVehicleTableInternal extends HITableBase {
                     .setParameter("vehicle_id", vehicleId);
             return getSingle(executeQueryVehicleHealthindicators(query));
         } catch(final Exception exception) {
-            throw failed("Querying vehicle by id failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying vehicle by id failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -218,7 +233,9 @@ public class HIVehicleTableInternal extends HITableBase {
         try {
             return hiVehicleRepository.queryByVan(van);
         } catch(final Exception exception) {
-            throw failed("Querying vehicle by van failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying vehicle by van failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -235,7 +252,9 @@ public class HIVehicleTableInternal extends HITableBase {
                     .setParameter("van", van);
             return getSingle(executeQueryVehicleHealthindicators(query));
         } catch(final Exception exception) {
-            throw failed("Querying vehicle by van failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying vehicle by van failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -250,7 +269,9 @@ public class HIVehicleTableInternal extends HITableBase {
         try {
             return hiVehicleRepository.queryByGearboxId(gearboxId);
         } catch(final Exception exception) {
-            throw failed("Querying vehicle by gearbox_id failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying vehicle by gearbox_id failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -268,7 +289,9 @@ public class HIVehicleTableInternal extends HITableBase {
                     .setParameter("gearbox_id", gearboxId);
             return getSingle(executeQueryVehicleHealthindicators(query));
         } catch(final Exception exception) {
-            throw failed("Querying vehicle by gearbox_id failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying vehicle by gearbox_id failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -290,7 +313,9 @@ public class HIVehicleTableInternal extends HITableBase {
             return new HIVehicleWithHealthIndicatorsDAO(vehicleFromDB, healthindicatorsTable.getByIdExternalTransaction(
                                                                          vehicleFromDB.getNewestHealthindicatorsId()));
         } catch(final Exception exception) {
-            throw failed("Querying vehicle by van failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying vehicle by van failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -300,7 +325,9 @@ public class HIVehicleTableInternal extends HITableBase {
             return hiVehicleRepository.queryAll();
         }
         catch(final Exception exception) {
-            throw failed("Querying vehicles failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying vehicles failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -317,7 +344,9 @@ public class HIVehicleTableInternal extends HITableBase {
             return executeQueryVehicleHealthindicators(query);
         }
         catch(final Exception exception) {
-            throw failed("Querying vehicles failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying vehicles failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -333,7 +362,7 @@ public class HIVehicleTableInternal extends HITableBase {
             return hiVehicleRepository.queryUpdatedSince(updatedSince);
         }
         catch(final Exception exception) {
-            throw failed("Querying vehicles failed!", exception);
+            throw failed("Querying vehicles failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -353,7 +382,7 @@ public class HIVehicleTableInternal extends HITableBase {
             return executeQueryVehicleHealthindicators(query);
         }
         catch(final Exception exception) {
-            throw failed("Querying vehicles failed!", exception);
+            throw failed("Querying vehicles failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -371,7 +400,7 @@ public class HIVehicleTableInternal extends HITableBase {
             return hiVehicleRepository.queryByProductionDate(producedSince, producedUntil);
         }
         catch(final Exception exception) {
-            throw failed("Querying vehicles failed!", exception);
+            throw failed("Querying vehicles failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -393,7 +422,7 @@ public class HIVehicleTableInternal extends HITableBase {
             return executeQueryVehicleHealthindicators(query);
         }
         catch(final Exception exception) {
-            throw failed("Querying vehicles failed!", exception);
+            throw failed("Querying vehicles failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -414,7 +443,7 @@ public class HIVehicleTableInternal extends HITableBase {
 
             return vehicles;
         } catch(final Exception exception) {
-            throw failed("Executing query failed!", exception);
+            throw failed("Executing query failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -440,7 +469,7 @@ public class HIVehicleTableInternal extends HITableBase {
             return (NativeQuery<Object[]>)((Session)this.entityManager.getDelegate()).createSQLQuery(query);
         }
         catch(final Exception exception) {
-            throw failed("Initializing query failed!", exception);
+            throw failed("Initializing query failed! " + exception.getMessage(), exception);
         }
     }
 

@@ -9,6 +9,8 @@ import net.catena_x.btp.hi.oem.common.database.hi.tables.healthindicators.HIHeal
 import net.catena_x.btp.hi.oem.common.database.hi.tables.vehicle.HIVehicleTableInternal;
 import net.catena_x.btp.hi.oem.common.model.enums.HICalculationStatus;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +24,8 @@ public class HICalculationTableInternal extends HITableBase {
     @Autowired private HICalculationRepository hiCalculationRepository;
     @Autowired private HIVehicleTableInternal hiVehicleTable;
     @Autowired private HIHealthIndicatorsTableInternal hiHealthIndicatorsTable;
+
+    private final Logger logger = LoggerFactory.getLogger(HICalculationTableInternal.class);
 
     @HITransactionSerializableUseExisting
     public Exception runSerializableExternalTransaction(@NotNull final Supplier<Exception> function) {
@@ -54,7 +58,9 @@ public class HICalculationTableInternal extends HITableBase {
             hiCalculationRepository.insert(id, calculationTimestamp, calculationSyncCounterMin,
                     calculationSyncCounterMax, status.toString());
         } catch (final Exception exception) {
-            throw failed("Inserting calculation failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Inserting calculation failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -78,7 +84,9 @@ public class HICalculationTableInternal extends HITableBase {
                     calculationSyncCounterMax, status.toString());
             return id;
         } catch (final Exception exception) {
-            throw failed("Inserting calculation failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Inserting calculation failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -98,7 +106,9 @@ public class HICalculationTableInternal extends HITableBase {
             hiCalculationRepository.createNow(id, calculationSyncCounterMin, calculationSyncCounterMax,
                     HICalculationStatus.CREATED.toString());
         } catch (final Exception exception) {
-            throw failed("Inserting calculation failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Inserting calculation failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -118,7 +128,9 @@ public class HICalculationTableInternal extends HITableBase {
                     HICalculationStatus.CREATED.toString());
             return id;
         } catch (final Exception exception) {
-            throw failed("Inserting calculation failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Inserting calculation failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -135,7 +147,9 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             hiCalculationRepository.updateStatus(id, newStatus.toString());
         } catch (final Exception exception) {
-            throw failed("Updating calculation status failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Updating calculation status failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -151,7 +165,9 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             hiCalculationRepository.setMessage(id, message);
         } catch (final Exception exception) {
-            throw failed("Updating message for calculation failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Updating message for calculation failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -166,7 +182,9 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             hiCalculationRepository.deleteAll();
         } catch (final Exception exception) {
-            throw failed("Deleting all calculations failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Deleting all calculations failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -180,7 +198,9 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             hiCalculationRepository.deleteById(id);
         } catch (final Exception exception) {
-            throw failed("Deleting calculation failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Deleting calculation failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -195,7 +215,9 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             hiCalculationRepository.deleteByStatus(status.toString());
         } catch (final Exception exception) {
-            throw failed("Deleting calculation failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Deleting calculation failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -209,7 +231,9 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             hiCalculationRepository.deleteCalculatedUntil(calculatedUntil);
         } catch (final Exception exception) {
-            throw failed("Deleting calculation failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Deleting calculation failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -225,7 +249,9 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             hiCalculationRepository.deleteCalculationSyncCounterUntil(calculationSyncCounter);
         } catch (final Exception exception) {
-            throw failed("Deleting calculation failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Deleting calculation failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -240,7 +266,9 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             return hiCalculationRepository.queryAll();
         } catch (final Exception exception) {
-            throw failed("Querying calculations failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying calculations failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -254,7 +282,9 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             return hiCalculationRepository.queryById(id);
         } catch (final Exception exception) {
-            throw failed("Querying calculation by id failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Querying calculation by id failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -269,7 +299,7 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             return hiCalculationRepository.queryByStatus(status.toString());
         } catch (final Exception exception) {
-            throw failed("Querying calculations by status failed!", exception);
+            throw failed("Querying calculations by status failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -285,7 +315,7 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             return hiCalculationRepository.queryByStatusOrderByCalculationSyncCounter(status.toString());
         } catch (final Exception exception) {
-            throw failed("Querying calculations by status failed!", exception);
+            throw failed("Querying calculations by status failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -300,7 +330,7 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             return hiCalculationRepository.queryAllOrderByCalculationTimestamp();
         } catch (final Exception exception) {
-            throw failed("Querying calculations failed!", exception);
+            throw failed("Querying calculations failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -314,7 +344,7 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             return hiCalculationRepository.queryAllOrderByCalculationSyncCounter();
         } catch (final Exception exception) {
-            throw failed("Querying calculations failed!", exception);
+            throw failed("Querying calculations failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -329,7 +359,7 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             return hiCalculationRepository.queryByCalculationSince(calculationTimestampSince);
         } catch (final Exception exception) {
-            throw failed("Querying calculations failed!", exception);
+            throw failed("Querying calculations failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -345,7 +375,7 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             return hiCalculationRepository.queryByCalculationUntil(calculationTimestampUntil);
         } catch (final Exception exception) {
-            throw failed("Querying calculations failed!", exception);
+            throw failed("Querying calculations failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -361,7 +391,7 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             return hiCalculationRepository.queryByCalculationSyncCounterSince(calculationSyncCounterSince);
         } catch (final Exception exception) {
-            throw failed("Querying calculations failed!", exception);
+            throw failed("Querying calculations failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -377,7 +407,7 @@ public class HICalculationTableInternal extends HITableBase {
         try {
             return hiCalculationRepository.queryByCalculationSyncCounterUntil(calculationSyncCounterUntil);
         } catch (final Exception exception) {
-            throw failed("Querying calculations failed!", exception);
+            throw failed("Querying calculations failed! " + exception.getMessage(), exception);
         }
     }
 

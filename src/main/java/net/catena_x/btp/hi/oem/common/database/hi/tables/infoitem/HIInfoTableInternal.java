@@ -5,8 +5,11 @@ import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionDefau
 import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableCreateNew;
 import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableUseExisting;
 import net.catena_x.btp.hi.oem.common.database.hi.base.HITableBase;
+import net.catena_x.btp.hi.oem.common.database.hi.tables.healthindicators.HIHealthIndicatorsTableInternal;
 import net.catena_x.btp.hi.oem.common.model.enums.HIInfoKey;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +20,8 @@ import java.util.function.Supplier;
 @Component
 public class HIInfoTableInternal extends HITableBase {
     @Autowired private HIInfoItemRepository hiInfoItemRepository;
+
+    private final Logger logger = LoggerFactory.getLogger(HIInfoTableInternal.class);
 
     @HITransactionSerializableUseExisting
     public Exception runSerializableExternalTransaction(@NotNull final Supplier<Exception> function) {
@@ -34,7 +39,9 @@ public class HIInfoTableInternal extends HITableBase {
         try {
             hiInfoItemRepository.insert(key.toString(), value);
         } catch (final Exception exception) {
-            throw failed("Inserting info value failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Inserting info value failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -50,7 +57,9 @@ public class HIInfoTableInternal extends HITableBase {
         try {
             hiInfoItemRepository.update(key.toString(), value);
         } catch (final Exception exception) {
-            throw failed("Updating info value failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Updating info value failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -65,7 +74,9 @@ public class HIInfoTableInternal extends HITableBase {
         try {
             return hiInfoItemRepository.queryByKey(key.toString());
         } catch (final Exception exception) {
-            throw failed("Reading info item failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Reading info item failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -79,7 +90,9 @@ public class HIInfoTableInternal extends HITableBase {
         try {
             return hiInfoItemRepository.queryAll();
         } catch (final Exception exception) {
-            throw failed("Reading all info items failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Reading all info items failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -93,7 +106,9 @@ public class HIInfoTableInternal extends HITableBase {
         try {
             hiInfoItemRepository.deleteAll();
         } catch (final Exception exception) {
-            throw failed("Deleting all info items failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Deleting all info items failed! " + exception.getMessage(), exception);
         }
     }
 
@@ -107,7 +122,9 @@ public class HIInfoTableInternal extends HITableBase {
         try {
             hiInfoItemRepository.delete(key.toString());
         } catch (final Exception exception) {
-            throw failed("Deleting info item failed!", exception);
+            logger.error(exception.getMessage());
+            exception.printStackTrace();
+            throw failed("Deleting info item failed! " + exception.getMessage(), exception);
         }
     }
 
