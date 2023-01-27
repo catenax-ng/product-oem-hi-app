@@ -15,7 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
 		"net.catena_x.btp.hi.supplier",
 		"net.catena_x.btp.libraries.notification",
 		"net.catena_x.btp.libraries.oem.backend.model.dto",
-		"net.catena_x.btp.libraries.oem.backend.cloud",
+//		"net.catena_x.btp.libraries.oem.backend.cloud",
 		"net.catena_x.btp.libraries.oem.backend.edc",
 		"net.catena_x.btp.libraries.util",
 		"net.catena_x.btp.libraries.edc",
