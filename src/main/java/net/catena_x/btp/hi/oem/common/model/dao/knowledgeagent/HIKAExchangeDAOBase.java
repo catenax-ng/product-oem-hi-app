@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HIKAExchangeDAOBase<BindingType> {
-    private HIKAInputsHeaderDAO head;
+    private HIKAHeaderDAO head;
     private HIKAResultsDAO<BindingType> results;
 }

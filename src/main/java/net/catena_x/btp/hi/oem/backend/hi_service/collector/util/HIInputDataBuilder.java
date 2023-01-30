@@ -3,6 +3,8 @@ package net.catena_x.btp.hi.oem.backend.hi_service.collector.util;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HIDataToSupplierContent;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.AdaptionValuesList;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.HealthIndicatorInput;
+import net.catena_x.btp.hi.oem.common.model.dto.knowledgeagent.HIKAInput;
+import net.catena_x.btp.hi.oem.common.model.dto.knowledgeagent.HIKAInputs;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import net.catena_x.btp.libraries.bamm.custom.classifiedloadspectrum.ClassifiedLoadSpectrum;
 import net.catena_x.btp.libraries.bamm.custom.classifiedloadspectrum.items.LoadSpectrumType;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +37,25 @@ public class HIInputDataBuilder {
         }
 
         return new HIDataToSupplierContent(requestId, healthIndicatorInputs);
+    }
+
+    public HIKAInputs buildForAgent(@NotNull final String requestId, @NotNull final List<Vehicle> updatedVehicles,
+                                    @NotNull final long syncCounterMax,
+                                    @NotNull final Instant calculationTimestamp) throws OemHIException {
+        final HIKAInputs inputs = new HIKAInputs();
+
+        inputs.setRequestId(requestId);
+        inputs.setMaxSyncCounter(syncCounterMax);
+        inputs.setCalculationTimestamp(calculationTimestamp);
+
+        inputs.setRequests(new ArrayList<>(updatedVehicles.size()));
+
+        for (final Vehicle vehicle :updatedVehicles) {
+            inputs.getRequests().add(new HIKAInput(vehicle.getVan(),
+                    vehicle.getNewestTelematicsData().getAdaptionValues().get(0).getValues()));
+        }
+
+        return inputs;
     }
 
     private HealthIndicatorInput convert(@NotNull final TelematicsData telematicsData,

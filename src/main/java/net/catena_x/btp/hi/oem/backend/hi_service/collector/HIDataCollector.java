@@ -4,17 +4,21 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.catena_x.btp.hi.oem.backend.hi_service.collector.enums.UpdateInfo;
 import net.catena_x.btp.hi.oem.backend.hi_service.collector.util.*;
+import net.catena_x.btp.hi.oem.backend.hi_service.controller.util.HIKnowledgeAgentTest;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HIDataToSupplierContent;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.HINotificationToSupplierConverter;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dto.supplierhiservice.items.HealthIndicatorInput;
 import net.catena_x.btp.hi.oem.common.model.dto.calculation.HICalculation;
 import net.catena_x.btp.hi.oem.common.model.dto.calculation.HICalculationTable;
+import net.catena_x.btp.hi.oem.common.model.dto.knowledgeagent.HIKAInputs;
 import net.catena_x.btp.hi.oem.common.model.enums.HICalculationStatus;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import net.catena_x.btp.libraries.edc.EdcApi;
 import net.catena_x.btp.libraries.edc.util.exceptions.EdcException;
 import net.catena_x.btp.libraries.notification.dto.Notification;
+import net.catena_x.btp.libraries.oem.backend.model.dto.infoitem.InfoTable;
 import net.catena_x.btp.libraries.oem.backend.model.dto.vehicle.Vehicle;
+import net.catena_x.btp.libraries.util.apihelper.model.DefaultApiResult;
 import net.catena_x.btp.libraries.util.datahelper.DataHelper;
 import net.catena_x.btp.libraries.util.exceptions.BtpException;
 import net.catena_x.btp.libraries.util.json.ObjectMapperFactoryBtp;
@@ -34,6 +38,7 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URL;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -49,9 +54,12 @@ public class HIDataCollector {
     @Autowired private HIVehicleCollector hiVehicleCollector;
     @Autowired private HIInputDataBuilder hiInputDataBuilder;
     @Autowired private HICalculationTable hiCalculationTable;
+    @Autowired private InfoTable infoTable;
     @Autowired private HIVehicleRegistrator vehicleRegistrator;
+    @Autowired private HIKnowledgeAgentTest knowledgeAgentTest;
     @Autowired private EdcApi edcApi;
     @Autowired @Qualifier(ObjectMapperFactoryBtp.EXTENDED_OBJECT_MAPPER) private ObjectMapper objectMapper;
+
 
     @Value("${supplier.hiservice.inputAssetName}") private String inputAssetName;
     @Value("${supplier.hiservice.endpoint}") private URL supplierHiServiceEndpoint;
@@ -80,7 +88,12 @@ public class HIDataCollector {
 
             registerNewVehicles(updatedVehicles);
 
-            buildHIServiceInputsAndDispatch(updatedVehicles, syncCounterMin, options);
+            if(options.isUseKnowledgeAgent()) {
+                buildHIServiceInputsForAgentAndDispatch(updatedVehicles, syncCounterMin,
+                        infoTable.getCurrentDatabaseTimestampNewTransaction());
+            } else {
+                buildHIServiceInputsAndDispatch(updatedVehicles, syncCounterMin, options);
+            }
 
             return UpdateInfo.UPDATE_STARTED;
         } catch (final Exception exception) {
@@ -105,6 +118,18 @@ public class HIDataCollector {
         final HIDataToSupplierContent dataToSupplierContent = hiInputDataBuilder.build(requestId, updatedVehicles);
         createNewCalculationInDatabase(requestId, syncCounterMin, getSyncCounterMax(updatedVehicles));
         dispatchRequestWithHttp(requestId, dataToSupplierContent, options);
+    }
+
+    private void buildHIServiceInputsForAgentAndDispatch(
+            @NotNull final List<Vehicle> updatedVehicles, @NotNull final long syncCounterMin,
+            @NotNull final Instant calculationTimestamp) throws BtpException {
+
+        final String requestId = generateRequestId();
+        final long sycCounterMax = getSyncCounterMax(updatedVehicles);
+        final HIKAInputs agentInputs = hiInputDataBuilder.buildForAgent(requestId, updatedVehicles,
+                sycCounterMax, calculationTimestamp);
+        createNewCalculationInDatabase(requestId, syncCounterMin, sycCounterMax);
+        dispatchRequestWithAgent(agentInputs);
     }
 
     private long getSyncCounterMax(@NotNull final List<Vehicle> updatedVehicles) {
@@ -174,6 +199,12 @@ public class HIDataCollector {
                 : callService(requestId, notification, options));
     }
 
+    private void dispatchRequestWithAgent(@NotNull final HIKAInputs agentInputs) {
+        logger.info("Agent request for id " + agentInputs.getRequestId() + " (" + agentInputs.getRequests().size()
+                + " vehicles) prepared.");
+        callAgent(agentInputs);
+    }
+
     private void processResult(@NotNull final String requestId, @NotNull final ResponseEntity<JsonNode> result)
             throws OemHIException {
 
@@ -215,6 +246,14 @@ public class HIDataCollector {
                 hiNotificationToSupplierConverter.toDAO(notification), JsonNode.class);
     }
 
+    private ResponseEntity<JsonNode> callAgent(@NotNull final HIKAInputs agentInputs) {
+
+        final ResponseEntity<DefaultApiResult> result = knowledgeAgentTest.run(agentInputs);
+        final ResponseEntity<JsonNode> response = new ResponseEntity<>(objectMapper.valueToTree(result.getBody()),
+                result.getHeaders(), result.getStatusCode());
+        return response;
+    }
+
     private void serviceCallFailed(@NotNull final String errorText) throws OemHIException {
         logger.error(errorText);
         throw new OemHIException(errorText);
@@ -223,10 +262,8 @@ public class HIDataCollector {
     private void limitVehicles(@NotNull final Notification<HIDataToSupplierContent> notificationInOut,
                                @NotNull final int maxVehicleTwins) {
         if(maxVehicleTwins < notificationInOut.getContent().getHealthIndicatorInputs().size()) {
-
             List<HealthIndicatorInput> limitedInputs =
                     notificationInOut.getContent().getHealthIndicatorInputs().subList(0, maxVehicleTwins);
-
             notificationInOut.getContent().setHealthIndicatorInputs(limitedInputs);
         }
     }

@@ -1,16 +1,15 @@
-package net.catena_x.btp.hi.oem.common.model.dao.knowledgeagent;
+package net.catena_x.btp.hi.oem.common.model.dto.knowledgeagent;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class HIKAInputsHeaderDAO {
-    private List<String> vars;
+public class HIKAInput {
+    private String van;
+    private double[] adaptionValues;
 }

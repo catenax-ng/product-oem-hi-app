@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 @Setter
 @NoArgsConstructor
 public class HIKAOutputsDAO extends HIKAExchangeDAOBase<HIKAOutputBindingDAO> {
-    public HIKAOutputsDAO(@Nullable final HIKAInputsHeaderDAO head,
+    public HIKAOutputsDAO(@Nullable final HIKAHeaderDAO head,
                          @Nullable final HIKAResultsDAO<HIKAOutputBindingDAO> results) {
         super(head, results);
     }

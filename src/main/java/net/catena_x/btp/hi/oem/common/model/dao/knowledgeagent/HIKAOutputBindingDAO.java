@@ -14,7 +14,6 @@ public class HIKAOutputBindingDAO {
     private HIKAVariableDAO aggregate;
     private HIKAVariableDAO assembly;
     private HIKAVariableDAO healthType;
-    private HIKAVariableDAO adaptionValues;
     private HIKAVariableDAO recordDate;
     private HIKAVariableDAO mileage;
     private HIKAVariableDAO operatingTime;

@@ -15,6 +15,7 @@ Options for the calculation preparation. There are four basic options:
  * D: Reset HI database.
  * Q: Reset calculation queue.
  * P: Use predefined alternating results for the mockup service instead of calculated ones.
+ * K: Use knowledge agent for calculation (instead of direct service calls).
 
 And the limit option at the end: Limit the count of components that are calculated.
 """;
@@ -28,8 +29,12 @@ And the limit option at the end: Limit the count of components that are calculat
     public static final String OPTIONS_EXAMPLE_2_VALUE = "ADQ";
 
     public static final String OPTIONS_EXAMPLE_3_NAME = "Rename, reinitialize and limit";
-    public static final String OPTIONS_EXAMPLE_3_DESCRIPTION = "RAQ: DESCRIPTION.";
+    public static final String OPTIONS_EXAMPLE_3_DESCRIPTION = "";
     public static final String OPTIONS_EXAMPLE_3_VALUE = "RAQ15";
+
+    public static final String OPTIONS_EXAMPLE_4_NAME = "Use knowledge agent";
+    public static final String OPTIONS_EXAMPLE_4_DESCRIPTION = "";
+    public static final String OPTIONS_EXAMPLE_4_VALUE = "AK";
 
     public static final String RESPONSE_OK_DESCRIPTION = "OK: Calculation started or nothing to calculate.";
     public static final String RESPONSE_OK_VALUE = """

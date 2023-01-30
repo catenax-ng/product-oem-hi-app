@@ -6,7 +6,6 @@ import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionDefau
 import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableCreateNew;
 import net.catena_x.btp.hi.oem.common.database.hi.annotations.HITransactionSerializableUseExisting;
 import net.catena_x.btp.hi.oem.common.database.hi.base.HITableBase;
-import net.catena_x.btp.hi.oem.common.database.hi.tables.calculation.HICalculationTableInternal;
 import net.catena_x.btp.hi.oem.util.exceptions.OemHIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

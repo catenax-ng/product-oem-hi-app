@@ -78,6 +78,10 @@ public class HIJobRunner {
             case RUNNING: {
                 switch (startJobInternal(currentQueueElement.options())) {
                     case UPDATE_STARTED: {
+                        if(currentQueueElement.options().isUseKnowledgeAgent()) {
+                            setJobFinishedAndStartQueued();
+                        }
+
                         return apiHelper.ok("Started external hi calculation.");
                     }
 

@@ -49,6 +49,11 @@ public class HIBackendCollectorControllerRunTest {
                                         name = CollectorRunTestDoc.OPTIONS_EXAMPLE_3_NAME,
                                         description = CollectorRunTestDoc.OPTIONS_EXAMPLE_3_DESCRIPTION,
                                         value = CollectorRunTestDoc.OPTIONS_EXAMPLE_3_VALUE
+                                ),
+                                @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                        name = CollectorRunTestDoc.OPTIONS_EXAMPLE_4_NAME,
+                                        description = CollectorRunTestDoc.OPTIONS_EXAMPLE_4_DESCRIPTION,
+                                        value = CollectorRunTestDoc.OPTIONS_EXAMPLE_4_VALUE
                                 )
                         }
             )},

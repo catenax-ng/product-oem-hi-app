@@ -1,16 +1,17 @@
 package net.catena_x.btp.hi.oem.backend.hi_service.controller.util;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.catena_x.btp.hi.oem.common.model.dao.knowledgeagent.*;
+import net.catena_x.btp.hi.oem.backend.hi_service.receiver.HIResultProcessor;
+import net.catena_x.btp.hi.oem.common.model.dao.knowledgeagent.HIKAInputsDAO;
+import net.catena_x.btp.hi.oem.common.model.dao.knowledgeagent.HIKAOutputsDAO;
+import net.catena_x.btp.hi.oem.common.model.dto.knowledgeagent.*;
 import net.catena_x.btp.libraries.util.apihelper.ApiHelper;
 import net.catena_x.btp.libraries.util.apihelper.ResponseChecker;
 import net.catena_x.btp.libraries.util.apihelper.model.DefaultApiResult;
 import net.catena_x.btp.libraries.util.exceptions.BtpException;
 import net.catena_x.btp.libraries.util.json.ObjectMapperFactoryBtp;
 import okhttp3.HttpUrl;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,13 +25,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collections;
 
 @Component
 public class HIKnowledgeAgentTest {
     @Autowired private ApiHelper apiHelper;
     @Autowired private RestTemplate restTemplate;
     @Autowired @Qualifier(ObjectMapperFactoryBtp.EXTENDED_OBJECT_MAPPER) private ObjectMapper objectMapper;
+    @Autowired private HIResultProcessor resultProcessor;
+    @Autowired private HIKAInputsConverter hikaInputsConverter;
+    @Autowired private HIKAOutputsConverter hikaAOutputsConverter;
 
     @Value("${knowledgeagent.api.username:foo}") private String knowledgeApiUsername;
     @Value("${knowledgeagent.api.password:bar}") private String knowledgeApiPassword;
@@ -42,30 +49,43 @@ public class HIKnowledgeAgentTest {
     public ResponseEntity<DefaultApiResult> run() {
         return callService(generateTestInputs());
     }
+    public ResponseEntity<DefaultApiResult> run(@NotNull final HIKAInputs inputs) {
+        return callService(inputs);
+    }
 
-    private ResponseEntity<DefaultApiResult> callService(@NotNull final HIKAInputsDAO inputs) {
+    private ResponseEntity<DefaultApiResult> callService(@NotNull final HIKAInputs inputs) {
         final HttpUrl requestUrl = HttpUrl.parse(knowledgeApiAddress)
                 .newBuilder().addPathSegment("api").addPathSegment("agent")
                 .addEncodedQueryParameter("asset", "urn:cx:Skill:consumer:Health").build();
-
         final HttpHeaders headers = generateDefaultHeaders();
         addAuthorizationHeaders(headers);
 
-        final HttpEntity<HIKAInputsDAO> request = new HttpEntity<>(inputs, headers);
+        final HttpEntity<HIKAInputsDAO> request = new HttpEntity<>(hikaInputsConverter.toDAO(inputs), headers);
 
         final ResponseEntity<HIKAOutputsDAO> response =
                 restTemplate.postForEntity(requestUrl.toString(), request, HIKAOutputsDAO.class);
 
-        checkAndShowResponse(response);
-        return apiHelper.ok("Received data from Knowledge: " + resultToString(response.getBody()));
+        if(!checkAndShowResponse(response)) {
+            return apiHelper.failed("Failed to run the knowledge agent!");
+        }
+
+        resultProcessor.process(convertResult(response.getBody()), inputs);
+
+        return apiHelper.ok("Received data from Knowledge Agent. Processing started.");
     }
 
-    private void checkAndShowResponse(final ResponseEntity<HIKAOutputsDAO> response) {
+    private HIKAOutputs convertResult(@NotNull final HIKAOutputsDAO result) {
+        return hikaAOutputsConverter.toDTO(result);
+    }
+
+    private boolean checkAndShowResponse(final ResponseEntity<HIKAOutputsDAO> response) {
         try {
             ResponseChecker.checkResponse(response);
             showResponse(response.getBody());
+            return true;
         } catch (final BtpException exception) {
             logger.error(exception.getMessage());
+            return false;
         }
     }
 
@@ -103,35 +123,12 @@ public class HIKnowledgeAgentTest {
         return headers;
     }
 
-    private HIKAInputsDAO generateTestInputs() {
-        final HIKAInputsDAO inputs = new HIKAInputsDAO();
-
-        inputs.setHead(new HIKAInputsHeaderDAO());
-        inputs.getHead().setVars(new ArrayList<String>());
-        inputs.getHead().getVars().add("van");
-        inputs.getHead().getVars().add("aggregate");
-        inputs.getHead().getVars().add("healthType");
-        inputs.getHead().getVars().add("adaptionValues");
-
-        inputs.setResults(new HIKAResultsDAO<HIKAInputBindingDAO>());
-        inputs.getResults().setBindings(new ArrayList<HIKAInputBindingDAO>());
-
-        addBinding(inputs, "FNKQHZHFTHMCRX", "Differential Gear",
-                "GearSet", "[0.2, 0.3, 0.4]");
-        addBinding(inputs, "LKTYZWBNDOMPGQ", "Differential Gear",
-                "GearSet", "[0.4, 0.3, 0.2]");
-
+    private HIKAInputs generateTestInputs() {
+        final HIKAInputs inputs = new HIKAInputs();
+        inputs.setRequests(new ArrayList<>(2));
+        inputs.getRequests().add(new HIKAInput("FNKQHZHFTHMCRX", new double[]{0.2, 0.3, 0.4, 233}));
+        inputs.getRequests().add(new HIKAInput("LKTYZWBNDOMPGQ", new double[]{0.4, 0.3, 0.2, -155}));
         return inputs;
-    }
-
-    private void addBinding(@NotNull final HIKAInputsDAO inputs, @NotNull final String van,
-                            @NotNull final String aggregate, @NotNull final String healthType,
-                            @NotNull final String adaptionValues) {
-        inputs.getResults().getBindings().add(new HIKAInputBindingDAO(
-                new HIKAVariableDAO("literal", van, null),
-                new HIKAVariableDAO("literal", aggregate, null),
-                new HIKAVariableDAO("literal", healthType, null),
-                new HIKAVariableDAO("literal", adaptionValues, null)));
     }
 
     private String resultToString(@NotNull HIKAOutputsDAO result) {
