@@ -11,6 +11,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class HIKAResults {
-    private List<HIKABinding> bindings;
+public class HIKAInputsHeaderDAO {
+    private List<String> vars;
 }

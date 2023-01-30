@@ -5,12 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class HIKAInputsHeader {
-    private List<String> vars;
+public class HIKAExchangeDAOBase<BindingType> {
+    private HIKAInputsHeaderDAO head;
+    private HIKAResultsDAO<BindingType> results;
 }

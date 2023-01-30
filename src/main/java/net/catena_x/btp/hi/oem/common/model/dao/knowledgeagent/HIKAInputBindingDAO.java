@@ -9,7 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class HIKABinding {
-    private HIKAVariable vin;
-    private HIKAVariable aggregate;
+public class HIKAInputBindingDAO {
+    private HIKAVariableDAO van;
+    private HIKAVariableDAO aggregate;
+    private HIKAVariableDAO healthType;
+    private HIKAVariableDAO adaptionValues;
 }
