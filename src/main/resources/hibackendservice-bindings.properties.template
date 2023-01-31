@@ -1,8 +1,8 @@
 server.port=25553
 
-cloud.endpoint=${RUL_CLOUD_ENDPOINT}
-cloud.accessKey=${RUL_CLOUD_ACCESS_KEY}
-cloud.secretKey=${RUL_CLOUD_SECRET_KEY}
+cloud.endpoint=${HI_CLOUD_ENDPOINT}
+cloud.accessKey=${HI_CLOUD_ACCESS_KEY}
+cloud.secretKey=${HI_CLOUD_SECRET_KEY}
 cloud.region=eu-west-1
 cloud.bucket=test
 cloud.inputFile.bucketName=testbucket
@@ -12,12 +12,12 @@ edc.apiwrapper.url=http://myapiwrapper.url
 edc.apiwrapper.username=user
 edc.apiwrapper.password=pass
 
-supplier.rulservice.endpoint=http://edc.supplier.com/endpoint
+supplier.hiservice.endpoint=http://edc.supplier.com/endpoint
 supplier.bpn=BPN0000SUPPLIER
-supplier.rulservice.inputAssetName=example
+supplier.hiservice.inputAssetName=example
 
 edc.bpn=BPN0000OEM
 edc.endpoint=https://oem.com/edc
 
-security.api.username=${RULBACKENDSERVICE_API_USER}
-security.api.password=${RULBACKENDSERVICE_API_PASS}
+security.api.username=${HIBACKENDSERVICE_API_USER}
+security.api.password=${HIBACKENDSERVICE_API_PASS}

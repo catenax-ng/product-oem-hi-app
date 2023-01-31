@@ -1,4 +1,4 @@
-package net.catena_x.btp.hi.supplier.mockup.swagger;
+package net.catena_x.btp.hi.supplier.mockup.controller.swagger;
 
 public class SupplierMockUpDoc {
     public static final String SUMMARY = "MockUp endpoint to simulate the external calculation service.";
@@ -86,11 +86,11 @@ Url of the provider connector (not used in the mock up).
           },
           "bammId": "urn:bamm:io.openmanufacturing.digitaltwin:1.0.0#ClassifiedLoadSpectrum"
         },
-        "adaptionValues": {
+        "adaptionValueList": {
           "version": "DV_0.0.99",
-          "timeStamp": "2022-08-11T00:00:00Z",
-          "mileageInKm": 65432.0,
-          "operatingTimeInSeconds": 11570040,
+          "timestamp": "2022-08-11T00:00:00Z",
+          "mileage_km": 65432.0,
+          "operatingtime_s": 11570040,
           "values": [0.5, 16554.6, 234.3, 323.0]
         }
       },
@@ -136,11 +136,11 @@ Url of the provider connector (not used in the mock up).
           },
           "bammId": "urn:bamm:io.openmanufacturing.digitaltwin:1.0.0#ClassifiedLoadSpectrum"
         },
-        "adaptionValues": {
+        "adaptionValueList": {
           "version": "DV_0.0.99",
-          "timeStamp": "2022-08-11T00:00:00Z",
-          "mileageInKm": 65432.0,
-          "operatingTimeInSeconds": 11570040,
+          "timestamp": "2022-08-11T00:00:00Z",
+          "mileage_km": 65432.0,
+          "operatingtime_s": 11570040,
           "values": [0.5, 16554.6, 234.3, 323.0]
         }
       },
@@ -172,13 +172,25 @@ Url of the provider connector (not used in the mock up).
               }
             ]
           },
+          "body": {
+            "counts": {
+              "countsName": "Time",
+              "countsList": [769.6, 15222.4, 631520.8, 304929.6, 196.8]
+            },
+            "classes": [
+              {
+                "className": "TC_Clutch-class",
+                "classList": [2, 3, 4, 5, 6]
+              }
+            ]
+          },
           "bammId": "urn:bamm:io.openmanufacturing.digitaltwin:1.0.0#ClassifiedLoadSpectrum"
         },
-        "adaptionValues": {
+        "adaptionValueList": {
           "version": "DV_0.0.99",
-          "timeStamp": "2022-08-11T00:00:00Z",
-          "mileageInKm": 65432.0,
-          "operatingTimeInSeconds": 11570040,
+          "timestamp": "2022-08-11T00:00:00Z",
+          "mileage_km": 65432.0,
+          "operatingtime_s": 11570040,
           "values": [0.5, 16554.6, 234.3, 323.0]
         }
       }
@@ -187,7 +199,7 @@ Url of the provider connector (not used in the mock up).
 }
 """;
 
-    public static final String RESPONSE_OK_DESCRIPTION = "OK: The results were mapped successfully.";
+    public static final String RESPONSE_OK_DESCRIPTION = "OK: The calculation was started successfully.";
     public static final String RESPONSE_OK_VALUE = """
 {
   "timestamp": "2022-12-20T12:21:56.523230300Z",
@@ -196,7 +208,7 @@ Url of the provider connector (not used in the mock up).
 }
 """;
 
-    public static final String RESPONSE_ERROR_DESCRIPTION = "OK: Mapping results failed.";
+    public static final String RESPONSE_ERROR_DESCRIPTION = "ERROR: Starting calculation failed.";
     public static final String RESPONSE_ERROR_VALUE = """
 {
   "timestamp": "2022-12-09T16:24:52.741984700Z",

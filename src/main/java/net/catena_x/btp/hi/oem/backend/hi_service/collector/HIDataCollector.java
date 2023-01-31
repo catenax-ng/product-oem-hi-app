@@ -60,7 +60,6 @@ public class HIDataCollector {
     @Autowired private EdcApi edcApi;
     @Autowired @Qualifier(ObjectMapperFactoryBtp.EXTENDED_OBJECT_MAPPER) private ObjectMapper objectMapper;
 
-
     @Value("${supplier.hiservice.inputAssetName}") private String inputAssetName;
     @Value("${supplier.hiservice.endpoint}") private URL supplierHiServiceEndpoint;
 
