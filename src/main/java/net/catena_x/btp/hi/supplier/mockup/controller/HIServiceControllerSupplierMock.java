@@ -1,4 +1,4 @@
-package net.catena_x.btp.hi.supplier.mockup;
+package net.catena_x.btp.hi.supplier.mockup.controller;
 
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import net.catena_x.btp.hi.oem.backend.hi_service.collector.HIDataCollector;
@@ -7,7 +7,7 @@ import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhise
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.items.AdaptionValuesListDAO;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.items.HealthIndicatorInputDAO;
 import net.catena_x.btp.hi.oem.backend.hi_service.notifications.dao.supplierhiservice.items.HealthIndicatorOutputDAO;
-import net.catena_x.btp.hi.supplier.mockup.swagger.SupplierMockUpDoc;
+import net.catena_x.btp.hi.supplier.mockup.controller.swagger.SupplierMockUpDoc;
 import net.catena_x.btp.libraries.bamm.custom.classifiedloadspectrum.ClassifiedLoadSpectrum;
 import net.catena_x.btp.libraries.notification.dao.NotificationDAO;
 import net.catena_x.btp.libraries.notification.dto.Notification;
@@ -145,7 +145,6 @@ public class HIServiceControllerSupplierMock {
                             ))
             }
     )
-
     public ResponseEntity<DefaultApiResult> runHICalculationMock(
             @RequestBody @NotNull NotificationDAO<HINotificationToSupplierContentDAO> data,
             @PathVariable @NotNull final String assetId,

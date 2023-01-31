@@ -12,7 +12,6 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = {
 		"net.catena_x.btp.hi.oem.backend.hi_service",
 		"net.catena_x.btp.hi.oem.common",
-		"net.catena_x.btp.hi.supplier",
 		"net.catena_x.btp.libraries.notification",
 		"net.catena_x.btp.libraries.oem.backend.model.dto",
 //		"net.catena_x.btp.libraries.oem.backend.cloud",
@@ -21,7 +20,7 @@ import org.springframework.context.annotation.ComponentScan;
 		"net.catena_x.btp.libraries.edc",
 		"net.catena_x.btp.libraries.oem.backend.database.rawdata",
 		"net.catena_x.btp.libraries.util.security"})
-@OpenAPIDefinition(info = @Info(title = "OEM hi backend service", version = "0.0.99"))
+@OpenAPIDefinition(info = @Info(title = "OEM hi backend service", version = "0.1.0"))
 public class OemHiBackendServiceApplication {
 	public static void main(String[] args) {
 		new SpringApplicationBuilder()

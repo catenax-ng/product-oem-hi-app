@@ -18,7 +18,7 @@ import org.springframework.context.annotation.ComponentScan;
 		"net.catena_x.btp.hi.oem.frontend",
 		"net.catena_x.btp.hi.oem.common",
 		"net.catena_x.btp.libraries.util"})
-@OpenAPIDefinition(info = @Info(title = "Health indicator frontend", version = "0.0.99"))
+@OpenAPIDefinition(info = @Info(title = "Health indicator frontend", version = "0.1.0"))
 public class OemHiFrontendApplication {
 	public static void main(String[] args) {
 		new SpringApplicationBuilder()
