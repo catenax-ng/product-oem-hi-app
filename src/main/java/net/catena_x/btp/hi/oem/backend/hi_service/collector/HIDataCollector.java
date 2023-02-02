@@ -39,7 +39,10 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 
 @Component
 public class HIDataCollector {
@@ -84,14 +87,15 @@ public class HIDataCollector {
 
             registerNewVehicles(updatedVehicles);
 
+            final Instant currentDatabaseTimestamp = infoTable.getCurrentDatabaseTimestampNewTransaction();
+
             if(options.isUseKnowledgeAgent()) {
                 if(options.isLimitVehicleTwinCount()){
                     buildHIServiceInputsForAgentAndDispatch(
                             updatedVehicles.subList(0, Math.min(options.getMaxVehicleTwins(), updatedVehicles.size())),
-                            syncCounterMin, infoTable.getCurrentDatabaseTimestampNewTransaction());
+                            syncCounterMin, currentDatabaseTimestamp);
                 } else {
-                    buildHIServiceInputsForAgentAndDispatch(updatedVehicles, syncCounterMin,
-                            infoTable.getCurrentDatabaseTimestampNewTransaction());
+                    buildHIServiceInputsForAgentAndDispatch(updatedVehicles, syncCounterMin, currentDatabaseTimestamp);
                 }
             } else {
                 buildHIServiceInputsAndDispatch(updatedVehicles, syncCounterMin, options);

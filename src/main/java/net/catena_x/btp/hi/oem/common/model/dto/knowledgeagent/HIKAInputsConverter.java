@@ -1,7 +1,6 @@
 package net.catena_x.btp.hi.oem.common.model.dto.knowledgeagent;
 
 import net.catena_x.btp.hi.oem.common.model.dao.knowledgeagent.*;
-import net.catena_x.btp.libraries.bamm.custom.classifiedloadspectrum.items.LoadSpectrumType;
 import net.catena_x.btp.libraries.util.database.converter.DAOConverter;
 import org.springframework.stereotype.Component;
 
