@@ -150,14 +150,24 @@ public class HIServiceControllerSupplierMock {
             @PathVariable @NotNull final String assetId,
             @RequestParam(required = true, name="provider-connector-url") @Nullable String providerConnectorUrl) {
 
-        final List<HealthIndicatorInputDAO> healthIndicatorInputs = data.getContent().getHealthIndicatorInputs();
-        healthIndicatorInputs.sort(Comparator.comparing(HealthIndicatorInputDAO::getComponentId));
+        final List<HealthIndicatorInputDAO> healthIndicatorInputs = getInputsSorted(data.getContent());
 
         if(assetId.equals(HIDataCollector.INPUT_ASSET_NAME_TEST_PREDEFINED)) {
             return processPredefinedAlternating(data.getContent().getRequestRefId(), healthIndicatorInputs);
         } else {
             return processByInputs(data.getContent().getRequestRefId(), healthIndicatorInputs);
         }
+    }
+
+    public ResponseEntity<HINotificationFromSupplierContentDAO> runHICalculationMockSynchron(
+            @NotNull final HINotificationToSupplierContentDAO data) {
+        return processByInputsSynchron(data.getRequestRefId(), getInputsSorted(data));
+    }
+
+    private List<HealthIndicatorInputDAO> getInputsSorted(@NotNull final HINotificationToSupplierContentDAO data) {
+        final List<HealthIndicatorInputDAO> healthIndicatorInputs = data.getHealthIndicatorInputs();
+        healthIndicatorInputs.sort(Comparator.comparing(HealthIndicatorInputDAO::getComponentId));
+        return healthIndicatorInputs;
     }
 
     private ResponseEntity<DefaultApiResult> processPredefinedAlternating(
@@ -177,18 +187,31 @@ public class HIServiceControllerSupplierMock {
 
     private ResponseEntity<DefaultApiResult> processByInputs(
             @NotNull final String refId, @NotNull final List<HealthIndicatorInputDAO> healthIndicatorInputs) {
+        return buildAndSendNotification(refId, generateOutputsByInputs(healthIndicatorInputs));
+    }
+
+    private ResponseEntity<HINotificationFromSupplierContentDAO> processByInputsSynchron(
+            @NotNull final String refId, @NotNull final List<HealthIndicatorInputDAO> healthIndicatorInputs) {
+        final HINotificationFromSupplierContentDAO result = new HINotificationFromSupplierContentDAO();
+        result.setRequestRefId(refId);
+        result.setHealthIndicatorOutputs(generateOutputsByInputs(healthIndicatorInputs));
+        return apiHelper.ok(result);
+    }
+
+    private List<HealthIndicatorOutputDAO> generateOutputsByInputs(
+            @NotNull final List<HealthIndicatorInputDAO> healthIndicatorInputs) {
+
         final int count = healthIndicatorInputs.size();
         final List<HealthIndicatorOutputDAO> outputs = new ArrayList<>(count);
-        final double[][] healthIndicatorValues = isHiValues1() ? healthIndicatorValues1 : healthIndicatorValues2;
 
         for (int i = 0; i < count; i++) {
             final HealthIndicatorInputDAO inputData = healthIndicatorInputs.get(i);
             outputs.add(new HealthIndicatorOutputDAO("DV_0.0.99", inputData.getComponentId(),
                     new double[]{calculateLoadSpectrumIndicator(inputData.getClassifiedLoadSpectrum()),
-                                 calculateAdaptionValuesIndicator(inputData.getAdaptionValuesList())}));
+                            calculateAdaptionValuesIndicator(inputData.getAdaptionValuesList())}));
         }
 
-        return buildAndSendNotification(refId, outputs);
+        return outputs;
     }
 
     private double calculateLoadSpectrumIndicator(@NotNull final ClassifiedLoadSpectrum loadSpectrum) {

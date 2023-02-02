@@ -48,7 +48,7 @@ public final class HIKAInputsConverter extends DAOConverter<HIKAInputsDAO, HIKAI
         if(count > 0) {
             for (final HIKAInput sourceinput: source.getRequests()) {
                 addBinding(inputs, sourceinput.getVan(), "Differential Gear",
-                        "GearSet", sourceinput.getAdaptionValues());
+                        "Clutch", sourceinput.getAdaptionValues());
             }
         }
 
