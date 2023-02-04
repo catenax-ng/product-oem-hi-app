@@ -17,7 +17,7 @@ import java.time.Instant;
 @Component
 public class HINotificationCreator {
     @Value("${supplier.hiservice.endpoint}") private URL suplierHiServiceEndpoint;
-    @Value("${supplier.bpn}") private String supplierBpn;
+    @Value("${supplier.hiservice.bpn}") private String supplierBpn;
     @Value("${edc.bpn}") private String edcBpn;
     @Value("${edc.endpoint}") private URL edcEndpoint;
 
