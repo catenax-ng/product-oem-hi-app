@@ -10,17 +10,17 @@ import javax.persistence.*;
 @Entity
 @Table(name = "hiinfo", uniqueConstraints={@UniqueConstraint(columnNames = {"key"})})
 @NamedNativeQuery(name = "HIInfoItemDAO.insert",
-        query = "INSERT INTO hi (key, value) VALUES (:key, :value)")
+        query = "INSERT INTO hiinfo (key, value) VALUES (:key, :value)")
 @NamedNativeQuery(name = "HIInfoItemDAO.update",
-        query = "UPDATE hi SET value=:value WHERE key=:key")
+        query = "UPDATE hiinfo SET value=:value WHERE key=:key")
 @NamedNativeQuery(name = "HIInfoItemDAO.deleteAll",
-        query = "DELETE FROM hi")
+        query = "DELETE FROM hiinfo")
 @NamedNativeQuery(name = "HIInfoItemDAO.delete",
-        query = "DELETE FROM hi WHERE key=:key")
+        query = "DELETE FROM hiinfo WHERE key=:key")
 @NamedNativeQuery(name = "HIInfoItemDAO.queryAll", resultClass = HIInfoItemDAO.class,
-        query = "SELECT key, value FROM hi")
+        query = "SELECT key, value FROM hiinfo")
 @NamedNativeQuery(name = "HIInfoItemDAO.queryByKey", resultClass = HIInfoItemDAO.class,
-        query = "SELECT key, value FROM hi WHERE key=:key")
+        query = "SELECT key, value FROM hiinfo WHERE key=:key")
 @Getter
 @Setter
 @NoArgsConstructor

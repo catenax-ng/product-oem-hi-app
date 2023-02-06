@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @Component
 public final class HIInfoItemConverter extends DAOConverter<HIInfoItemDAO, HIInfoItem> {
     protected HIInfoItem toDTOSourceExists(@NotNull final HIInfoItemDAO source) {
-        return new HIInfoItem(HIInfoKey.DATAVERSION.valueOf(source.getKey()), source.getValue());
+        return new HIInfoItem(HIInfoKey.valueOf(source.getKey()), source.getValue());
     }
 
     protected HIInfoItemDAO toDAOSourceExists(@NotNull final HIInfoItem source) {

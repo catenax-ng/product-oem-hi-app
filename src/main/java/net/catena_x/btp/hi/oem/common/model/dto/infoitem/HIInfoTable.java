@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 @Component
 public class HIInfoTable {
     @Autowired private HIInfoTableInternal internal;
-    @Autowired private HIInfoItemConverter hiInfoItemconverter;
+    @Autowired private HIInfoItemConverter hiInfoItemConverter;
 
     public Exception runSerializableNewTransaction(@NotNull final Supplier<Exception> function) {
         return internal.runSerializableNewTransaction(function);
@@ -68,18 +68,18 @@ public class HIInfoTable {
     }
 
     public HIInfoItem getInfoItemNewTransaction(@NotNull final HIInfoKey key) throws OemHIException {
-        return hiInfoItemconverter.toDTO(internal.getInfoItemNewTransaction(key));
+        return hiInfoItemConverter.toDTO(internal.getInfoItemNewTransaction(key));
     }
 
     public HIInfoItem getInfoItemExternalTransaction(@NotNull final HIInfoKey key) throws OemHIException {
-        return hiInfoItemconverter.toDTO(internal.getInfoItemExternalTransaction(key));
+        return hiInfoItemConverter.toDTO(internal.getInfoItemExternalTransaction(key));
     }
 
     public List<HIInfoItem> getAllNewTransaction() throws OemHIException {
-        return hiInfoItemconverter.toDTO(internal.getAllNewTransaction());
+        return hiInfoItemConverter.toDTO(internal.getAllNewTransaction());
     }
 
     public List<HIInfoItem> getAllExternalTransaction() throws OemHIException {
-        return hiInfoItemconverter.toDTO(internal.getAllExternalTransaction());
+        return hiInfoItemConverter.toDTO(internal.getAllExternalTransaction());
     }
 }
