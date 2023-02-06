@@ -14,7 +14,7 @@ edc.apiwrapper.password=pass
 
 supplier.hiservice.endpoint=http://edc.supplier.com/endpoint
 supplier.hiservice.bpn=BPN0000SUPPLIER
-supplier.hiservice.inputAssetName=example
+supplier.hiservice.inputAssetId=example
 
 edc.bpn=BPN0000OEM
 edc.endpoint=https://oem.com/edc

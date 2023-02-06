@@ -60,7 +60,7 @@ public class HIDataCollector {
     @Autowired private EdcApi edcApi;
     @Autowired @Qualifier(ObjectMapperFactoryBtp.EXTENDED_OBJECT_MAPPER) private ObjectMapper objectMapper;
 
-    @Value("${supplier.hiservice.inputAssetName}") private String inputAssetName;
+    @Value("${supplier.hiservice.inputAssetId}") private String inputAssetId;
     @Value("${supplier.hiservice.endpoint}") private URL supplierHiServiceEndpoint;
 
     private final Logger logger = LoggerFactory.getLogger(HIDataCollector.class);
@@ -236,7 +236,7 @@ public class HIDataCollector {
                     .replace("Spectrum", "Collective");
 
             return startAsyncRequest(requestId, supplierHiServiceEndpoint.toString(),
-                    options.isUsePredefinedResults()? INPUT_ASSET_NAME_TEST_PREDEFINED : inputAssetName,
+                    options.isUsePredefinedResults()? INPUT_ASSET_NAME_TEST_PREDEFINED : inputAssetId,
                     notificationAsString, JsonNode.class);
         } catch(final IOException exception) {
             setCalculationStatus(requestId, HICalculationStatus.FAILED_EXTERNAL);
@@ -248,7 +248,7 @@ public class HIDataCollector {
             @NotNull final String requestId, @NotNull final Notification<HIDataToSupplierContent> notification,
             @NotNull final HIUpdateOptions options) throws OemHIException {
         return startAsyncRequest(requestId, supplierHiServiceEndpoint.toString(),
-                options.isUsePredefinedResults()? INPUT_ASSET_NAME_TEST_PREDEFINED : inputAssetName,
+                options.isUsePredefinedResults()? INPUT_ASSET_NAME_TEST_PREDEFINED : inputAssetId,
                 hiNotificationToSupplierConverter.toDAO(notification), JsonNode.class);
     }
 
