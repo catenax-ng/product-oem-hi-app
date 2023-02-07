@@ -13,5 +13,4 @@ public class HIKAInputBindingDAO {
     private HIKAVariableDAO van;
     private HIKAVariableDAO aggregate;
     private HIKAVariableDAO healthType;
-    private HIKAVariableDAO adaptionValues;
 }

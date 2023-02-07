@@ -41,7 +41,7 @@ public class HIKnowledgeAgentTest {
 
     @Value("${knowledgeagent.api.username:foo}") private String knowledgeApiUsername;
     @Value("${knowledgeagent.api.password:bar}") private String knowledgeApiPassword;
-    @Value("${knowledgeagent.api.address:https://knowledge.dev.demo.catena-x.net/oem-edc-data/BPNL00000003COJN}")
+    @Value("${knowledgeagent.api.address:https://bmw-agent-data.dev.demo.catena-x.net}")
     private String knowledgeApiAddress;
 
     private final Logger logger = LoggerFactory.getLogger(HIKnowledgeAgentTest.class);
@@ -56,11 +56,20 @@ public class HIKnowledgeAgentTest {
     private ResponseEntity<DefaultApiResult> callService(@NotNull final HIKAInputs inputs) {
         final HttpUrl requestUrl = HttpUrl.parse(knowledgeApiAddress)
                 .newBuilder().addPathSegment("api").addPathSegment("agent")
-                .addEncodedQueryParameter("asset", "urn:cx:Skill:consumer:Health").build();
+                .addEncodedQueryParameter("asset", "urn:cx:Skill:oem:Health").build();
         final HttpHeaders headers = generateDefaultHeaders();
         addAuthorizationHeaders(headers);
 
         final HttpEntity<HIKAInputsDAO> request = new HttpEntity<>(hikaInputsConverter.toDAO(inputs), headers);
+
+        try {
+            System.out.println("=======================");
+            System.out.println("HI input to agent:");
+            System.out.println(objectMapper.writeValueAsString(request.getBody()));
+            System.out.println("=======================");
+        } catch (final Exception exception) {
+            logger.error("Input to agent can not be showed: " + exception.getMessage());
+        }
 
         final ResponseEntity<HIKAOutputsDAO> response =
                 restTemplate.postForEntity(requestUrl.toString(), request, HIKAOutputsDAO.class);
@@ -126,8 +135,8 @@ public class HIKnowledgeAgentTest {
     private HIKAInputs generateTestInputs() {
         final HIKAInputs inputs = new HIKAInputs();
         inputs.setRequests(new ArrayList<>(2));
-        inputs.getRequests().add(new HIKAInput("FNKQHZHFTHMCRX", new double[]{0.2, 0.3, 0.4, 233}));
-        inputs.getRequests().add(new HIKAInput("LKTYZWBNDOMPGQ", new double[]{0.4, 0.3, 0.2, -155}));
+        inputs.getRequests().add(new HIKAInput("FNKQHZHFTHMCRX"));
+        inputs.getRequests().add(new HIKAInput("LKTYZWBNDOMPGQ"));
         return inputs;
     }
 

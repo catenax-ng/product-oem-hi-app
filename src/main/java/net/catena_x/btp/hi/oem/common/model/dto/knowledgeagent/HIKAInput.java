@@ -11,5 +11,4 @@ import lombok.Setter;
 @AllArgsConstructor
 public class HIKAInput {
     private String van;
-    private double[] adaptionValues;
 }

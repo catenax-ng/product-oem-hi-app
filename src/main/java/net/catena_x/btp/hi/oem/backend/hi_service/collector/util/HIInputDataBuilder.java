@@ -41,7 +41,7 @@ public class HIInputDataBuilder {
 
     public HIKAInputs buildForAgent(@NotNull final String requestId, @NotNull final List<Vehicle> updatedVehicles,
                                     @NotNull final long syncCounterMax,
-                                    @NotNull final Instant calculationTimestamp) throws OemHIException {
+                                    @NotNull final Instant calculationTimestamp) {
         final HIKAInputs inputs = new HIKAInputs();
 
         inputs.setRequestId(requestId);
@@ -51,8 +51,7 @@ public class HIInputDataBuilder {
         inputs.setRequests(new ArrayList<>(updatedVehicles.size()));
 
         for (final Vehicle vehicle :updatedVehicles) {
-            inputs.getRequests().add(new HIKAInput(vehicle.getVan(),
-                    vehicle.getNewestTelematicsData().getAdaptionValues().get(0).getValues()));
+            inputs.getRequests().add(new HIKAInput(vehicle.getVan()));
         }
 
         return inputs;
