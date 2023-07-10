@@ -8,8 +8,8 @@ The results are mapped to the related calculation.
 """;
     public static final String BODY_DESCRIPTION = "Notification with results.";
 
-    public static final String BODY_EXAMPLE_1_NAME = "Sample result";
-    public static final String BODY_EXAMPLE_1_DESCRIPTION = "Result for three components.";
+    public static final String BODY_EXAMPLE_1_NAME = "Sample input";
+    public static final String BODY_EXAMPLE_1_DESCRIPTION = "Input for three components.";
     public static final String BODY_EXAMPLE_1_VALUE = """
 {
   "header": {
